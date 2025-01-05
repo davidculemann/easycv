@@ -3,41 +3,52 @@ import { PRICING_PLANS, PLANS, type Interval } from "@/services/stripe/plans";
 import { getSupabaseWithHeaders } from "./supabase.server";
 
 async function seedProfiles(supabase: any) {
-	const { data: existingProfiles } = await supabase.from("profiles").select("*");
-	const testUserId = crypto.randomUUID();
-	if (existingProfiles?.length) {
-		console.info("🏃‍♂️ Skipping profiles seeding - profiles already exist");
-		return;
-	}
+    const { data: existingProfiles } = await supabase.from("profiles").select("*");
+    if (existingProfiles?.length) {
+        console.info("🏃‍♂️ Skipping profiles seeding - profiles already exist");
+        return;
+    }
 
-	const { error } = await supabase.from("profiles").insert([
-		{
-			id: testUserId,
-			email: "test@example.com",
-			username: "Test User",
-			avatar_url: null,
-			customer_id: null,
-			created_at: new Date().toISOString(),
-		},
-	]);
+    // First create the user in auth.users
+    const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+        email: "test@example.com",
+        password: "password123",
+        email_confirm: true
+    });
 
-	if (error) {
-		console.error("Error seeding profiles:", error);
-		throw error;
-	}
+    if (authError) {
+        console.error("Error creating auth user:", authError);
+        throw authError;
+    }
+
+    // Then create the profile using the auth user's ID
+    const { error } = await supabase.from("profiles").insert([
+        {
+            id: authUser.user.id,
+            email: "test@example.com",
+            username: "Test User",
+            avatar_url: null,
+            customer_id: null,
+            created_at: new Date().toISOString(),
+        },
+    ]);
+
+    if (error) {
+        console.error("Error seeding profiles:", error);
+        throw error;
+    }
 }
-
 async function seedKeepAlive(supabase: any) {
-	const { data: existingKeepAlive } = await supabase.from("keep-alive").select("*");
+	const { data: existingKeepAlive } = await supabase.from("keep_alive").select("*");
 	if (existingKeepAlive?.length) {
-		console.info("🏃‍♂️ Skipping keep-alive seeding - entries already exist");
+		console.info("🏃‍♂️ Skipping keep_alive seeding - entries already exist");
 		return;
 	}
 
-	const { error } = await supabase.from("keep-alive").insert([{ name: "placeholder" }, { name: "example" }]);
+	const { error } = await supabase.from("keep_alive").insert([{ name: "placeholder" }, { name: "example" }]);
 
 	if (error) {
-		console.error("Error seeding keep-alive:", error);
+		console.error("Error seeding keep_alive:", error);
 		throw error;
 	}
 }

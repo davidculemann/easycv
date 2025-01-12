@@ -5,7 +5,7 @@ export const siteConfig: SiteConfig = {
 	name: "easycv",
 	project: "Easycv",
 	description: "Create your CV in minutes.",
-	url: "https://www.easycv.vercel.app",
+	url: "https://easycv.vercel.app/",
 	contactEmail: "davidculemann@gmail.com",
 	ogImage: "https://www.davidculemann.com/og.png",
 	links: {

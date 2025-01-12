@@ -28,15 +28,19 @@ export const meta: MetaFunction = () => {
 const STEPS = [
 	{
 		number: 1,
-		title: "Step One",
-		description: "Enter some stuff and let the magic happen. It's all very advanced.",
+		title: "Input Your Details",
+		description: "Enter your work history, education, and skills. Upload an existing CV to speed up the process.",
 	},
 	{
 		number: 2,
-		title: "Step Two",
-		description: "Watch in awe as vague promises are fulfilled by algorithms.",
+		title: "AI Enhancement",
+		description: "Our AI analyzes your information and suggests improvements to make your CV stand out.",
 	},
-	{ number: 3, title: "Step Three", description: "Profit? We think so!" },
+	{
+		number: 3,
+		title: "Download & Apply",
+		description: "Export your polished CV in multiple formats, ready to help you land your dream job.",
+	},
 ];
 
 export default function Index() {
@@ -50,7 +54,7 @@ export default function Index() {
 		const formData = new FormData(form);
 		try {
 			await axios.post("api/mailing-list", formData);
-			toast({ title: "Success!", description: "You've done it. You're on the list!" });
+			toast({ title: "Success!", description: "You've joined our mailing list for updates!" });
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
 				const { error: errorMessage = "Something went wrong. Try again?" } = error.response.data;
@@ -69,15 +73,15 @@ export default function Index() {
 				<motion.section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-24" {...enterAnimation}>
 					<div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
 						<h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-							Disrupt Your Industry with Our All-in-One Generic Platform
+							The Ultimate AI-Powered CV Builder
 						</h1>
 						<p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-							Whether you're a tech startup, a unicorn-to-be, or something in between, we've got the tools
-							you need to do... something.
+							Create professional, ATS-friendly CVs in minutes. Our AI-powered platform helps you craft
+							the perfect CV, tailored to your experience and industry.
 						</p>
 						<div className="space-x-4 flex">
 							<Link to="/signin">
-								<Button size="lg">Get Started</Button>
+								<Button size="lg">Create Your CV</Button>
 							</Link>
 							<Link to="/docs">
 								<Button variant="outline" size="lg">
@@ -88,15 +92,6 @@ export default function Index() {
 					</div>
 				</motion.section>
 
-				<motion.section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-16" {...enterAnimation}>
-					<div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">
-						<h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-							Using the latest technologies
-						</h1>
-						<StackIcons />
-					</div>
-				</motion.section>
-
 				<motion.section
 					{...enterAnimation}
 					id="features"
@@ -104,42 +99,43 @@ export default function Index() {
 				>
 					<div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
 						<h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-							The Future of Innovation is Here
+							Complete Career Support Suite
 						</h2>
 						<p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-							Our platform leverages technology (and buzzwords) to do incredible things. No one really
-							knows how, but it works.
+							Everything you need to land your dream job, powered by advanced AI technology.
 						</p>
 					</div>
 					<div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
 						<Card>
 							<CardHeader>
-								<CardTitle>Feature 1</CardTitle>
+								<CardTitle>AI CV Builder</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<p className="text-muted-foreground">
-									Use this feature to do something vaguely important, but we promise it’s really cool.
+									Create professional CVs tailored to your industry. Our AI analyzes your experience
+									and suggests the best way to present your skills.
 								</p>
 							</CardContent>
 						</Card>
 						<Card>
 							<CardHeader>
-								<CardTitle>Feature 2</CardTitle>
+								<CardTitle>Cover Letter Generator</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<p className="text-muted-foreground">
-									This feature does things you didn't know you needed. But trust us, it's a
-									game-changer.
+									Generate compelling cover letters customized for each job application. Just input
+									the company and role details.
 								</p>
 							</CardContent>
 						</Card>
 						<Card>
 							<CardHeader>
-								<CardTitle>Feature 3</CardTitle>
+								<CardTitle>Interview Prep (Coming Soon)</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<p className="text-muted-foreground">
-									It's like magic, but more complicated and with more buzzwords.
+									Practice with our AI interviewer. Get personalized feedback and improve your
+									interview skills.
 								</p>
 							</CardContent>
 						</Card>
@@ -160,7 +156,7 @@ export default function Index() {
 					>
 						<h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">How It Works</h2>
 						<p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-							Follow these super easy steps and prepare to be amazed.
+							Create your professional CV in three simple steps
 						</p>
 					</motion.div>
 					<motion.div
@@ -177,9 +173,7 @@ export default function Index() {
 
 				<motion.section {...enterAnimation} className="container py-8 md:py-12 lg:py-24">
 					<div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
-						<h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-							Ready to Change the World?
-						</h2>
+						<h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">Stay Updated</h2>
 						<p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
 							Enter your email below to stay updated. Or don’t. It’s totally up to you.
 						</p>

@@ -12,6 +12,8 @@ import { Form } from "@remix-run/react";
 import axios from "axios";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -40,6 +42,56 @@ const STEPS = [
 		number: 3,
 		title: "Download & Apply",
 		description: "Export your polished CV in multiple formats, ready to help you land your dream job.",
+	},
+];
+
+const TESTIMONIALS = [
+	{
+		name: "Sarah Johnson",
+		role: "Marketing Manager",
+		content:
+			"The AI suggestions helped me highlight achievements I would have missed. Landed my dream job within weeks!",
+		avatar: "https://avatar.iran.liara.run/public/28",
+		initials: "SJ",
+	},
+	{
+		name: "Michael Chen",
+		role: "Software Engineer",
+		content:
+			"The ATS-friendly templates and AI enhancement features gave me confidence in my applications. Highly recommended!",
+		avatar: "https://avatar.iran.liara.run/public/44",
+		initials: "MC",
+	},
+	{
+		name: "Emily Rodriguez",
+		role: "UX Designer",
+		content:
+			"Created both my CV and cover letter in under an hour. The AI understood exactly how to present my experience.",
+		avatar: "https://avatar.iran.liara.run/public/10",
+		initials: "ER",
+	},
+	{
+		name: "James Wilson",
+		role: "Sales Director",
+		content:
+			"The interview prep feature is a game-changer. Helped me ace my last interview and secure a 30% pay raise.",
+		avatar: "https://avatar.iran.liara.run/public/24",
+		initials: "JW",
+	},
+	{
+		name: "Lisa Thompson",
+		role: "Project Manager",
+		content: "Clean, professional templates and intuitive AI guidance. Made updating my CV actually enjoyable!",
+		avatar: "https://avatar.iran.liara.run/public/12",
+		initials: "LT",
+	},
+	{
+		name: "David Park",
+		role: "Data Scientist",
+		content:
+			"The AI suggestions for technical skills presentation were spot-on. Perfect for modern tech job applications.",
+		avatar: "https://avatar.iran.liara.run/public/20",
+		initials: "DP",
 	},
 ];
 
@@ -169,6 +221,44 @@ export default function Index() {
 							<Step key={number} {...{ number, description, title }} />
 						))}
 					</motion.div>
+				</motion.section>
+
+				<motion.section
+					className="container py-8 md:py-12 lg:py-24 bg-slate-50 dark:bg-transparent"
+					{...enterAnimation}
+				>
+					<div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-8">
+						<h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl text-center">
+							What Our Users Say
+						</h2>
+						<Carousel className="w-full max-w-4xl" opts={{ align: "start", loop: true }}>
+							<CarouselContent>
+								{TESTIMONIALS.map((testimonial, index) => (
+									<CarouselItem key={index} className="md:basis-1/2">
+										<Card>
+											<CardHeader>
+												<div className="flex items-center gap-2">
+													<Avatar>
+														<AvatarImage src={testimonial.avatar} />
+														<AvatarFallback>{testimonial.initials}</AvatarFallback>
+													</Avatar>
+													<div>
+														<CardTitle>{testimonial.name}</CardTitle>
+														<p className="text-sm text-muted-foreground">
+															{testimonial.role}
+														</p>
+													</div>
+												</div>
+											</CardHeader>
+											<CardContent>"{testimonial.content}"</CardContent>
+										</Card>
+									</CarouselItem>
+								))}
+							</CarouselContent>
+							<CarouselPrevious />
+							<CarouselNext />
+						</Carousel>
+					</div>
 				</motion.section>
 
 				<motion.section {...enterAnimation} className="container py-8 md:py-12 lg:py-24">

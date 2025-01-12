@@ -6,7 +6,7 @@ export function Footer() {
 		<div className="z-20 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-auto">
 			<div className="mx-4 md:mx-8 flex h-14 items-center justify-between">
 				<div className="flex gap-4">
-					<p className="text-xs text-muted-foreground">© 2025ß David Culemann.</p>
+					<p className="text-xs text-muted-foreground">© 2025 David Culemann.</p>
 					<a
 						href="https://linkedin.com/in/david-culemann"
 						target="_blank"

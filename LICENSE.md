@@ -1,4 +1,4 @@
-Copyright (c) 2024 David Culemann
+Copyright (c) 2025 David Culemann
 
 Permission is hereby granted to any person who lawfully obtains a copy of this software and associated documentation files (the "Software") to use the Software solely for internal business purposes. This license does not grant permission to modify, copy, merge, publish, distribute, sublicense, or sell copies of the Software without explicit prior written consent from the copyright holder.
 

@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { PROTECTED_ROUTES } from "@/config.shared";
 import type { CurrencyCode } from "@/services/stripe/plans";
-import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { Link, useLocation, useNavigate, useRevalidator } from "@remix-run/react";
+import { ArrowRightIcon, Link } from "@radix-ui/react-icons";
+import { useLocation, useNavigate, useRevalidator } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "db_types";

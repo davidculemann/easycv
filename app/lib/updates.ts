@@ -42,7 +42,11 @@ export const timelineItems: Update[] = [
 					type: "paragraph",
 					text: "Launched the placeholder website, still lacking functionality aside from the core features of my boilerplate that I forked this from: ",
 					children: [
-						{ type: "link", text: "remix-shadcn-supabase-boilerplate", href: "https://github.com/davidculemann/remix-shadcn-supabase-boilerplate" },
+						{
+							type: "link",
+							text: "remix-shadcn-supabase-boilerplate",
+							href: "https://github.com/davidculemann/remix-shadcn-supabase-boilerplate",
+						},
 					],
 				},
 			],

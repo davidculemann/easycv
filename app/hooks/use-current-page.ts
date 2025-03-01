@@ -1,5 +1,5 @@
 import { useLocation } from "@remix-run/react";
-import {  LayoutGrid, type LucideIcon, Settings, LetterText, FileBadge2 } from "lucide-react";
+import { FileBadge2, LayoutGrid, LetterText, type LucideIcon, Settings } from "lucide-react";
 import { useMemo } from "react";
 
 type Submenu = {

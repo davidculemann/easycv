@@ -1,5 +1,6 @@
 import { useToast } from "@/components/hooks/use-toast";
 import { PROTECTED_ROUTES } from "@/config.shared";
+import type { CurrencyCode } from "@/services/stripe/plans";
 import { useLocation, useNavigate, useRevalidator } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
@@ -13,6 +14,9 @@ export type SupabaseOutletContext = {
 	domainUrl?: string;
 	isLoading?: boolean;
 	user?: User | null;
+	profile?: Database["public"]["Tables"]["profiles"]["Row"] | null;
+	subscription?: Database["public"]["Tables"]["subscriptions"]["Row"] | null;
+	currency?: CurrencyCode;
 };
 
 type SupabaseEnv = {

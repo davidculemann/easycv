@@ -2,11 +2,11 @@ import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { Outlet, useOutletContext } from "@remix-run/react";
 
 export default function Documents() {
-	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
-	console.log(user);
+	const outletContext = useOutletContext<SupabaseOutletContext>();
+
 	return (
 		<div>
-			<Outlet context={{ supabase, user }} />
+			<Outlet context={outletContext} />
 		</div>
 	);
 }

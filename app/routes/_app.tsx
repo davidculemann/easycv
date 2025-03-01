@@ -101,6 +101,7 @@ export default function AuthLayout() {
 	}
 
 	const { profile, subscription, currency } = loaderData as LoaderSuccess;
+	const outletContext = { supabase, profile, subscription, currency } as SupabaseOutletContext;
 
 	return (
 		<AdminPanelLayout>
@@ -128,7 +129,7 @@ export default function AuthLayout() {
 						))}
 					</BreadcrumbList>
 				</Breadcrumb>
-				<Outlet context={{ supabase, profile, subscription, currency }} />
+				<Outlet context={outletContext} />
 			</ContentLayout>
 		</AdminPanelLayout>
 	);

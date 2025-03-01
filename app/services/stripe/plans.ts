@@ -8,6 +8,8 @@ export type Price = {
 	currency: string;
 };
 
+export type CurrencyCode = "usd" | "eur";
+
 /**
  * Enumerates subscription plan names.
  * These are used as unique identifiers in both the database and Stripe dashboard.

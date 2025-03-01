@@ -1,4 +1,3 @@
-import { useToast } from "@/components/hooks/use-toast";
 import AdminPanelLayout from "@/components/layout/admin-panel-layout";
 import { ContentLayout } from "@/components/layout/content-layout";
 import PageLoading from "@/components/shared/page-loading";

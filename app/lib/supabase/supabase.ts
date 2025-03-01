@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { PROTECTED_ROUTES } from "@/config.shared";
 import type { CurrencyCode } from "@/services/stripe/plans";
-import { ArrowRightIcon, Link } from "@radix-ui/react-icons";
 import { useLocation, useNavigate, useRevalidator } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/ssr";
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
@@ -56,13 +54,6 @@ export const useSupabase = ({ env, session }: UseSupabase) => {
 				toast.error("Please sign in to view this content.", {
 					duration: Infinity,
 					closeButton: true,
-					action: (
-						<Button asChild variant="outline">
-							<Link to="/signin">
-								Sign in <ArrowRightIcon />
-							</Link>
-						</Button>
-					),
 				});
 			}
 

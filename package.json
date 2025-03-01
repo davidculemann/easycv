@@ -75,7 +75,7 @@
 		"isbot": "5.1.0",
 		"iso-639-1": "^3.1.3",
 		"lru-cache": "^11.0.1",
-		"lucide-react": "^0.441.0",
+		"lucide-react": "^0.477.0",
 		"morgan": "1.10.0",
 		"octokit": "^4.0.2",
 		"parse-link-header": "^2.0.0",

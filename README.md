@@ -122,7 +122,7 @@ GITHUB_TOKEN=ghp_1234567890abcdef1234567890abcdef1234567890
 <h2>Confirm Your Signup</h2>
 
 <p>Your verification code is: <strong>{{ .Token }}</strong></p>
-<p>This code will expire in 15 minutes. Please use it to complete your signup process.</p>
+<p>This code will expire in 5 minutes. Please use it to complete your signup process.</p>
 ```
 
 2. Reset Password:

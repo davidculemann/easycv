@@ -96,3 +96,38 @@ create table
     email text null,
     constraint emails_pkey primary key (id)
   ) tablespace pg_default;
+
+CREATE TABLE cover_letters (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  company TEXT,
+  position TEXT,
+  status TEXT CHECK (status IN ('draft', 'published', 'archived')) DEFAULT 'draft',
+  version INTEGER DEFAULT 1,
+  template_id UUID,
+  CONSTRAINT chk_status CHECK (status IN ('draft', 'published', 'archived'))
+);
+
+CREATE TABLE cvs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  title TEXT NOT NULL,
+  summary TEXT,
+  education JSONB,
+  experience JSONB,
+  skills JSONB,
+  certifications JSONB,
+  languages JSONB,
+  interests JSONB,
+  status TEXT CHECK (status IN ('draft', 'published', 'archived')) DEFAULT 'draft',
+  version INTEGER DEFAULT 1,
+  template_id UUID,
+  CONSTRAINT chk_status CHECK (status IN ('draft', 'published', 'archived'))
+);
+

@@ -53,8 +53,7 @@ export default function PrivacyPolicy() {
 					</li>
 					<li>
 						<strong>Company</strong> (referred to as either &quot;the Company&quot;, &quot;We&quot;,
-						&quot;Us&quot; or &quot;Our&quot; in this Agreement) refers to
-						remix-shadcn-supabase-boilerplate.
+						&quot;Us&quot; or &quot;Our&quot; in this Agreement) refers to easycv.
 					</li>
 					<li>
 						<strong>Cookies</strong> are small files that are placed on Your computer, mobile device or any
@@ -87,7 +86,7 @@ export default function PrivacyPolicy() {
 						visit).
 					</li>
 					<li>
-						<strong>Website</strong> refers to remix-shadcn-supabase-boilerplate, accessible from{" "}
+						<strong>Website</strong> refers to easycv, accessible from{" "}
 						<a
 							href={siteConfig.url}
 							rel="external nofollow noopener noreferrer"

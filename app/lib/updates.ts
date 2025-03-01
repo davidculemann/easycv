@@ -44,8 +44,8 @@ export const timelineItems: Update[] = [
 					children: [
 						{
 							type: "link",
-							text: "remix-shadcn-supabase-boilerplate",
-							href: "https://github.com/davidculemann/remix-shadcn-supabase-boilerplate",
+							text: "easycv",
+							href: "https://easycv.vercel.app/",
 						},
 					],
 				},

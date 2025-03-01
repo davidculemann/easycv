@@ -8,10 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { containerVariants, enterAnimation, itemVariants } from "@/lib/framer/animations";
+import { validateEmail } from "@/lib/utils";
 import { Form } from "@remix-run/react";
 import axios from "axios";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const meta: MetaFunction = () => {
@@ -98,13 +99,20 @@ export default function Index() {
 	const howItWorksRef = useRef(null);
 	const isInView = useInView(howItWorksRef, { amount: 0.6, once: true });
 
+	// Add state for email input
+	const [email, setEmail] = useState("");
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSuccess, setIsSuccess] = useState(false);
+
 	async function handleSubmitEmail(event: React.FormEvent<HTMLFormElement>) {
 		event.preventDefault();
+		setIsSubmitting(true);
 		const form = event.currentTarget;
 		const formData = new FormData(form);
 		try {
 			await axios.post("api/mailing-list", formData);
 			toast.success("You've joined our mailing list!");
+			setIsSuccess(true);
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
 				const { error: errorMessage = "Something went wrong. Try again?" } = error.response.data;
@@ -112,6 +120,8 @@ export default function Index() {
 			} else {
 				toast.error("An unexpected error occurred. Try again later.");
 			}
+		} finally {
+			setIsSubmitting(false);
 		}
 	}
 
@@ -261,7 +271,7 @@ export default function Index() {
 					<div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
 						<h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">Stay Updated</h2>
 						<p className="max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
-							Enter your email below to stay updated. Or don’t. It’s totally up to you.
+							Enter your email below to stay updated. Or don't. It's totally up to you.
 						</p>
 						<div className="w-full max-w-sm space-y-2">
 							<Form onSubmit={handleSubmitEmail} className="flex space-x-2">
@@ -271,8 +281,12 @@ export default function Index() {
 									id="email"
 									name="email"
 									type="email"
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
 								/>
-								<Button type="submit">Submit</Button>
+								<Button type="submit" disabled={!validateEmail(email) || isSuccess || isSubmitting}>
+									Submit
+								</Button>
 							</Form>
 							<p className="text-xs text-muted-foreground">We will probably email you with updates.</p>
 						</div>

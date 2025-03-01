@@ -70,7 +70,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	}
 
 	const { data: subscription } = await supabase.from("subscriptions").select("*").eq("user_id", user.id).single();
-
 	const currency = getLocaleCurrency(request);
 
 	return json<LoaderSuccess>({ profile, subscription, currency }, { headers });

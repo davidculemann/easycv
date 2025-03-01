@@ -1,5 +1,5 @@
 import { useLocation } from "@remix-run/react";
-import { Bookmark, LayoutGrid, type LucideIcon, Settings, SquarePen, Tag, Users } from "lucide-react";
+import {  LayoutGrid, type LucideIcon, Settings, LetterText, FileBadge2 } from "lucide-react";
 import { useMemo } from "react";
 
 type Submenu = {
@@ -36,49 +36,25 @@ export function getMenuList(pathname: string): Group[] {
 			],
 		},
 		{
-			groupLabel: "Contents",
+			groupLabel: "Documents",
 			menus: [
 				{
-					href: "",
-					label: "Posts",
-					active: pathname.includes("/posts"),
-					icon: SquarePen,
-					submenus: [
-						{
-							href: "/posts",
-							label: "All Posts",
-							active: pathname === "/posts",
-						},
-						{
-							href: "/posts/new",
-							label: "New Post",
-							active: pathname.includes("/posts/new"),
-						},
-					],
+					href: "/resumes",
+					label: "Resumes",
+					active: pathname.includes("/resumes"),
+					icon: FileBadge2,
 				},
 				{
-					href: "/categories",
-					label: "Categories",
-					active: pathname.includes("/categories"),
-					icon: Bookmark,
-				},
-				{
-					href: "/tags",
-					label: "Tags",
-					active: pathname.includes("/tags"),
-					icon: Tag,
+					href: "/cover-letters",
+					label: "Cover Letters",
+					active: pathname.includes("/cover-letters"),
+					icon: LetterText,
 				},
 			],
 		},
 		{
 			groupLabel: "Settings",
 			menus: [
-				{
-					href: "/users",
-					label: "Users",
-					active: pathname.includes("/users"),
-					icon: Users,
-				},
 				{
 					href: "/account",
 					label: "Account",

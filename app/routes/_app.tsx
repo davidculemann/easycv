@@ -1,7 +1,7 @@
+import { useToast } from "@/components/hooks/use-toast";
 import AdminPanelLayout from "@/components/layout/admin-panel-layout";
 import { ContentLayout } from "@/components/layout/content-layout";
 import PageLoading from "@/components/shared/page-loading";
-import { useToast } from "@/components/hooks/use-toast";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -13,10 +13,10 @@ import {
 import { useCurrentPage } from "@/hooks/use-current-page";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { Link, Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
-import { json, redirect } from "@remix-run/node";
-import type { LoaderFunctionArgs } from "@remix-run/node";
 import { getLocaleCurrency } from "@/services/stripe/stripe.server";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
+import { Link, Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { Fragment } from "react";
 
 type LoaderSuccess = {

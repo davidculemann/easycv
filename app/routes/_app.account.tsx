@@ -2,10 +2,9 @@ import SidebarNav from "@/components/account/sidebar-nav";
 import { Separator } from "@/components/ui/separator";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, Outlet, useOutletContext } from "@remix-run/react";
-import { IconCreditCard, IconReceipt, IconTool, IconUser } from "@tabler/icons-react";
+import { Outlet, useOutletContext } from "@remix-run/react";
+import { IconCreditCard, IconTool, IconUser } from "@tabler/icons-react";
 import type { Currency, Subscription } from "types/stripe";
-import { cn } from "@/lib/utils";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -18,7 +17,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Account() {
-	const user = useLoaderData<typeof loader>();
 	const { subscription, currency } = useOutletContext<{ subscription: Subscription; currency: Currency }>();
 
 	return (

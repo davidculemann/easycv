@@ -39,9 +39,9 @@ export function getMenuList(pathname: string): Group[] {
 			groupLabel: "Documents",
 			menus: [
 				{
-					href: "/resumes",
-					label: "Resumes",
-					active: pathname.includes("/resumes"),
+					href: "/cv",
+					label: "CVs",
+					active: pathname.includes("/cv"),
 					icon: FileBadge2,
 				},
 				{

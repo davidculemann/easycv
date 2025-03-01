@@ -4,12 +4,13 @@ import { useLoaderData } from "@remix-run/react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
+	const { data: documents } = await supabase.from("cvs").select("*");
 
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	return user;
+	return { user, documents };
 }
 
 export default function Dashboard() {

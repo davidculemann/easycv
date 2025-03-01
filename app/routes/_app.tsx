@@ -18,6 +18,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link, Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { Fragment } from "react";
+import { toast } from "sonner";
 
 type LoaderSuccess = {
 	profile: any;
@@ -79,7 +80,6 @@ export default function AuthLayout() {
 	const loaderData = useLoaderData<typeof loader>();
 	const { supabase, isLoading, user } = useOutletContext<SupabaseOutletContext>();
 	const { breadcrumbs, activePage } = useCurrentPage();
-	const { toast } = useToast();
 	const navigate = useNavigate();
 
 	if ("sessionAvailable" in loaderData && !loaderData.sessionAvailable) {
@@ -87,12 +87,8 @@ export default function AuthLayout() {
 			if (!session) return navigate("/signin");
 		});
 	}
-
 	if ("message" in loaderData) {
-		toast({
-			variant: "destructive",
-			description: loaderData.message,
-		});
+		toast.error(loaderData.message);
 		return navigate("/signin");
 	}
 

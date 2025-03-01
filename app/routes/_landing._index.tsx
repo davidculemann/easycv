@@ -2,18 +2,17 @@ import { title } from "@/config.shared";
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 
-import { useToast } from "@/components/hooks/use-toast";
-import StackIcons from "@/components/landing/stack-icons";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
 import { containerVariants, enterAnimation, itemVariants } from "@/lib/framer/animations";
 import { Form } from "@remix-run/react";
 import axios from "axios";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import { toast } from "sonner";
 
 export const meta: MetaFunction = () => {
 	return [
@@ -96,7 +95,6 @@ const TESTIMONIALS = [
 ];
 
 export default function Index() {
-	const { toast } = useToast();
 	const howItWorksRef = useRef(null);
 	const isInView = useInView(howItWorksRef, { amount: 0.6, once: true });
 
@@ -106,16 +104,14 @@ export default function Index() {
 		const formData = new FormData(form);
 		try {
 			await axios.post("api/mailing-list", formData);
-			toast({ title: "Success!", description: "You've joined our mailing list for updates!" });
+			toast.success("You've joined our mailing list!");
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
 				const { error: errorMessage = "Something went wrong. Try again?" } = error.response.data;
-				toast({
-					title: "Error",
-					variant: "destructive",
-					description: errorMessage,
-				});
-			} else toast({ title: "Error", description: "An unexpected error occurred. Try again later." });
+				toast.error(errorMessage);
+			} else {
+				toast.error("An unexpected error occurred. Try again later.");
+			}
 		}
 	}
 

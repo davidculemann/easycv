@@ -7,7 +7,7 @@ import { getRepoDoc } from "@/lib/docs-utils/github";
 import { CACHE_CONTROL, handleRedirects } from "@/lib/docs-utils/http.server";
 import { getMeta } from "@/lib/docs-utils/meta";
 import type { loader as rootLoader } from "@/root";
-import { type loader as docsLayoutLoader, useGitHubRef } from "@/routes/_landing.docs.$lang.$ref";
+import { type loader as docsLayoutLoader, useGitHubRef } from "@/routes/_landing/docs/_landing.docs.$lang.$ref";
 import type { HeadersFunction, LoaderFunctionArgs, SerializeFrom } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import type { MetaFunction } from "@remix-run/react";

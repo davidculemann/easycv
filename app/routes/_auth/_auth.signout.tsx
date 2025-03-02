@@ -1,5 +1,5 @@
 import { type ActionFunctionArgs, redirect } from "@remix-run/node";
-import { getSupabaseWithHeaders } from "../lib/supabase/supabase.server";
+import { getSupabaseWithHeaders } from "../../lib/supabase/supabase.server";
 
 export async function action({ request }: ActionFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });

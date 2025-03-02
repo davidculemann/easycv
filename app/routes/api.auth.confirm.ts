@@ -1,6 +1,6 @@
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { redirect } from "@remix-run/node";
 import type { LoaderFunctionArgs } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
 export async function loader({ request }: LoaderFunctionArgs) {

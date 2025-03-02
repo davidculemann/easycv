@@ -115,7 +115,7 @@ export default function Index() {
 			setIsSuccess(true);
 		} catch (error) {
 			if (axios.isAxiosError(error) && error.response) {
-				const { error: errorMessage = "Something went wrong. Try again?" } = error.response.data;
+				const { error: errorMessage = "Something went wrong, please try again." } = error.response.data;
 				toast.error(errorMessage);
 			} else {
 				toast.error("An unexpected error occurred. Try again later.");

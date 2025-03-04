@@ -1,7 +1,7 @@
 import { useCurrentPage } from "@/hooks/use-current-page";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { ThemeToggle } from "@/routes/resources.theme-toggle";
-import { Link, useOutletContext } from "@remix-run/react";
+import { Link, useNavigate, useOutletContext } from "@remix-run/react";
 import { ChevronLeft } from "lucide-react";
 import { Fragment } from "react";
 import type { Subscription } from "types/stripe";
@@ -26,6 +26,13 @@ export function Navbar({ subscription }: NavbarProps) {
 	const { user } = useOutletContext<SupabaseOutletContext>();
 	const userMetaData = user?.user_metadata;
 	const { breadcrumbs, activePage } = useCurrentPage();
+	const navigate = useNavigate();
+
+	const hasBackButton = breadcrumbs?.length > 1;
+
+	function handleGoBack() {
+		navigate(breadcrumbs[breadcrumbs.length - 2].href);
+	}
 
 	return (
 		<header className="sticky top-0 z-10 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
@@ -33,12 +40,14 @@ export function Navbar({ subscription }: NavbarProps) {
 				<div className="flex items-center space-x-4 lg:space-x-0">
 					<SheetMenu />
 					{/* Mobile: Back button + current page */}
-					<div className="flex items-center lg:hidden">
-						<Button variant="ghost" size="icon" onClick={() => window.history.back()}>
-							<ChevronLeft className="h-4 w-4" />
-							<span className="sr-only">Go back</span>
-						</Button>
-					</div>
+					{hasBackButton && (
+						<div className="flex items-center lg:hidden">
+							<Button variant="ghost" size="icon" onClick={handleGoBack}>
+								<ChevronLeft className="h-4 w-4" />
+								<span className="sr-only">Go back</span>
+							</Button>
+						</div>
+					)}
 					<Breadcrumb className="max-w-48 lg:max-w-none">
 						<BreadcrumbList>
 							<BreadcrumbItem className="lg:flex hidden">

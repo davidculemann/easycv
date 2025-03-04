@@ -2,10 +2,11 @@ import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export const useCV = () => {
+export const useCV = ({ initialData }: { initialData: any }) => {
 	const { data: cvs } = useQuery({
 		queryKey: [QUERY_KEYS.cvs.all],
 		queryFn: () => axios.get("/api/cv"),
+		initialData,
 	});
 
 	const { mutate: createCV, isPending: isCreatingCV } = useMutation({

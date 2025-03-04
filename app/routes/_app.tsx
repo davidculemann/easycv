@@ -1,22 +1,13 @@
 import AdminPanelLayout from "@/components/layout/admin-panel-layout";
 import { ContentLayout } from "@/components/layout/content-layout";
 import PageLoading from "@/components/shared/page-loading";
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { useCurrentPage } from "@/hooks/use-current-page";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { getLocaleCurrency } from "@/services/stripe/stripe.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
-import { Fragment, useEffect } from "react";
+import { Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
 type LoaderSuccess = {
@@ -78,7 +69,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function AuthLayout() {
 	const loaderData = useLoaderData<typeof loader>();
 	const { supabase, isLoading, user } = useOutletContext<SupabaseOutletContext>();
-	const { breadcrumbs, activePage } = useCurrentPage();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -102,30 +92,7 @@ export default function AuthLayout() {
 
 	return (
 		<AdminPanelLayout>
-			<ContentLayout title={activePage!.label} {...{ subscription }}>
-				<Breadcrumb>
-					<BreadcrumbList>
-						<BreadcrumbItem>
-							<BreadcrumbLink asChild>
-								<Link to="/">Home</Link>
-							</BreadcrumbLink>
-						</BreadcrumbItem>
-						{breadcrumbs?.map(({ href, label }) => (
-							<Fragment key={label}>
-								<BreadcrumbSeparator />
-								<BreadcrumbItem>
-									{label !== activePage!.label ? (
-										<BreadcrumbLink asChild>
-											<Link to={href}>{label}</Link>
-										</BreadcrumbLink>
-									) : (
-										<BreadcrumbPage>{label}</BreadcrumbPage>
-									)}
-								</BreadcrumbItem>
-							</Fragment>
-						))}
-					</BreadcrumbList>
-				</Breadcrumb>
+			<ContentLayout {...{ subscription }}>
 				<Outlet context={outletContext} />
 			</ContentLayout>
 		</AdminPanelLayout>

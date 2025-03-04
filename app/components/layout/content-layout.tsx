@@ -8,9 +8,9 @@ interface ContentLayoutProps {
 
 export function ContentLayout({ subscription, children }: ContentLayoutProps) {
 	return (
-		<div>
+		<div className="h-[calc(100%-3.5rem)]">
 			<Navbar subscription={subscription} />
-			<div className="container pt-8 pb-8 px-4 sm:px-8">{children}</div>
+			<div className="container h-full pt-8 pb-8 px-4 sm:px-8">{children}</div>
 		</div>
 	);
 }

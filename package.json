@@ -85,6 +85,7 @@
 		"react-day-picker": "8.10.1",
 		"react-dom": "18.2.0",
 		"react-hook-form": "^7.53.1",
+		"react-resizable-panels": "^2.1.7",
 		"react-router-dom": "^6.26.2",
 		"rehype-autolink-headings": "^7.1.0",
 		"rehype-pretty-code": "^0.14.0",

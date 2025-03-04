@@ -64,7 +64,7 @@ export function Navbar({ subscription }: NavbarProps) {
 							</BreadcrumbItem>
 
 							{/* Desktop: Show full breadcrumb trail */}
-							<div className="hidden lg:flex items-center">
+							<div className="hidden lg:flex items-center gap-2">
 								{breadcrumbs?.map(({ href, label }) => (
 									<Fragment key={label}>
 										<BreadcrumbSeparator />

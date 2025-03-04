@@ -11,7 +11,7 @@ import { containerVariants, enterAnimation, itemVariants } from "@/lib/framer/an
 import { validateEmail } from "@/lib/utils";
 import { Form } from "@remix-run/react";
 import axios from "axios";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView } from "motion/react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 

@@ -12,7 +12,7 @@ import { validateEmail, validatePassword } from "@/lib/utils";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, json } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
 import axios from "axios";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 

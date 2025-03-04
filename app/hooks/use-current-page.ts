@@ -1,24 +1,27 @@
-import { useLocation } from "@remix-run/react";
+import { useLocation, useParams } from "@remix-run/react";
 import { FileBadge2, LayoutGrid, LetterText, type LucideIcon, Settings } from "lucide-react";
-import { useMemo } from "react";
 
 type Submenu = {
 	href: string;
 	label: string;
-	active: boolean;
+	active?: boolean;
+	hidden?: boolean;
+	matches?: (path: string) => boolean;
+	resolveLabel?: (params: Record<string, string>) => string;
 };
 
-type Menu = {
+type Page = {
 	href: string;
 	label: string;
 	active: boolean;
 	icon: LucideIcon;
 	submenus?: Submenu[];
+	hidden?: boolean;
 };
 
 type Group = {
 	groupLabel: string;
-	menus: Menu[];
+	menus: Page[];
 };
 
 export function getMenuList(pathname: string): Group[] {
@@ -43,6 +46,18 @@ export function getMenuList(pathname: string): Group[] {
 					label: "CVs",
 					active: pathname.includes("/cvs"),
 					icon: FileBadge2,
+					submenus: [
+						{
+							href: "/cvs/:id",
+							label: "CV",
+							matches: (path: string) => {
+								return path.startsWith("/cvs/") && path !== "/cvs";
+							},
+							resolveLabel: (params) => {
+								return `CV ${params.id}`;
+							},
+						},
+					],
 				},
 				{
 					href: "/cover-letters",
@@ -78,33 +93,95 @@ export function getMenuList(pathname: string): Group[] {
 	];
 }
 
-export function useCurrentPage() {
-	const pathname = useLocation().pathname;
-	const menuList = useMemo(() => getMenuList(pathname), [pathname]);
+export const useCurrentPage = () => {
+	const location = useLocation();
+	const params = useParams();
+	const currentPath = location.pathname;
 
-	const { activePage, breadcrumbs } = useMemo(() => {
-		let activePage = null;
-		const breadcrumbs = [];
+	const pages = [
+		{
+			href: "/dashboard",
+			label: "Dashboard",
+		},
+		{
+			href: "/cvs",
+			label: "CVs",
+			submenus: [
+				{
+					href: "/cvs/:id",
+					label: "CV",
+					matches: (path: string) => {
+						return path.startsWith("/cvs/") && path !== "/cvs";
+					},
+					resolveLabel: (params: Record<string, string>) => {
+						return `CV ${params.id}`;
+					},
+				},
+			],
+		},
+		{
+			href: "/cover-letters",
+			label: "Cover Letters",
+			active: currentPath.includes("/cover-letters"),
+			icon: LetterText,
+		},
+		{
+			href: "/account",
+			label: "Account",
+			active: currentPath.includes("/account"),
+			icon: Settings,
+			submenus: [
+				{
+					href: "/account/settings",
+					label: "Settings",
+					active: currentPath === "/account/settings",
+				},
+				{
+					href: "/account/billing",
+					label: "Billing",
+					active: currentPath.includes("/account/billing"),
+				},
+			],
+		},
+	];
 
-		for (const group of menuList) {
-			for (const menu of group.menus) {
-				if (menu.active && menu.href) {
-					activePage = menu;
-					breadcrumbs.push(menu);
-				}
-				if (menu.submenus) {
-					for (const submenu of menu.submenus) {
-						if (pathname === submenu.href) {
-							activePage = submenu;
-							breadcrumbs.push(submenu);
-						}
+	const findActivePage = (path: string) => {
+		const page = pages.find((p) => p.href === path) as Page;
+
+		if (!page) {
+			for (const mainPage of pages) {
+				if (mainPage.submenus) {
+					const submenu = mainPage.submenus.find((sub: Submenu) =>
+						sub.matches ? sub.matches(path) : sub.href === path,
+					) as Submenu;
+					if (submenu) {
+						return {
+							...submenu,
+							label: submenu.resolveLabel
+								? submenu.resolveLabel(params as Record<string, string>)
+								: submenu.label,
+						};
 					}
 				}
 			}
 		}
 
-		return { activePage, breadcrumbs };
-	}, [menuList, pathname]);
+		return page;
+	};
 
-	return { activePage, menuList, breadcrumbs };
-}
+	const activePage = findActivePage(currentPath);
+
+	const breadcrumbs = currentPath
+		.split("/")
+		.filter(Boolean)
+		.reduce<Array<{ href: string; label: string }>>((acc, segment, index, arr) => {
+			const path = `/${arr.slice(0, index + 1).join("/")}`;
+			const page = findActivePage(path);
+			if (page && !page.hidden) {
+				acc.push({ href: path, label: page.label });
+			}
+			return acc;
+		}, []);
+
+	return { breadcrumbs, activePage, menuList: getMenuList(currentPath) };
+};

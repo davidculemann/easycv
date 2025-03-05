@@ -38,3 +38,10 @@ export const itemVariants = {
 	hidden: { opacity: 0, y: 20 },
 	show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
+
+export const tileEntryExit = {
+	initial: { opacity: 0, scale: 0, transition: { duration: 0.15 } },
+	animate: { opacity: 1, scale: 1, transition: { duration: 0.15 } },
+	exit: { opacity: 0, scale: 0, transition: { duration: 0.15 } },
+	layout: true,
+};

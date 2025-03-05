@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
-export async function getCVs({
+export async function getCVDocuments({
 	supabase,
 	limit = 100,
 	offset = 0,
@@ -35,7 +35,7 @@ export async function getCVs({
 	};
 }
 
-export async function createCV({ supabase }: { supabase: SupabaseClient<Database> }) {
+export async function createCVDocument({ supabase }: { supabase: SupabaseClient<Database> }) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
@@ -52,7 +52,7 @@ export async function createCV({ supabase }: { supabase: SupabaseClient<Database
 	return data;
 }
 
-export async function deleteCV({ supabase, id }: { supabase: SupabaseClient<Database>; id: string }) {
+export async function deleteCVDocument({ supabase, id }: { supabase: SupabaseClient<Database>; id: string }) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();

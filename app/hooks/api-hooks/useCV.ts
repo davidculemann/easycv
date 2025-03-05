@@ -1,24 +1,23 @@
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
-import { createCV, getCVs } from "@/lib/supabase/documents/cvs";
+import { createCVDocument, deleteCVDocument, getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
 export const useCV = ({ supabase }: { supabase: TypedSupabaseClient }) => {
 	const { data: cvs } = useQuery({
 		queryKey: [QUERY_KEYS.cvs.all],
-		queryFn: () => getCVs({ supabase }),
+		queryFn: () => getCVDocuments({ supabase }),
 	});
 
-	const { mutate: createNewCV, isPending: isCreatingCV } = useMutation({
-		mutationFn: () => createCV({ supabase }),
+	const { mutate: createCV, isPending: isCreatingCV } = useMutation({
+		mutationFn: () => createCVDocument({ supabase }),
 		mutationKey: [QUERY_KEYS.cvs.all],
 	});
 
 	const { mutate: deleteCV, isPending: isDeletingCV } = useMutation({
-		mutationFn: (id: string) => axios.delete(`/api/cv/${id}`),
+		mutationFn: (id: string) => deleteCVDocument({ supabase, id }),
 		mutationKey: [QUERY_KEYS.cvs.all],
 	});
 
-	return { createNewCV, isCreatingCV, deleteCV, isDeletingCV, cvs };
+	return { createCV, isCreatingCV, deleteCV, isDeletingCV, cvs };
 };

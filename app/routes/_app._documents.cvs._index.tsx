@@ -1,7 +1,7 @@
 import PageButton from "@/components/shared/page-button";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
-import { getCVs } from "@/lib/supabase/documents/cvs";
+import { getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	await queryClient.prefetchQuery({
 		queryKey: [QUERY_KEYS.cvs.all],
-		queryFn: () => getCVs({ supabase }),
+		queryFn: () => getCVDocuments({ supabase }),
 	});
 
 	return json({ dehydratedState: dehydrate(queryClient) });
@@ -24,10 +24,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 function CVList() {
 	const { supabase } = useOutletContext<SupabaseOutletContext>();
-	const { cvs, createNewCV } = useCV({ supabase });
+	const { cvs, createCV } = useCV({ supabase });
 
 	const handleCreateCV = () => {
-		createNewCV();
+		createCV();
 	};
 
 	const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import { useLocation, useParams } from "@remix-run/react";
-import { FileBadge2, LayoutGrid, LetterText, type LucideIcon, Settings } from "lucide-react";
+import { FileBadge2, LayoutGrid, LetterText, type LucideIcon, Settings, UserPen } from "lucide-react";
 
 type Submenu = {
 	href: string;
@@ -39,8 +39,14 @@ export function getMenuList(pathname: string): Group[] {
 			],
 		},
 		{
-			groupLabel: "Documents",
+			groupLabel: "Document Generation",
 			menus: [
+				{
+					href: "profile",
+					label: "Profile",
+					active: pathname.startsWith("/profile"),
+					icon: UserPen,
+				},
 				{
 					href: "cvs",
 					label: "CVs",
@@ -102,6 +108,10 @@ export const useCurrentPage = () => {
 		{
 			href: "/dashboard",
 			label: "Dashboard",
+		},
+		{
+			href: "/profile",
+			label: "Profile",
 		},
 		{
 			href: "/cvs",

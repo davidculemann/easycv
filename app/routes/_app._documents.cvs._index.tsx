@@ -1,5 +1,6 @@
 import PageButton from "@/components/shared/page-button";
 import { useCV } from "@/hooks/api-hooks/useCV";
+import { formatDate } from "@/lib/dates";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
@@ -45,7 +46,10 @@ function CVList() {
 			</PageButton>
 			{cvs?.data?.map((cv: any) => (
 				<PageButton key={cv.id} onClick={() => handleOpenCV(cv.id)}>
-					{cv.title}
+					<span className="flex flex-col justify-center items-center gap-2">
+						<span className="text-lg font-bold">{cv.title}</span>
+						<span className="text-sm text-muted-foreground">{formatDate(cv.created_at)}</span>
+					</span>
 				</PageButton>
 			))}
 		</AnimatePresence>

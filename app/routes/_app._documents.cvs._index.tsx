@@ -36,7 +36,9 @@ function CVList() {
 	};
 	return (
 		<AnimatePresence>
-			<PageButton onClick={handleCreateCV}>Create New CV</PageButton>
+			<PageButton onClick={handleCreateCV} newDocument>
+				Create New CV
+			</PageButton>
 			{cvs?.data?.map((cv: any) => (
 				<PageButton key={cv.id} onClick={() => handleOpenCV(cv.id)}>
 					{cv.title}
@@ -50,7 +52,7 @@ export default function CVs() {
 	const { dehydratedState } = useLoaderData<typeof loader>();
 
 	return (
-		<div className="p-4  gap-4 flex flex-wrap">
+		<div className="gap-4 flex flex-wrap">
 			<HydrationBoundary state={dehydratedState}>
 				<CVList />
 			</HydrationBoundary>

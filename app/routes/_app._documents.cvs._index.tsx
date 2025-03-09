@@ -8,6 +8,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
+import { CirclePlus } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -37,7 +38,10 @@ function CVList() {
 	return (
 		<AnimatePresence>
 			<PageButton onClick={handleCreateCV} newDocument>
-				Create New CV
+				<span className="flex flex-col justify-center items-center gap-2">
+					Create New CV
+					<CirclePlus size={48} />
+				</span>
 			</PageButton>
 			{cvs?.data?.map((cv: any) => (
 				<PageButton key={cv.id} onClick={() => handleOpenCV(cv.id)}>

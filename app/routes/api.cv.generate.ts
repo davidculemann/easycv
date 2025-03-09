@@ -1,3 +1,4 @@
+import { deepseek } from "@/lib/ai/deepseek";
 import { openai } from "@/lib/ai/openai";
 import { CVContextSchema } from "@/lib/documents/types";
 import type { ActionFunctionArgs } from "@remix-run/node";
@@ -7,12 +8,15 @@ import { z } from "zod";
 export const maxDuration = 60;
 
 export async function action({ request }: ActionFunctionArgs) {
-	const context = await request.json();
+	const { context, model = "deepseek" } = await request.json();
 
-	console.log(context, "context");
+	const modelMap = {
+		openai: openai("gpt-4o"),
+		deepseek: deepseek("deepseek-chat"),
+	};
 
 	const result = streamObject({
-		model: openai("gpt-4o"),
+		model: modelMap[model as keyof typeof modelMap],
 		schema: z.object({
 			cv: CVContextSchema,
 		}),
@@ -21,8 +25,6 @@ export async function action({ request }: ActionFunctionArgs) {
 			console.error(error); // your error logging logic here
 		},
 	});
-
-	console.log(result, "result");
 
 	return result.toTextStreamResponse();
 }

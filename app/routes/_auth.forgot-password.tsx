@@ -40,8 +40,10 @@ export default function ForgotPassword() {
 	const actionData = useActionData<ActionResponse>();
 
 	useEffect(() => {
-		if (actionData?.success) toast.success(actionData.message);
-		if (!actionData?.success) toast.error(actionData?.message);
+		if (actionData?.message) {
+			if (actionData?.success) toast.success(actionData.message);
+			if (!actionData?.success) toast.error(actionData?.message);
+		}
 	}, [actionData]);
 
 	return (

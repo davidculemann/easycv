@@ -46,10 +46,11 @@ export default function SignIn() {
 	const actionData = useActionData<ActionStatus | undefined>(); // Hook to retrieve action response
 
 	useEffect(() => {
-		if (actionData?.success) toast.success(actionData.message);
-		if (!actionData?.success) toast.error(actionData?.message);
+		if (actionData?.message) {
+			if (actionData?.success) toast.success(actionData.message);
+			if (!actionData?.success) toast.error(actionData?.message);
+		}
 	}, [actionData]);
-
 	return (
 		<motion.div {...enterLeftAnimation} layout="position">
 			<Form method="POST" className="mx-auto grid w-[350px] gap-6">

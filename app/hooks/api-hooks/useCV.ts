@@ -10,7 +10,18 @@ export const useCV = ({ supabase }: { supabase: TypedSupabaseClient }) => {
 	});
 
 	const { mutate: createCV, isPending: isCreatingCV } = useMutation({
-		mutationFn: () => createCVDocument({ supabase }),
+		mutationFn: async ({ success, error }: { success: (id: string) => void; error: (error: string) => void }) => {
+			try {
+				const data = await createCVDocument({ supabase });
+				success?.(data.id);
+			} catch (err) {
+				if (err instanceof Error) {
+					error?.(err.message);
+				} else {
+					error?.(String(err));
+				}
+			}
+		},
 		mutationKey: [QUERY_KEYS.cvs.all],
 	});
 

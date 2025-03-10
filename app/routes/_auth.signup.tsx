@@ -122,7 +122,7 @@ export default function Signup() {
 						<div className="flex items-center h-5">
 							<Label htmlFor="password">Password</Label>
 						</div>
-						<Input id="password" type="password" name="password" required />
+						<Input id="password" type="password" name="password" required autoComplete="new-password" />
 					</div>
 					<LoadingButton className="w-full" loading={navigation.state === "submitting"}>
 						Sign up

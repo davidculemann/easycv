@@ -11,6 +11,7 @@ import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
 import { CirclePlus } from "lucide-react";
 import { AnimatePresence } from "motion/react";
+import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -28,9 +29,12 @@ function CVList() {
 	const { supabase } = useOutletContext<SupabaseOutletContext>();
 	const { cvs, createCV } = useCV({ supabase });
 
-	const handleCreateCV = () => {
-		createCV();
-	};
+	function handleCreateCV() {
+		createCV({
+			success: (id: string) => handleOpenCV(id),
+			error: (error: string) => toast.error(error ?? "Something went wrong"),
+		});
+	}
 
 	const navigate = useNavigate();
 	const handleOpenCV = (id: string) => {

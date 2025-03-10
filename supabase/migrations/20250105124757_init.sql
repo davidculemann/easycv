@@ -122,6 +122,7 @@ CREATE TABLE cvs (
   education JSONB,
   experience JSONB,
   skills JSONB,
+  projects JSONB,
   certifications JSONB,
   languages JSONB,
   interests JSONB,

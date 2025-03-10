@@ -46,7 +46,8 @@ export default function SignIn() {
 	const actionData = useActionData<ActionStatus | undefined>(); // Hook to retrieve action response
 
 	useEffect(() => {
-		if (actionData) toast.success(actionData.message);
+		if (actionData?.success) toast.success(actionData.message);
+		if (!actionData?.success) toast.error(actionData?.message);
 	}, [actionData]);
 
 	return (

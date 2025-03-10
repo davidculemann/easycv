@@ -69,7 +69,8 @@ export default function UpdatePassword() {
 	const email = decodeURIComponent(searchParams.get("email") || "");
 
 	useEffect(() => {
-		if (actionData) toast.success(actionData.message);
+		if (actionData?.success) toast.success(actionData.message);
+		if (!actionData?.success) toast.error(actionData?.message);
 	}, [actionData]);
 
 	return (

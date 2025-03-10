@@ -54,9 +54,9 @@ export type Database = {
 					id: string;
 					interests: Json | null;
 					languages: Json | null;
+					projects: Json | null;
 					skills: Json | null;
 					status: string | null;
-					summary: string | null;
 					template_id: string | null;
 					title: string;
 					updated_at: string;
@@ -71,9 +71,9 @@ export type Database = {
 					id?: string;
 					interests?: Json | null;
 					languages?: Json | null;
+					projects?: Json | null;
 					skills?: Json | null;
 					status?: string | null;
-					summary?: string | null;
 					template_id?: string | null;
 					title: string;
 					updated_at?: string;
@@ -88,9 +88,9 @@ export type Database = {
 					id?: string;
 					interests?: Json | null;
 					languages?: Json | null;
+					projects?: Json | null;
 					skills?: Json | null;
 					status?: string | null;
-					summary?: string | null;
 					template_id?: string | null;
 					title?: string;
 					updated_at?: string;

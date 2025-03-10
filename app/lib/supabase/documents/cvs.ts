@@ -1,5 +1,6 @@
+import type { CVContext } from "@/lib/documents/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "db_types";
+import type { Database, Json } from "db_types";
 
 export async function getCVDocuments({
 	supabase,
@@ -68,3 +69,28 @@ export async function deleteCVDocument({ supabase, id }: { supabase: SupabaseCli
 
 	return data;
 }
+
+export async function updateCVDocument({
+	supabase,
+	id,
+	cv,
+}: { supabase: SupabaseClient<Database>; id: string; cv: Partial<CVContext> }) {
+	const { education, experience, skills, projects } = cv;
+	const { data, error } = await supabase
+		.from("cvs")
+		.update({
+			education: education as Json,
+			experience: experience as Json,
+			skills: skills as Json,
+			projects: projects as Json,
+		})
+		.eq("id", id)
+		.select();
+	console.log(education, experience, skills, projects);
+	if (error) {
+		throw new Error(error.message);
+	}
+	return data[0];
+}
+
+//TODO: make sure each of these fields are json array for supabase!

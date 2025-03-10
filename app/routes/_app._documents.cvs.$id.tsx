@@ -1,14 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CVContextSchema } from "@/lib/documents/types";
+import { useCV } from "@/hooks/api-hooks/useCV";
+import { type CVContext, CVContextSchema } from "@/lib/documents/types";
+import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
-// import { useParams } from "@remix-run/react";
+import { useOutletContext, useParams } from "@remix-run/react";
 import { useState } from "react";
 import { z } from "zod";
 
 export default function CV() {
-	// const params = useParams();
+	const params = useParams();
+	const { id } = params;
+	const { supabase } = useOutletContext<SupabaseOutletContext>();
 	const [model, setModel] = useState("deepseek");
 
 	const { isLoading, object, submit, ...attributes } = useObject({
@@ -17,6 +21,13 @@ export default function CV() {
 			cv: CVContextSchema,
 		}),
 	});
+
+	const { updateCV, isUpdatingCV } = useCV({ supabase, id: id ?? "" });
+
+	function handleSaveChanges() {
+		if (!object) return;
+		updateCV({ id: id ?? "", cv: object.cv as CVContext });
+	}
 
 	return (
 		<ResizablePanelGroup direction="horizontal" className="border h-full">
@@ -36,6 +47,13 @@ export default function CV() {
 						disabled={isLoading}
 					>
 						{isLoading ? "Generating..." : "Generate CV"}
+					</Button>
+					<Button
+						variant="outline"
+						disabled={isLoading || !object || isUpdatingCV}
+						onClick={handleSaveChanges}
+					>
+						Save Changes
 					</Button>
 				</div>
 			</ResizablePanel>

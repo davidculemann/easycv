@@ -16,5 +16,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Dashboard() {
 	const user = useLoaderData<typeof loader>();
 
-	return <div className="h-full" />;
+	return (
+		<div className="container h-full pt-8 pb-8 px-4 sm:px-8">
+			<h1>Dashboard</h1>
+		</div>
+	);
 }

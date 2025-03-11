@@ -47,16 +47,17 @@ export type Database = {
 			};
 			cvs: {
 				Row: {
-					certifications: Json | null;
+					certifications: string[] | null;
 					created_at: string;
-					education: Json | null;
-					experience: Json | null;
+					education: Json[] | null;
+					experience: Json[] | null;
 					id: string;
-					interests: Json | null;
-					languages: Json | null;
-					projects: Json | null;
-					skills: Json | null;
+					interests: string[] | null;
+					languages: string[] | null;
+					projects: Json[] | null;
+					skills: string[] | null;
 					status: string | null;
+					summary: string | null;
 					template_id: string | null;
 					title: string;
 					updated_at: string;
@@ -64,16 +65,17 @@ export type Database = {
 					version: number | null;
 				};
 				Insert: {
-					certifications?: Json | null;
+					certifications?: string[] | null;
 					created_at?: string;
-					education?: Json | null;
-					experience?: Json | null;
+					education?: Json[] | null;
+					experience?: Json[] | null;
 					id?: string;
-					interests?: Json | null;
-					languages?: Json | null;
-					projects?: Json | null;
-					skills?: Json | null;
+					interests?: string[] | null;
+					languages?: string[] | null;
+					projects?: Json[] | null;
+					skills?: string[] | null;
 					status?: string | null;
+					summary?: string | null;
 					template_id?: string | null;
 					title: string;
 					updated_at?: string;
@@ -81,16 +83,17 @@ export type Database = {
 					version?: number | null;
 				};
 				Update: {
-					certifications?: Json | null;
+					certifications?: string[] | null;
 					created_at?: string;
-					education?: Json | null;
-					experience?: Json | null;
+					education?: Json[] | null;
+					experience?: Json[] | null;
 					id?: string;
-					interests?: Json | null;
-					languages?: Json | null;
-					projects?: Json | null;
-					skills?: Json | null;
+					interests?: string[] | null;
+					languages?: string[] | null;
+					projects?: Json[] | null;
+					skills?: string[] | null;
 					status?: string | null;
+					summary?: string | null;
 					template_id?: string | null;
 					title?: string;
 					updated_at?: string;

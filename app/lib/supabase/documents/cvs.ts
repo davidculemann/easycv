@@ -1,6 +1,6 @@
 import type { CVContext } from "@/lib/documents/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database, Json } from "db_types";
+import type { Database } from "db_types";
 
 export async function getCVDocuments({
 	supabase,
@@ -79,10 +79,10 @@ export async function updateCVDocument({
 	const { data, error } = await supabase
 		.from("cvs")
 		.update({
-			education: education as Json,
-			experience: experience as Json,
-			skills: skills as Json,
-			projects: projects as Json,
+			education: education,
+			experience: experience,
+			skills: skills,
+			projects: projects,
 		})
 		.eq("id", id)
 		.select();

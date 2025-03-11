@@ -2,9 +2,12 @@ import { cn } from "@/lib/utils";
 import { isProPlan } from "@/services/stripe/plans";
 import type { Subscription } from "types/stripe";
 
-export default function SubscriptionPlanPill({ subscription }: { subscription?: Subscription }) {
-	const planId = subscription?.plan_id;
-	const isPro = isProPlan(planId);
+export default function SubscriptionPlanPill({
+	subscription,
+	planId,
+}: { subscription?: Subscription; planId?: string }) {
+	const resolvedPlanId = planId ?? subscription?.plan_id;
+	const isPro = isProPlan(resolvedPlanId);
 
 	return (
 		<span
@@ -15,7 +18,7 @@ export default function SubscriptionPlanPill({ subscription }: { subscription?: 
 					: "bg-subscription-free text-subscription-free-foreground",
 			)}
 		>
-			{planId ? planId.charAt(0).toUpperCase() + planId.slice(1) : "Free"}
+			{resolvedPlanId ? resolvedPlanId.charAt(0).toUpperCase() + resolvedPlanId.slice(1) : "Free"}
 		</span>
 	);
 }

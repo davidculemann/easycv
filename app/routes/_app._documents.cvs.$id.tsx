@@ -1,6 +1,6 @@
+import ProviderSelector from "@/components/shared/provider-selector";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
@@ -38,17 +38,7 @@ export default function CV() {
 		<ResizablePanelGroup direction="horizontal" className="border h-full">
 			<ResizablePanel>
 				<div className="flex flex-col gap-4 p-6">
-					<Select value={model} onValueChange={setModel}>
-						<SelectTrigger>
-							<SelectValue placeholder="Select a model" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="deepseek">DeepSeek</SelectItem>
-							<SelectItem value="openai" disabled={!isPro}>
-								OpenAI
-							</SelectItem>
-						</SelectContent>
-					</Select>
+					<ProviderSelector model={model} setModel={setModel} isPro={isPro} />
 					<Button
 						onClick={() => submit({ context: "Nothing for now just make it up", model: "deepseek" })}
 						disabled={isLoading}

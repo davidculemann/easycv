@@ -60,7 +60,7 @@ export default function CV() {
 				</div>
 			</ResizablePanel>
 			<ResizableHandle />
-			<ResizablePanel>
+			<ResizablePanel style={{ viewTransitionName: `cv-card-${id}`, contain: "layout" }}>
 				<div className="flex h-full p-6 overflow-auto">
 					<pre className="whitespace-pre-wrap">{JSON.stringify(dataToDisplay, null, 2)}</pre>
 				</div>

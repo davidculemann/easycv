@@ -37,9 +37,8 @@ function CVList() {
 	}
 
 	const navigate = useNavigate();
-	const handleOpenCV = (id: string) => {
-		navigate(`/cvs/${id}`);
-	};
+	const handleOpenCV = (id: string) => navigate(`/cvs/${id}`, { viewTransition: true });
+
 	return (
 		<AnimatePresence>
 			<PageButton onClick={handleCreateCV} newDocument>
@@ -49,7 +48,11 @@ function CVList() {
 				</span>
 			</PageButton>
 			{cvs?.data?.map((cv: any) => (
-				<PageButton key={cv.id} onClick={() => handleOpenCV(cv.id)}>
+				<PageButton
+					key={cv.id}
+					onClick={() => handleOpenCV(cv.id)}
+					style={{ viewTransitionName: `cv-card-${cv.id}` }}
+				>
 					<span className="flex flex-col justify-center items-center gap-2">
 						<span className="text-lg font-bold">{cv.title}</span>
 						<span className="text-sm text-muted-foreground">{formatDate(cv.created_at)}</span>

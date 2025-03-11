@@ -31,7 +31,7 @@ export function Navbar({ subscription }: NavbarProps) {
 	const hasBackButton = breadcrumbs?.length > 1;
 
 	function handleGoBack() {
-		navigate(breadcrumbs[breadcrumbs.length - 2].href);
+		navigate(breadcrumbs[breadcrumbs.length - 2].href, { viewTransition: true });
 	}
 
 	return (
@@ -71,7 +71,9 @@ export function Navbar({ subscription }: NavbarProps) {
 										<BreadcrumbItem>
 											{label !== activePage!.label ? (
 												<BreadcrumbLink asChild>
-													<Link to={href}>{label}</Link>
+													<Link to={href} viewTransition>
+														{label}
+													</Link>
 												</BreadcrumbLink>
 											) : (
 												<BreadcrumbPage>{label}</BreadcrumbPage>

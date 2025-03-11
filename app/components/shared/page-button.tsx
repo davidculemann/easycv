@@ -7,9 +7,15 @@ export default function PageButton({
 	children,
 	onClick,
 	newDocument,
-}: { children: React.ReactNode; onClick: () => void; newDocument?: boolean }) {
+	style,
+}: {
+	children: React.ReactNode;
+	onClick: () => void;
+	newDocument?: boolean;
+	style?: React.CSSProperties;
+}) {
 	return (
-		<motion.div {...tileEntryExit}>
+		<motion.div {...tileEntryExit} style={style}>
 			<Button
 				onClick={onClick}
 				variant="outline"

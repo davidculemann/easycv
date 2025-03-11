@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -102,10 +101,6 @@ export default function ProfileForm() {
 									<SelectItem value="m@support.com">m@support.com</SelectItem>
 								</SelectContent>
 							</Select>
-							<FormDescription>
-								You can manage verified email addresses in your{" "}
-								<Link to="/examples/forms">email settings</Link>.
-							</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}

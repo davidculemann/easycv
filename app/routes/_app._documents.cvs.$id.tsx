@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
+import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { useOutletContext, useParams } from "@remix-run/react";
 import { useState } from "react";
@@ -12,7 +13,9 @@ import { z } from "zod";
 export default function CV() {
 	const params = useParams();
 	const { id } = params;
-	const { supabase } = useOutletContext<SupabaseOutletContext>();
+	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
+	const isPro = isProPlan(subscription?.plan_id);
+
 	const [model, setModel] = useState("deepseek");
 
 	const { isLoading, object, submit, ...attributes } = useObject({
@@ -40,8 +43,10 @@ export default function CV() {
 							<SelectValue placeholder="Select a model" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value="openai">OpenAI</SelectItem>
 							<SelectItem value="deepseek">DeepSeek</SelectItem>
+							<SelectItem value="openai" disabled={!isPro}>
+								OpenAI
+							</SelectItem>
 						</SelectContent>
 					</Select>
 					<Button

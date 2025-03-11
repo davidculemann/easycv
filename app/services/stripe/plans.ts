@@ -19,6 +19,10 @@ export const PLANS = {
 	PRO: "pro",
 } as const;
 
+export function isProPlan(planId: string | undefined | null) {
+	return planId === PLANS.PRO;
+}
+
 export type Plan = (typeof PLANS)[keyof typeof PLANS];
 
 /**

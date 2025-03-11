@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { siteConfig } from "@/config/site";
 import { INTENTS } from "@/lib/constants";
+import { formatDate } from "@/lib/dates";
 import { getSupabaseWithHeaders, requireUser } from "@/lib/supabase/supabase.server";
 import { CURRENCIES, INTERVALS, type Interval, PLANS, PRICING_PLANS, type Plan } from "@/services/stripe/plans";
 import { createCustomerPortal, createSubscriptionCheckout } from "@/services/stripe/queries.server";
@@ -148,22 +149,13 @@ export default function Billing() {
 					<div className="flex w-full flex-col items-center justify-evenly gap-2 border-border p-6 pt-0">
 						<div className="flex w-full items-center overflow-hidden rounded-md border border-primary/60">
 							<div className="flex w-full flex-col items-start p-4">
-								<div className="flex items-end gap-1">
-									<span className="text-base font-medium">
+								<div className="flex items-baseline gap-2">
+									<span className="font-medium">
 										{subscription.plan_id.charAt(0).toUpperCase() + subscription.plan_id.slice(1)}
 									</span>
-									<p className="flex items-start gap-1 text-sm font-normal text-muted-foreground">
-										{subscription.cancel_at_period_end === true ? (
-											<span className="flex h-[18px] items-center text-sm font-medium text-red-500">
-												Expires
-											</span>
-										) : (
-											<span className="flex h-[18px] items-center text-sm font-medium text-green-500">
-												Renews
-											</span>
-										)}
-										on:{" "}
-										{new Date(subscription?.current_period_end ?? "").toLocaleDateString("en-US")}.
+									<p className="flex items-end gap-1 text-sm font-normal text-muted-foreground">
+										{subscription.cancel_at_period_end === true ? "Expires " : "Renews "}
+										on: {formatDate(subscription?.current_period_end ?? "")}.
 									</p>
 								</div>
 								<p className="text-start text-sm font-normal text-muted-foreground">

@@ -1,4 +1,5 @@
 import SidebarNav from "@/components/account/sidebar-nav";
+import { Container } from "@/components/layout/container";
 import { Separator } from "@/components/ui/separator";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
@@ -20,7 +21,7 @@ export default function Account() {
 	const { subscription, currency } = useOutletContext<{ subscription: Subscription; currency: Currency }>();
 
 	return (
-		<div className="flex flex-col pt-4">
+		<Container>
 			<div className="space-y-0.5">
 				<div className="flex items-center gap-2">
 					<p className="text-muted-foreground">Manage your account settings, profile and billing.</p>
@@ -35,7 +36,7 @@ export default function Account() {
 					<Outlet context={{ subscription, currency }} />
 				</div>
 			</div>
-		</div>
+		</Container>
 	);
 }
 

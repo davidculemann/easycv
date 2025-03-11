@@ -22,7 +22,7 @@ export default function CV() {
 		}),
 	});
 
-	const { updateCV, isUpdatingCV } = useCV({ supabase, id: id ?? "" });
+	const { updateCV, isUpdatingCV, cv } = useCV({ supabase, id: id ?? "" });
 
 	function handleSaveChanges() {
 		if (!object) return;

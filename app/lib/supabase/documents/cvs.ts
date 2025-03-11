@@ -21,7 +21,7 @@ export async function getCVDocuments({
 
 	const { data, error, count } = await supabase
 		.from("cvs")
-		.select("*", { count: "exact" })
+		.select("id, title, created_at", { count: "exact" })
 		.eq("user_id", user.id)
 		.range(offset, offset + limit - 1);
 
@@ -34,6 +34,32 @@ export async function getCVDocuments({
 		count,
 		hasMore: count ? offset + limit < count : false,
 	};
+}
+
+export async function getCVDocument({ supabase, id }: { supabase: SupabaseClient<Database>; id: string }) {
+	const { data, error } = await supabase.from("cvs").select("*").eq("id", id).single();
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	function formatCV(cv: Database["public"]["Tables"]["cvs"]["Row"]) {
+		return {
+			id: cv.id,
+			title: cv.title,
+			created_at: cv.created_at,
+			cv: {
+				education: cv.education,
+				experience: cv.experience,
+				skills: cv.skills,
+				projects: cv.projects,
+				summary: cv.summary,
+				languages: cv.languages,
+				interests: cv.interests,
+			},
+		};
+	}
+
+	return formatCV(data);
 }
 
 export async function createCVDocument({ supabase }: { supabase: SupabaseClient<Database> }) {

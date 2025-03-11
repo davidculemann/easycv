@@ -1,6 +1,12 @@
 import type { CVContext } from "@/lib/documents/types";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
-import { createCVDocument, deleteCVDocument, getCVDocuments, updateCVDocument } from "@/lib/supabase/documents/cvs";
+import {
+	createCVDocument,
+	deleteCVDocument,
+	getCVDocument,
+	getCVDocuments,
+	updateCVDocument,
+} from "@/lib/supabase/documents/cvs";
 import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -8,6 +14,13 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 	const { data: cvs } = useQuery({
 		queryKey: [QUERY_KEYS.cvs.all],
 		queryFn: () => getCVDocuments({ supabase }),
+		enabled: !id,
+	});
+
+	const { data: cv } = useQuery({
+		queryKey: [QUERY_KEYS.cvs.single, id],
+		queryFn: () => getCVDocument({ supabase, id: id as string }),
+		enabled: Boolean(id),
 	});
 
 	const { mutate: createCV, isPending: isCreatingCV } = useMutation({
@@ -36,5 +49,5 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		mutationKey: [QUERY_KEYS.cvs.single, id],
 	});
 
-	return { createCV, isCreatingCV, deleteCV, isDeletingCV, cvs, updateCV, isUpdatingCV };
+	return { createCV, isCreatingCV, deleteCV, isDeletingCV, cvs, cv, updateCV, isUpdatingCV };
 };

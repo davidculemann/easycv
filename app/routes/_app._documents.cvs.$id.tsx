@@ -29,6 +29,8 @@ export default function CV() {
 		updateCV({ id: id ?? "", cv: object.cv as CVContext });
 	}
 
+	const dataToDisplay = object?.cv ?? cv?.cv;
+
 	return (
 		<ResizablePanelGroup direction="horizontal" className="border h-full">
 			<ResizablePanel>
@@ -60,7 +62,7 @@ export default function CV() {
 			<ResizableHandle />
 			<ResizablePanel>
 				<div className="flex h-full p-6 overflow-auto">
-					<pre className="whitespace-pre-wrap">{JSON.stringify(object, null, 2)}</pre>
+					<pre className="whitespace-pre-wrap">{JSON.stringify(dataToDisplay, null, 2)}</pre>
 				</div>
 			</ResizablePanel>
 		</ResizablePanelGroup>

@@ -10,6 +10,7 @@ const ExperienceSchema = z.object({
 	description: z.string(),
 	startDate: dateString,
 	endDate: dateString,
+	location: z.string().optional(),
 });
 
 // Education Schema
@@ -18,6 +19,8 @@ const EducationSchema = z.object({
 	degree: z.string().min(1, "Degree is required"),
 	startDate: dateString,
 	endDate: dateString,
+	location: z.string().optional(),
+	description: z.string().optional(),
 });
 
 // Project Schema
@@ -38,6 +41,19 @@ export const CVContextSchema = z.object({
 
 // Type inference
 export type CVContext = z.infer<typeof CVContextSchema>;
+
+//NOTE: currently optional fields
+const FullCVContextSchema = CVContextSchema.extend({
+	firstName: z.string().min(1, "First name is required").optional(),
+	lastName: z.string().min(1, "Last name is required").optional(),
+	email: z.string().email("Invalid email address").optional(),
+	phone: z.string().optional(),
+	website: z.string().url("Invalid website URL").optional(),
+	linkedin: z.string().url("Invalid LinkedIn URL").optional(),
+	github: z.string().url("Invalid GitHub URL").optional(),
+});
+
+export type FullCVContext = z.infer<typeof FullCVContextSchema>;
 
 // Individual type exports if needed
 export type Experience = z.infer<typeof ExperienceSchema>;

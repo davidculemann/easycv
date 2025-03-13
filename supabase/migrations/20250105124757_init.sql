@@ -5,6 +5,8 @@ create table
   public.profiles (
     id uuid not null,
     username text null,
+    first_name text null,
+    last_name text null,
     avatar_url text null,
     created_at timestamp with time zone null default timezone ('utc'::text, now()),
     customer_id text null,
@@ -12,6 +14,7 @@ create table
     constraint profiles_pkey primary key (id),
     constraint profiles_id_fkey foreign key (id) references auth.users (id) on delete cascade
   ) tablespace pg_default;
+
 
 -- Create function to handle new users
 CREATE OR REPLACE FUNCTION handle_new_user()
@@ -132,3 +135,61 @@ CREATE TABLE cvs (
   CONSTRAINT chk_status CHECK (status IN ('draft', 'published', 'archived'))
 );
 
+create table public.cv_profiles (
+  id bigint generated always as identity not null,
+  user_id uuid null,
+  first_name text not null,
+  last_name text not null,
+  email text not null,
+  phone text null,
+  website text null,
+  linkedin text null,
+  github text null,
+  address text null,
+  created_at timestamp with time zone not null default CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone not null default CURRENT_TIMESTAMP,
+  constraint cv_profiles_pkey primary key (id),
+  constraint cv_profiles_user_id_fkey foreign KEY (user_id) references auth.users (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+-- Create trigger for auth.users
+create trigger on_auth_user_signup
+after insert on auth.users
+for each row execute procedure public.handle_new_user_signup();
+
+create or replace function public.handle_new_user_signup()
+returns trigger as $$
+declare
+  display_name text;
+  first_name text;
+  last_name text;
+begin
+  -- Extract full name from raw metadata
+  display_name := NEW.raw_user_meta_data->>'full_name';
+
+  -- Derive first and last names from the full name
+  if display_name is not null then
+    first_name := split_part(display_name, ' ', 1);
+    if strpos(display_name, ' ') > 0 then
+      last_name := ltrim(substr(display_name, strpos(display_name, ' ') + 1));
+    else
+      last_name := null;
+    end if;
+  else
+    first_name := null;
+    last_name := null;
+  end if;
+
+  -- Insert into profiles table with the new columns added
+  INSERT INTO public.profiles (id, username, avatar_url, first_name, last_name)
+  VALUES (NEW.id, display_name, NEW.raw_user_meta_data->>'avatar_url', first_name, last_name);
+
+  -- Insert into cv_profiles if an email or display name is available
+  if NEW.email is not null or display_name is not null then
+    INSERT INTO public.cv_profiles (user_id, email, first_name, last_name)
+    VALUES (NEW.id, NEW.email, first_name, last_name);
+  end if;
+
+  RETURN NEW;
+end;
+$$ language plpgsql security definer;

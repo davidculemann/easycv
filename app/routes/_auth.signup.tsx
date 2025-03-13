@@ -69,7 +69,13 @@ export default function Signup() {
 	const { supabase } = useOutletContext<SupabaseOutletContext>();
 
 	useEffect(() => {
-		if (actionData) toast.success(actionData.message);
+		if (actionData?.message) {
+			if (actionData.success) {
+				toast.success(actionData.message);
+			} else {
+				toast.error(actionData.message);
+			}
+		}
 	}, [actionData]);
 
 	async function handleSubmitOTP(event: React.FormEvent<HTMLFormElement>) {

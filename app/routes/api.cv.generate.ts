@@ -30,7 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const selectedModelProvider = modelMap[model as keyof typeof modelMap];
 	const isPro = isProPlan(subscription?.plan_id);
 
-	if (isPro && selectedModelProvider.proOnly) {
+	if (!isPro && selectedModelProvider.proOnly) {
 		return new Response("You are not authorized to use this model", { status: 403 });
 	}
 

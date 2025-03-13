@@ -7,7 +7,10 @@ import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { useOutletContext, useParams } from "@remix-run/react";
-import { useState } from "react";
+import { IconPdf } from "@tabler/icons-react";
+import { Download, FileJson } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 
 export default function CV() {
@@ -17,6 +20,9 @@ export default function CV() {
 	const isPro = isProPlan(subscription?.plan_id);
 
 	const [model, setModel] = useState("deepseek");
+	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+	const [pdfData, setPdfData] = useState<string | null>(null);
+	const [viewMode, setViewMode] = useState<"json" | "pdf">("json");
 
 	const { isLoading, object, submit, ...attributes } = useObject({
 		api: "/api/cv/generate",
@@ -34,9 +40,77 @@ export default function CV() {
 
 	const dataToDisplay = object?.cv ?? cv?.cv;
 
+	// Reset PDF view when changing CVs
+	useEffect(() => {
+		setPdfData(null);
+		setViewMode("json");
+	}, [id]);
+
+	// Function to generate and display PDF
+	const generatePDF = async (download = false) => {
+		if (!dataToDisplay) return;
+
+		try {
+			setIsGeneratingPdf(true);
+			const formData = new FormData();
+			formData.append("cvId", id || "");
+			formData.append("cvData", JSON.stringify(dataToDisplay));
+
+			// Submit to the resource route and get the response
+			const response = await fetch("/api/cv/pdf-latex", {
+				method: "POST",
+				body: formData,
+			});
+
+			if (!response.ok) {
+				// Handle error response
+				const errorBuffer = await response.arrayBuffer();
+				const errorText = new TextDecoder().decode(errorBuffer);
+				console.error("Error response:", errorText);
+
+				let errorMessage = "Failed to generate PDF";
+				try {
+					const errorData = JSON.parse(errorText);
+					errorMessage = errorData.error || errorMessage;
+				} catch (e) {
+					errorMessage = errorText || errorMessage;
+				}
+
+				throw new Error(errorMessage);
+			}
+
+			// Create a blob from the PDF Stream
+			const blob = await response.blob();
+
+			if (download) {
+				// Download the PDF
+				const url = window.URL.createObjectURL(blob);
+				const a = document.createElement("a");
+				a.href = url;
+				a.download = `cv-${id}.pdf`;
+				document.body.appendChild(a);
+				a.click();
+				window.URL.revokeObjectURL(url);
+				a.remove();
+				toast.success("PDF downloaded successfully");
+			} else {
+				// Simply set the URL for the iframe
+				const url = window.URL.createObjectURL(blob);
+				setPdfData(url);
+				setViewMode("pdf");
+				toast.success("PDF generated successfully");
+			}
+		} catch (error) {
+			toast.error(error instanceof Error ? error.message : "Failed to generate PDF");
+			console.error(error);
+		} finally {
+			setIsGeneratingPdf(false);
+		}
+	};
+
 	return (
 		<ResizablePanelGroup direction="horizontal" className="border h-full">
-			<ResizablePanel>
+			<ResizablePanel defaultSize={30}>
 				<div className="flex flex-col gap-4 p-6">
 					<ProviderSelector model={model} setModel={setModel} isPro={isPro} />
 					<Button
@@ -52,12 +126,71 @@ export default function CV() {
 					>
 						Save Changes
 					</Button>
+
+					{/* PDF Generation Buttons */}
+					<div className="flex flex-col gap-2">
+						<Button
+							variant="outline"
+							disabled={!dataToDisplay || isGeneratingPdf}
+							onClick={() => generatePDF(false)}
+							className="flex gap-2"
+						>
+							<IconPdf className="h-4 w-4" />
+							{isGeneratingPdf ? "Generating PDF..." : "Generate & View PDF"}
+						</Button>
+
+						<Button
+							variant="outline"
+							disabled={!dataToDisplay || isGeneratingPdf}
+							onClick={() => generatePDF(true)}
+							className="flex gap-2"
+						>
+							<Download className="h-4 w-4" />
+							{isGeneratingPdf ? "Generating PDF..." : "Download PDF"}
+						</Button>
+					</div>
+
+					{/* View Toggle Buttons */}
+					{pdfData && (
+						<div className="flex gap-2 mt-2">
+							<Button
+								size="sm"
+								variant={viewMode === "json" ? "default" : "outline"}
+								onClick={() => setViewMode("json")}
+								className="flex gap-2"
+							>
+								<FileJson className="h-4 w-4" />
+								JSON View
+							</Button>
+							<Button
+								size="sm"
+								variant={viewMode === "pdf" ? "default" : "outline"}
+								onClick={() => setViewMode("pdf")}
+								className="flex gap-2"
+							>
+								<IconPdf className="h-4 w-4" />
+								PDF View
+							</Button>
+						</div>
+					)}
 				</div>
 			</ResizablePanel>
 			<ResizableHandle />
 			<ResizablePanel style={{ viewTransitionName: `cv-card-${id}`, contain: "layout" }}>
-				<div className="flex h-full p-6 overflow-auto">
-					<pre className="whitespace-pre-wrap">{JSON.stringify(dataToDisplay, null, 2)}</pre>
+				<div className="flex h-full overflow-auto">
+					{viewMode === "json" ? (
+						<pre className="whitespace-pre-wrap p-6">{JSON.stringify(dataToDisplay, null, 2)}</pre>
+					) : (
+						pdfData && (
+							<iframe
+								src={pdfData}
+								title="CV PDF"
+								width="100%"
+								height="100%"
+								style={{ border: "none" }}
+							/>
+						)
+					)}
 				</div>
 			</ResizablePanel>
 		</ResizablePanelGroup>

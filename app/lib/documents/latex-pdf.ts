@@ -171,7 +171,7 @@ export function generateLatexTemplate(data: FullCVContext) {
 \\section{Education}
   \\resumeSubHeadingListStart
   ${
-		education.length > 0
+		education?.length > 0
 			? education
 					.map(
 						(edu) => `
@@ -205,7 +205,7 @@ export function generateLatexTemplate(data: FullCVContext) {
 \\section{Industrial Experience}
     \\resumeSubHeadingListStart
     ${
-		experience.length > 0
+		experience?.length > 0
 			? experience
 					.map(
 						(exp) => `
@@ -230,7 +230,7 @@ export function generateLatexTemplate(data: FullCVContext) {
 \\section{Projects}
     \\resumeSubHeadingListStart
     ${
-		projects.length > 0
+		projects?.length > 0
 			? projects
 					.map(
 						(project) => `
@@ -256,12 +256,12 @@ export function generateLatexTemplate(data: FullCVContext) {
 }
 
 // Format skills in a clean way for LaTeX
-function formatSkillsForLatex(skills: string[]): string {
+function formatSkillsForLatex(skills: string[] = []): string {
 	// Group skills by category if they follow a pattern like "Category: Skill1, Skill2"
 	const skillMap = new Map<string, string[]>();
 	const uncategorizedSkills: string[] = [];
 
-	skills.forEach((skill) => {
+	skills?.forEach((skill) => {
 		if (skill.includes(":")) {
 			const [category, skillList] = skill.split(":").map((s) => s.trim());
 			if (!skillMap.has(category)) {
@@ -277,13 +277,13 @@ function formatSkillsForLatex(skills: string[]): string {
 
 	// Add categorized skills
 	if (skillMap.size > 0) {
-		skillMap.forEach((skills, category) => {
+		skillMap?.forEach((skills, category) => {
 			result += `\\textbf{${escapeLatex(category)}:} ${escapeLatex(skills.join(", "))}\\\\`;
 		});
 	}
 
 	// Add uncategorized skills in Frontend/Backend format to match your CV
-	if (uncategorizedSkills.length > 0) {
+	if (uncategorizedSkills?.length > 0) {
 		if (skillMap.size > 0) result += "\\\\"; // Add separation if there were categorized skills
 
 		// Split skills into two groups to mimic your CV format

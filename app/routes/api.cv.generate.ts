@@ -19,11 +19,11 @@ export async function action({ request }: ActionFunctionArgs) {
 	const modelMap = {
 		openai: {
 			model: openai("gpt-4o"),
-			proOnly: false,
+			proOnly: true,
 		},
 		deepseek: {
 			model: deepseek("deepseek-chat"),
-			proOnly: true,
+			proOnly: false,
 		},
 	};
 

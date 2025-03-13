@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { getUserProfile } from "@/lib/supabase/documents/cvs";
-import { getSupabaseWithHeaders, requireUser } from "@/lib/supabase/supabase.server";
+import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/cvs";
+import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validatePhone } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
@@ -45,7 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Profile() {
 	const { profile } = useLoaderData<typeof loader>();
-
+	console.log(profile);
 	const defaultValues = {
 		firstName: profile?.first_name || "",
 		lastName: profile?.last_name || "",
@@ -60,15 +60,9 @@ export default function Profile() {
 	const form = useForm<ProfileFormValues>({
 		resolver: zodResolver(profileSchema),
 		defaultValues,
-		mode: "onChange", // Validate on change for immediate feedback
+		mode: "onBlur",
 	});
 
-	function onSubmit(values: ProfileFormValues) {
-		console.log(values);
-		// Your submission logic here
-	}
-
-	// Check if form is valid and has changes
 	const isValid = form.formState.isValid;
 	const isDirty = form.formState.isDirty;
 	const canSubmit = isValid && isDirty;
@@ -80,7 +74,7 @@ export default function Profile() {
 				<CardDescription>Complete your profile information to create a professional CV</CardDescription>
 			</CardHeader>
 			<FormUI {...form}>
-				<RemixForm method="POST" onSubmit={form.handleSubmit(onSubmit)}>
+				<RemixForm method="POST">
 					<CardContent className="space-y-6">
 						<div>
 							<h3 className="text-lg font-medium mb-2">Personal Information</h3>
@@ -272,7 +266,7 @@ export default function Profile() {
 							</div>
 						</div>
 					</CardContent>
-					<CardFooter className="flex justify-end border-t bg-muted/20 p-6">
+					<CardFooter className="flex justify-end">
 						<Button type="submit" disabled={!canSubmit || form.formState.isSubmitting}>
 							{form.formState.isSubmitting ? (
 								<>
@@ -292,7 +286,29 @@ export default function Profile() {
 
 export async function action({ request }: ActionFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
-	const user = await requireUser({ supabase, headers: request.headers });
-	const profile = await getUserProfile({ supabase });
-	return json({ user, profile });
+	const formData = await request.formData();
+
+	// Map form data to expected field names
+	const updatedProfile = {
+		first_name: formData.get("firstName"),
+		last_name: formData.get("lastName"),
+		email: formData.get("email"),
+		phone: formData.get("phone"),
+		address: formData.get("address"), //TODO: change to city + maybe country
+		linkedin: formData.get("linkedin"),
+		github: formData.get("github"),
+		website: formData.get("website"),
+	};
+
+	try {
+		await updateUserProfile({
+			supabase,
+			profile: updatedProfile as any,
+		});
+	} catch (error) {
+		console.error(error);
+		return json({ error: "Failed to update profile" }, { status: 500 });
+	}
+
+	return json({ message: "Profile updated successfully" });
 }

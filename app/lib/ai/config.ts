@@ -14,3 +14,5 @@ export const AI_PROVIDERS = {
 		defaultModelId: "gpt-4o",
 	},
 };
+
+export type AIProvider = keyof typeof AI_PROVIDERS;

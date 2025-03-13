@@ -1,3 +1,4 @@
+import { AI_PROVIDERS } from "@/lib/ai/config";
 import { deepseek } from "@/lib/ai/deepseek";
 import { openai } from "@/lib/ai/openai";
 import { CVContextSchema } from "@/lib/documents/types";
@@ -16,25 +17,21 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const { context, model = "deepseek" } = await request.json();
 
-	const modelMap = {
-		openai: {
-			model: openai("gpt-4o"),
-			proOnly: true,
-		},
-		deepseek: {
-			model: deepseek("deepseek-chat"),
-			proOnly: false,
-		},
-	};
-
-	const selectedModelProvider = modelMap[model as keyof typeof modelMap];
+	const selectedModelProvider = AI_PROVIDERS[model as keyof typeof AI_PROVIDERS];
 	const isPro = isProPlan(subscription?.plan_id);
+
+	const modelMap = {
+		openai,
+		deepseek,
+	};
 
 	if (!isPro && selectedModelProvider.proOnly) {
 		return new Response("You are not authorized to use this model", { status: 403 });
 	}
 
-	const selectedModel = isPro ? selectedModelProvider.model : modelMap.deepseek.model;
+	const selectedModel = isPro
+		? modelMap[selectedModelProvider.id as keyof typeof modelMap](selectedModelProvider.defaultModelId)
+		: deepseek(selectedModelProvider.defaultModelId);
 
 	const result = streamObject({
 		model: selectedModel,

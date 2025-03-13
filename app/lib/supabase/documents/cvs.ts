@@ -118,4 +118,69 @@ export async function updateCVDocument({
 	return data[0];
 }
 
-//TODO: make sure each of these fields are json array for supabase!
+export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Database> }) {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		throw new Error("User not found");
+	}
+
+	const { data, error } = await supabase.from("cv_profiles").select("*").eq("user_id", user.id).single();
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	return data;
+}
+
+export type CVProfileInput = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "id" | "user_id">;
+
+export async function createUserProfile({
+	supabase,
+	profile,
+}: {
+	supabase: SupabaseClient<Database>;
+	profile: CVProfileInput;
+}) {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		throw new Error("User not found");
+	}
+
+	const { data, error } = await supabase
+		.from("cv_profiles")
+		.insert({ ...profile, user_id: user.id })
+		.select()
+		.single();
+
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	return data;
+}
+
+export async function updateUserProfile({
+	supabase,
+	profile,
+}: { supabase: SupabaseClient<Database>; profile: Database["public"]["Tables"]["cv_profiles"]["Row"] }) {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		throw new Error("User not found");
+	}
+
+	const { id, user_id, created_at, ...updatableProfile } = profile;
+
+	const { data, error } = await supabase.from("cv_profiles").update(updatableProfile).eq("user_id", user.id).single();
+	if (error) {
+		throw new Error(error.message);
+	}
+}

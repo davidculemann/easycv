@@ -112,7 +112,6 @@ export async function updateCVDocument({
 		})
 		.eq("id", id)
 		.select();
-	console.log(education, experience, skills, projects);
 	if (error) {
 		throw new Error(error.message);
 	}

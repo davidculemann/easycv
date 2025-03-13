@@ -5,9 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { MetaFunction } from "@remix-run/node";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+export const meta: MetaFunction = () => {
+	return [{ title: "Account Profile | EasyCV" }, { name: "description", content: "Manage your account profile" }];
+};
 
 const profileFormSchema = z.object({
 	username: z

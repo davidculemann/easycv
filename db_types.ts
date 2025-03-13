@@ -45,6 +45,51 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			cv_profiles: {
+				Row: {
+					address: string | null;
+					created_at: string;
+					email: string;
+					first_name: string;
+					github: string | null;
+					id: number;
+					last_name: string;
+					linkedin: string | null;
+					phone: string | null;
+					updated_at: string;
+					user_id: string | null;
+					website: string | null;
+				};
+				Insert: {
+					address?: string | null;
+					created_at?: string;
+					email: string;
+					first_name: string;
+					github?: string | null;
+					id?: never;
+					last_name: string;
+					linkedin?: string | null;
+					phone?: string | null;
+					updated_at?: string;
+					user_id?: string | null;
+					website?: string | null;
+				};
+				Update: {
+					address?: string | null;
+					created_at?: string;
+					email?: string;
+					first_name?: string;
+					github?: string | null;
+					id?: never;
+					last_name?: string;
+					linkedin?: string | null;
+					phone?: string | null;
+					updated_at?: string;
+					user_id?: string | null;
+					website?: string | null;
+				};
+				Relationships: [];
+			};
 			cvs: {
 				Row: {
 					certifications: string[] | null;
@@ -206,7 +251,9 @@ export type Database = {
 					created_at: string | null;
 					customer_id: string | null;
 					email: string | null;
+					first_name: string | null;
 					id: string;
+					last_name: string | null;
 					username: string | null;
 				};
 				Insert: {
@@ -214,7 +261,9 @@ export type Database = {
 					created_at?: string | null;
 					customer_id?: string | null;
 					email?: string | null;
+					first_name?: string | null;
 					id: string;
+					last_name?: string | null;
 					username?: string | null;
 				};
 				Update: {
@@ -222,7 +271,9 @@ export type Database = {
 					created_at?: string | null;
 					customer_id?: string | null;
 					email?: string | null;
+					first_name?: string | null;
 					id?: string;
+					last_name?: string | null;
 					username?: string | null;
 				};
 				Relationships: [];

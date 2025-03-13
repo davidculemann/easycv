@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail } from "@/lib/utils";
-import { type LoaderFunctionArgs, type MetaFunction, json } from "@remix-run/node";
+import { type ActionFunctionArgs, type MetaFunction, json } from "@remix-run/node";
 import { Form, Link, useActionData } from "@remix-run/react";
 import { motion } from "motion/react";
 import { useEffect } from "react";
@@ -16,7 +16,7 @@ export const meta: MetaFunction = () => {
 
 type ActionResponse = { success: true; message: string } | { success: false; message: string };
 
-export async function action({ request }: LoaderFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 	const formData = await request.formData();
 	const email = formData.get("email") as string;

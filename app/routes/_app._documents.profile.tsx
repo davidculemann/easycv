@@ -1,15 +1,40 @@
 import { Button } from "@/components/ui/button";
 import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { FormControl, FormDescription, FormField, FormItem, FormLabel, Form as FormUI } from "@/components/ui/form";
+import {
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+	Form as FormUI,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { getUserProfile } from "@/lib/supabase/documents/cvs";
 import { getSupabaseWithHeaders, requireUser } from "@/lib/supabase/supabase.server";
+import { validatePhone } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form as RemixForm, useLoaderData } from "@remix-run/react";
 import { Github, Globe, Linkedin, Loader2, Mail, MapPin, Phone, User } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+// Create a schema for form validation
+const profileSchema = z.object({
+	firstName: z.string().min(1, "First name is required"),
+	lastName: z.string().min(1, "Last name is required"),
+	email: z.string().email("Invalid email address"),
+	phone: z.string().refine(validatePhone, "Invalid phone number"),
+	address: z.string().optional(),
+	linkedin: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
+	github: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
+	website: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
+});
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -21,26 +46,35 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function Profile() {
 	const { profile } = useLoaderData<typeof loader>();
 
-	const form = useForm({
-		defaultValues: {
-			firstName: profile?.first_name || "",
-			lastName: profile?.last_name || "",
-			email: profile?.email || "",
-			phone: profile?.phone || "",
-			address: profile?.address || "",
-			linkedin: profile?.linkedin || "",
-			github: profile?.github || "",
-			website: profile?.website || "",
-		},
+	const defaultValues = {
+		firstName: profile?.first_name || "",
+		lastName: profile?.last_name || "",
+		email: profile?.email || "",
+		phone: profile?.phone || "",
+		address: profile?.address || "",
+		linkedin: profile?.linkedin || "",
+		github: profile?.github || "",
+		website: profile?.website || "",
+	};
+
+	const form = useForm<ProfileFormValues>({
+		resolver: zodResolver(profileSchema),
+		defaultValues,
+		mode: "onChange", // Validate on change for immediate feedback
 	});
 
-	function onSubmit(values: any) {
+	function onSubmit(values: ProfileFormValues) {
 		console.log(values);
 		// Your submission logic here
 	}
 
+	// Check if form is valid and has changes
+	const isValid = form.formState.isValid;
+	const isDirty = form.formState.isDirty;
+	const canSubmit = isValid && isDirty;
+
 	return (
-		<div className="container">
+		<div>
 			<CardHeader>
 				<CardTitle className="text-2xl font-bold">Profile</CardTitle>
 				<CardDescription>Complete your profile information to create a professional CV</CardDescription>
@@ -64,6 +98,7 @@ export default function Profile() {
 														<Input className="pl-10" placeholder="John" {...field} />
 													</div>
 												</FormControl>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -81,6 +116,7 @@ export default function Profile() {
 														<Input className="pl-10" placeholder="Doe" {...field} />
 													</div>
 												</FormControl>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -111,6 +147,7 @@ export default function Profile() {
 														/>
 													</div>
 												</FormControl>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -132,6 +169,7 @@ export default function Profile() {
 														/>
 													</div>
 												</FormControl>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -153,6 +191,7 @@ export default function Profile() {
 														/>
 													</div>
 												</FormControl>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -182,6 +221,7 @@ export default function Profile() {
 														/>
 													</div>
 												</FormControl>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -203,6 +243,7 @@ export default function Profile() {
 														/>
 													</div>
 												</FormControl>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -223,6 +264,7 @@ export default function Profile() {
 												<FormDescription>
 													Share your portfolio or personal website
 												</FormDescription>
+												<FormMessage />
 											</FormItem>
 										)}
 									/>
@@ -231,7 +273,7 @@ export default function Profile() {
 						</div>
 					</CardContent>
 					<CardFooter className="flex justify-end border-t bg-muted/20 p-6">
-						<Button type="submit" disabled={form.formState.isSubmitting}>
+						<Button type="submit" disabled={!canSubmit || form.formState.isSubmitting}>
 							{form.formState.isSubmitting ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />

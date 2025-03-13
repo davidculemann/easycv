@@ -16,3 +16,9 @@ export function validatePassword(password: string | undefined) {
 	const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 	return passwordRegex.test(password);
 }
+
+export function validatePhone(phone: string | undefined) {
+	if (!phone) return false;
+	const phoneRegex = new RegExp(/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/);
+	return phoneRegex.test(phone);
+}

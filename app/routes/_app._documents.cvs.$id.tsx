@@ -6,6 +6,7 @@ import { type CVContext, CVContextSchema } from "@/lib/documents/types";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useOutletContext, useParams } from "@remix-run/react";
 import { IconPdf } from "@tabler/icons-react";
 import { Download, FileJson } from "lucide-react";
@@ -13,6 +14,10 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { z } from "zod";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+	const { supabase } = useOutletContext<SupabaseOutletContext>();
+}
 
 export default function CV() {
 	const params = useParams();

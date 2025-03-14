@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/cvs";
+import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validatePhone } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";

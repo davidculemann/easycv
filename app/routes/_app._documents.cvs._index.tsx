@@ -68,7 +68,7 @@ export default function CVs() {
 	const { dehydratedState } = useLoaderData<typeof loader>();
 
 	return (
-		<div className="gap-4 flex flex-wrap">
+		<div className="gap-4 flex flex-wrap justify-center sm:justify-start">
 			<HydrationBoundary state={dehydratedState}>
 				<CVList />
 			</HydrationBoundary>

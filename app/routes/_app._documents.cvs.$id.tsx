@@ -11,6 +11,7 @@ import { IconPdf } from "@tabler/icons-react";
 import { Download, FileJson } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
 import { z } from "zod";
 
 export default function CV() {
@@ -18,7 +19,7 @@ export default function CV() {
 	const { id } = params;
 	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
 	const isPro = isProPlan(subscription?.plan_id);
-
+	const isMobile = useMediaQuery("(max-width: 768px)");
 	const [model, setModel] = useState("deepseek");
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [pdfData, setPdfData] = useState<string | null>(null);
@@ -109,7 +110,7 @@ export default function CV() {
 	};
 
 	return (
-		<ResizablePanelGroup direction="horizontal" className="border h-full">
+		<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="border h-full">
 			<ResizablePanel defaultSize={30}>
 				<div className="flex flex-col gap-4 p-6">
 					<ProviderSelector model={model} setModel={setModel} isPro={isPro} />

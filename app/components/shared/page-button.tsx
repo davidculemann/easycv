@@ -21,7 +21,10 @@ export default function PageButton({
 			<Button
 				onClick={onClick}
 				variant="outline"
-				className={cn("h-64 w-48", newDocument && "border-dashed border-muted-foreground bg-muted")}
+				className={cn(
+					"h-52 w-40 sm:h-64 sm:w-48",
+					newDocument && "border-dashed border-muted-foreground bg-muted",
+				)}
 			>
 				{children}
 			</Button>

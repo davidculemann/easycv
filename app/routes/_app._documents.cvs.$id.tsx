@@ -111,7 +111,7 @@ export default function CV() {
 
 	return (
 		<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="border h-full">
-			<ResizablePanel defaultSize={30}>
+			<ResizablePanel defaultSize={isMobile ? undefined : 30}>
 				<div className="flex flex-col gap-4 p-6">
 					<ProviderSelector model={model} setModel={setModel} isPro={isPro} />
 					<Button

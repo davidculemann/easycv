@@ -49,6 +49,7 @@ function CVList() {
 			</PageButton>
 			{cvs?.data?.map((cv: any) => (
 				<PageButton
+					animate
 					key={cv.id}
 					onClick={() => handleOpenCV(cv.id)}
 					style={{ viewTransitionName: `cv-card-${cv.id}` }}

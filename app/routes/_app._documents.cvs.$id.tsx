@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
+import { getUserProfile } from "@/lib/supabase/documents/profile";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
+import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
@@ -16,7 +18,10 @@ import { useMediaQuery } from "usehooks-ts";
 import { z } from "zod";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-	const { supabase } = useOutletContext<SupabaseOutletContext>();
+	const { supabase } = getSupabaseWithHeaders({ request });
+
+	const profile = await getUserProfile({ supabase });
+	return { profile };
 }
 
 export default function CV() {

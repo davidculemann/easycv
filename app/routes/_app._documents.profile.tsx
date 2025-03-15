@@ -17,9 +17,11 @@ import { validatePhone } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form as RemixForm, useLoaderData } from "@remix-run/react";
+import { Form as RemixForm, useActionData, useLoaderData } from "@remix-run/react";
 import { Github, Globe, Linkedin, Loader2, Mail, MapPin, Phone, User } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 // Create a schema for form validation
@@ -44,8 +46,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Profile() {
+	const actionData = useActionData<typeof action>();
+
+	useEffect(() => {
+		if (actionData?.message) {
+			if (actionData.success) toast.success(actionData.message);
+			else toast.error(actionData.message);
+		}
+	}, [actionData]);
+
 	const { profile } = useLoaderData<typeof loader>();
-	console.log(profile);
 	const defaultValues = {
 		firstName: profile?.first_name || "",
 		lastName: profile?.last_name || "",
@@ -70,7 +80,7 @@ export default function Profile() {
 	return (
 		<div>
 			<CardHeader>
-				<CardTitle className="text-2xl font-bold">Profile</CardTitle>
+				<CardTitle className="text-3xl font-bold">Profile</CardTitle>
 				<CardDescription>Complete your profile information to create a professional CV</CardDescription>
 			</CardHeader>
 			<FormUI {...form}>
@@ -307,8 +317,8 @@ export async function action({ request }: ActionFunctionArgs) {
 		});
 	} catch (error) {
 		console.error(error);
-		return json({ error: "Failed to update profile" }, { status: 500 });
+		return { message: "Failed to update profile", success: false };
 	}
 
-	return json({ message: "Profile updated successfully" });
+	return { message: "Profile updated successfully", success: true };
 }

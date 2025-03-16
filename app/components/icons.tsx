@@ -6,10 +6,12 @@ import {
 	ChevronRight,
 	CreditCard,
 	File,
+	FileBadge2,
 	FileText,
 	HelpCircle,
 	Image,
 	Laptop,
+	LetterText,
 	Loader2,
 	type Icon as LucideIcon,
 	type LucideProps,
@@ -23,6 +25,7 @@ import {
 	Trash,
 	Twitter,
 	User,
+	UserPen,
 	X,
 } from "lucide-react";
 import Logo from "./shared/logo";
@@ -52,6 +55,9 @@ export const Icons = {
 	moon: Moon,
 	laptop: Laptop,
 	mail: MailCheck,
+	cv: FileBadge2,
+	coverLetter: LetterText,
+	profile: UserPen,
 	gitHub: ({ ...props }: LucideProps) => (
 		<svg
 			aria-hidden="true"

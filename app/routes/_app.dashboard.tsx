@@ -84,6 +84,31 @@ export default function Dashboard() {
 					</CardFooter>
 				</Card>
 			</div>
+
+			<div className="mt-8">
+				<h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+				<Card>
+					<CardContent className="p-0">
+						<div className="divide-y">
+							<ActivityItem
+								title="Software Engineer CV"
+								description="Last edited 2 days ago"
+								link="/cv/1"
+							/>
+							<ActivityItem
+								title="Marketing Position Cover Letter"
+								description="Created 3 days ago"
+								link="/cover-letter/1"
+							/>
+							<ActivityItem
+								title="Product Manager CV"
+								description="Last edited 1 week ago"
+								link="/cv/2"
+							/>
+						</div>
+					</CardContent>
+				</Card>
+			</div>
 		</div>
 	);
 }
@@ -136,5 +161,20 @@ function ActionCard({
 				</Button>
 			</CardFooter>
 		</Card>
+	);
+}
+
+interface ActivityItemProps {
+	title: string;
+	description: string;
+	link: string;
+}
+
+function ActivityItem({ title, description, link }: ActivityItemProps) {
+	return (
+		<Link to={link} className="block p-4 hover:bg-muted/50">
+			<div className="font-medium">{title}</div>
+			<div className="text-sm text-muted-foreground">{description}</div>
+		</Link>
 	);
 }

@@ -42,8 +42,7 @@ export const CVContextSchema = z.object({
 // Type inference
 export type CVContext = z.infer<typeof CVContextSchema>;
 
-//NOTE: currently optional fields
-const FullCVContextSchema = CVContextSchema.extend({
+export const ProfileContextSchema = z.object({
 	firstName: z.string().min(1, "First name is required").optional(),
 	lastName: z.string().min(1, "Last name is required").optional(),
 	email: z.string().email("Invalid email address").optional(),
@@ -52,6 +51,11 @@ const FullCVContextSchema = CVContextSchema.extend({
 	linkedin: z.string().url("Invalid LinkedIn URL").optional(),
 	github: z.string().url("Invalid GitHub URL").optional(),
 });
+
+export type ProfileContext = z.infer<typeof ProfileContextSchema>;
+
+//NOTE: currently optional fields
+const FullCVContextSchema = CVContextSchema.extend(ProfileContextSchema.shape);
 
 export type FullCVContext = z.infer<typeof FullCVContextSchema>;
 

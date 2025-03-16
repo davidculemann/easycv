@@ -3,7 +3,7 @@ import type { FullCVContext } from "@/lib/documents/types";
 export function generateLatexTemplate(data: FullCVContext) {
 	const { firstName, lastName, email, phone, website, linkedin, github, education, experience, skills, projects } =
 		data;
-
+	console.log(data);
 	const userName = `${firstName || ""} ${lastName || ""}`.trim() || "Your Name";
 	const userEmail = email || "email@example.com";
 	const userPhone = phone || "";
@@ -25,7 +25,7 @@ export function generateLatexTemplate(data: FullCVContext) {
     bottom=2 cm,
     left=2 cm,
     right=2 cm,
-    footskip=1.0 cm,
+    footskip=4.08003pt,
 ]{geometry}
 \\usepackage{titlesec}
 \\usepackage{tabularx}
@@ -42,6 +42,7 @@ export function generateLatexTemplate(data: FullCVContext) {
 \\usepackage{textcomp}
 \\usepackage{amsmath}
 \\usepackage[dvipsnames]{xcolor}
+\\usepackage{fontawesome}
 \\definecolor{primaryColor}{RGB}{0, 79, 144}
 \\input{glyphtounicode}
 \\pagecolor{white}

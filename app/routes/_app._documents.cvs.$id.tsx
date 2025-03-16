@@ -69,6 +69,7 @@ export default function CV() {
 			const formData = new FormData();
 			formData.append("cvId", id || "");
 			formData.append("cvData", JSON.stringify(dataToDisplay));
+			formData.append("profile", JSON.stringify(profile));
 
 			// Submit to the resource route and get the response
 			const response = await fetch("/api/cv/pdf-latex", {

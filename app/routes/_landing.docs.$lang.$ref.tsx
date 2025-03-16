@@ -6,8 +6,6 @@ import { Button } from "@/components/ui/button";
 import { docConfig } from "@/config/doc";
 import { siteConfig } from "@/config/site";
 import iconsHref from "@/icons.svg";
-import { cn } from "@/lib/utils";
-import "@/styles/docs.css";
 import type { Doc } from "@/lib/docs-utils/github";
 import {
 	getLatestVersion,
@@ -19,6 +17,8 @@ import {
 } from "@/lib/docs-utils/github";
 import { octokit } from "@/lib/docs-utils/github.server";
 import { CACHE_CONTROL } from "@/lib/docs-utils/http.server";
+import { cn } from "@/lib/utils";
+import "@/styles/docs.css";
 import type { HeadersFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {

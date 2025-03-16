@@ -1,5 +1,5 @@
 import { generateLatexTemplate } from "@/lib/documents/latex-pdf";
-import type { FullCVContext } from "@/lib/documents/types";
+import type { CVContext, FullCVContext, ProfileContext } from "@/lib/documents/types";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -21,18 +21,19 @@ export async function action({ request }: ActionFunctionArgs) {
 		const formData = await request.formData();
 		const cvId = formData.get("cvId")?.toString();
 		const cvData = formData.get("cvData")?.toString();
+		const profile = formData.get("profile")?.toString() ?? "{}";
 
 		if (!cvId || !cvData) {
 			return json({ error: "Missing required data" }, { status: 400 });
 		}
 
 		// Parse the CV data
-		const data = JSON.parse(cvData) as FullCVContext;
+		const data = JSON.parse(cvData) as CVContext;
+		const profileData = JSON.parse(profile) as ProfileContext;
+		const joinedData = { ...data, ...profileData } as FullCVContext;
 
 		// Generate LaTeX content
-		const latexContent = generateLatexTemplate(data);
-
-		console.log("Sending request to LaTeX API...");
+		const latexContent = generateLatexTemplate(joinedData);
 
 		// FIXED: The service doesn't accept the filename parameter - removed it
 		try {

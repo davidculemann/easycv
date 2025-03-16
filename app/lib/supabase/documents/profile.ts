@@ -17,7 +17,9 @@ export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Da
 		throw new Error(error.message);
 	}
 
-	return data;
+	const { user_id, ...cvData } = data;
+
+	return cvData;
 }
 
 export async function createUserProfile({

@@ -110,7 +110,7 @@ function ActionCard({
 	count,
 }: ActionCardProps) {
 	return (
-		<Card className="w-72">
+		<Card className="w-72 flex flex-col">
 			<CardHeader className="pb-3">
 				<div className="flex items-center justify-between">
 					<CardTitle className="text-lg">{title}</CardTitle>
@@ -118,13 +118,13 @@ function ActionCard({
 				</div>
 				<CardDescription>{description}</CardDescription>
 			</CardHeader>
-			<CardContent className="pb-2">
+			<CardContent className="pb-2 h-full">
 				<div className="flex items-center justify-between text-sm">
 					<span>Total {title}</span>
 					<span className="font-medium">{count}</span>
 				</div>
 			</CardContent>
-			<CardFooter className="flex flex-col gap-2">
+			<CardFooter className="flex flex-col gap-2 mt-auto">
 				<Button className="w-full" asChild>
 					<Link to={createLink}>
 						<Plus className="mr-2 h-4 w-4" />

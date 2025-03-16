@@ -9,7 +9,7 @@ import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useOutletContext, useParams } from "@remix-run/react";
+import { useLoaderData, useOutletContext, useParams } from "@remix-run/react";
 import { IconPdf } from "@tabler/icons-react";
 import { Download, FileJson } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -27,6 +27,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 //TODO: Use profile to prefill the form
 
 export default function CV() {
+	const { profile } = useLoaderData<typeof loader>();
 	const params = useParams();
 	const { id } = params;
 	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
@@ -121,15 +122,21 @@ export default function CV() {
 		}
 	};
 
+	function handleGenerateCV() {
+		submit({
+			context: {
+				profile,
+			},
+			model,
+		});
+	}
+
 	return (
 		<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="border h-full">
 			<ResizablePanel defaultSize={isMobile ? undefined : 30}>
 				<div className="flex flex-col gap-4 p-6">
 					<ProviderSelector model={model} setModel={setModel} isPro={isPro} />
-					<Button
-						onClick={() => submit({ context: "Nothing for now just make it up", model: "deepseek" })}
-						disabled={isLoading}
-					>
+					<Button onClick={handleGenerateCV} disabled={isLoading}>
 						{isLoading ? "Generating..." : "Generate CV"}
 					</Button>
 					<Button

@@ -33,12 +33,14 @@ export async function action({ request }: ActionFunctionArgs) {
 		? modelMap[selectedModelProvider.id as keyof typeof modelMap](selectedModelProvider.defaultModelId)
 		: deepseek(selectedModelProvider.defaultModelId);
 
+	const stringifiedContext = JSON.stringify(context ?? {});
+
 	const result = streamObject({
 		model: selectedModel,
 		schema: z.object({
 			cv: CVContextSchema,
 		}),
-		prompt: `Generate a CV with the following context: ${context.context ?? "Nothing for now just make it up"}`,
+		prompt: `Generate a CV with the following context: ${stringifiedContext}`,
 	});
 
 	return result.toTextStreamResponse();

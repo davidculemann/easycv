@@ -36,6 +36,34 @@ export async function getCVDocuments({
 	};
 }
 
+//get the last 3 created/edited cover letters and cvs
+export async function getLastThreeDocuments({ supabase }: { supabase: SupabaseClient<Database> }) {
+	const { data, error } = await supabase
+		.from("cvs")
+		.select("id, title, created_at")
+		.order("created_at", { ascending: false })
+		.limit(3);
+
+	if (error) {
+		throw new Error(error.message);
+	}
+
+	const { data: coverLetters, error: coverLetterError } = await supabase
+		.from("cover_letters")
+		.select("id, title, created_at")
+		.order("created_at", { ascending: false })
+		.limit(3);
+
+	if (coverLetterError) {
+		throw new Error(coverLetterError.message);
+	}
+
+	return {
+		cvs: data,
+		coverLetters: coverLetters,
+	};
+}
+
 export async function getCVDocument({ supabase, id }: { supabase: SupabaseClient<Database>; id: string }) {
 	const { data, error } = await supabase.from("cvs").select("*").eq("id", id).single();
 	if (error) {

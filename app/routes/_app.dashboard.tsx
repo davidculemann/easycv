@@ -1,26 +1,40 @@
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DATE_FORMATS, formatDate } from "@/lib/dates";
+import { getLastThreeDocuments } from "@/lib/supabase/documents/cvs";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { Plus } from "lucide-react";
-
+import { useMemo, useState } from "react";
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
-	const { data: coverLetters } = await supabase.from("cover_letters").select("*").eq("user_id", user?.id);
-	const { data: cvs } = await supabase.from("cvs").select("*").eq("user_id", user?.id);
 	const { data: profile } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
-
+	const { cvs, coverLetters } = await getLastThreeDocuments({ supabase });
 	return { user, coverLetters, cvs, profile };
 }
 
 export default function Dashboard() {
-	const { user, coverLetters, cvs, profile } = useLoaderData<typeof loader>();
-	console.log(profile);
+	const { coverLetters, cvs, profile } = useLoaderData<typeof loader>();
+	const [activeTab, setActiveTab] = useState<string>("all");
+
+	const activityItems = useMemo(() => {
+		if (activeTab === "all") {
+			return [...cvs, ...coverLetters]?.slice(0, 3);
+		}
+		if (activeTab === "cvs") {
+			return cvs;
+		}
+		if (activeTab === "cover-letters") {
+			return coverLetters;
+		}
+	}, [activeTab, cvs, coverLetters]);
+
 	return (
 		<div className="container h-full pt-8 pb-8 px-4 sm:px-8">
 			<h1 className="text-xl font-bold">
@@ -87,24 +101,23 @@ export default function Dashboard() {
 
 			<div className="mt-8">
 				<h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+
+				<Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
+					<TabsList className="mb-4">
+						<TabsTrigger value="all">All</TabsTrigger>
+						<TabsTrigger value="cvs">CVs</TabsTrigger>
+						<TabsTrigger value="cover-letters">Cover Letters</TabsTrigger>
+					</TabsList>
+				</Tabs>
+
 				<Card>
 					<CardContent className="p-0">
 						<div className="divide-y">
-							<ActivityItem
-								title="Software Engineer CV"
-								description="Last edited 2 days ago"
-								link="/cv/1"
-							/>
-							<ActivityItem
-								title="Marketing Position Cover Letter"
-								description="Created 3 days ago"
-								link="/cover-letter/1"
-							/>
-							<ActivityItem
-								title="Product Manager CV"
-								description="Last edited 1 week ago"
-								link="/cv/2"
-							/>
+							{activityItems?.length ? (
+								activityItems?.map((cv) => <ActivityItem key={cv.id} cv={cv} />)
+							) : (
+								<div className="p-4 text-center text-sm text-muted-foreground">No activity yet</div>
+							)}
 						</div>
 					</CardContent>
 				</Card>
@@ -165,16 +178,18 @@ function ActionCard({
 }
 
 interface ActivityItemProps {
-	title: string;
-	description: string;
-	link: string;
+	cv: {
+		id: string;
+		title: string;
+		created_at: string;
+	};
 }
 
-function ActivityItem({ title, description, link }: ActivityItemProps) {
+function ActivityItem({ cv }: ActivityItemProps) {
 	return (
-		<Link to={link} className="block p-4 hover:bg-muted/50">
-			<div className="font-medium">{title}</div>
-			<div className="text-sm text-muted-foreground">{description}</div>
+		<Link to={`/cvs/${cv.id}`} className="block p-4 hover:bg-muted/50">
+			<div className="font-medium">{cv.title}</div>
+			<div className="text-sm text-muted-foreground">{formatDate(cv.created_at, DATE_FORMATS.fullTime)}</div>
 		</Link>
 	);
 }

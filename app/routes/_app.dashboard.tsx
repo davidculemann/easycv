@@ -26,7 +26,7 @@ export default function Dashboard() {
 			<h1 className="text-xl font-bold">
 				Welcome{profile?.first_name ? `, ${profile?.first_name}` : ""}! Your EasyCV Journey Starts Here
 			</h1>
-			<div className="flex flex-wrap gap-4 py-8 px-4">
+			<div className="flex flex-wrap gap-4 py-8 px-4 justify-center sm:justify-start">
 				<ActionCard
 					title="CVs"
 					description="Create and manage your resumes"
@@ -49,7 +49,7 @@ export default function Dashboard() {
 					count={coverLetters?.length || 0}
 				/>
 
-				<Card>
+				<Card className="w-72">
 					<CardHeader className="pb-3">
 						<div className="flex items-center justify-between">
 							<CardTitle className="text-lg">Complete Your Profile</CardTitle>
@@ -110,7 +110,7 @@ function ActionCard({
 	count,
 }: ActionCardProps) {
 	return (
-		<Card>
+		<Card className="w-72">
 			<CardHeader className="pb-3">
 				<div className="flex items-center justify-between">
 					<CardTitle className="text-lg">{title}</CardTitle>

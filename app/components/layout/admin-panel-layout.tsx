@@ -1,7 +1,6 @@
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { cn } from "@/lib/utils";
 import { useStore } from "zustand";
-import { Footer } from "./footer";
 import { Sidebar } from "./sidebar";
 
 export default function AdminPanelLayout({
@@ -24,14 +23,6 @@ export default function AdminPanelLayout({
 			>
 				{children}
 			</main>
-			<span
-				className={cn(
-					"transition-[margin-left] ease-in-out duration-300",
-					sidebar?.isOpen === false ? "lg:ml-[90px]" : "lg:ml-72",
-				)}
-			>
-				<Footer />
-			</span>
 		</>
 	);
 }

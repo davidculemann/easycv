@@ -24,6 +24,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return { profile };
 }
 
+//TODO: Use profile to prefill the form
+
 export default function CV() {
 	const params = useParams();
 	const { id } = params;

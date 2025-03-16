@@ -1,4 +1,7 @@
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import type { Subscription } from "types/stripe";
+import { useStore } from "zustand";
+import { Footer } from "./footer";
 import { Navbar } from "./navbar";
 
 interface ContentLayoutProps {
@@ -7,10 +10,17 @@ interface ContentLayoutProps {
 }
 
 export function ContentLayout({ subscription, children }: ContentLayoutProps) {
+	const sidebar = useStore(useSidebarToggle, (state) => state);
+
+	if (!sidebar) return null;
+
 	return (
-		<div className="h-[calc(100%-3.5rem)]">
+		<div className="min-h-screen flex flex-col">
 			<Navbar subscription={subscription} />
-			<div className="h-full w-full">{children}</div>
+			<div className="h-full w-full flex flex-1">{children}</div>
+			<span className="mt-auto">
+				<Footer />
+			</span>
 		</div>
 	);
 }

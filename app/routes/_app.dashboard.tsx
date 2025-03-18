@@ -40,9 +40,7 @@ export default function Dashboard() {
 
 	return (
 		<div className="container h-full pt-8 pb-8 px-4 sm:px-8">
-			<h1 className="text-xl font-bold">
-				Welcome{profile?.first_name ? `, ${profile?.first_name}` : ""}! Your EasyCV Journey Starts Here
-			</h1>
+			<h1 className="text-xl font-bold">Welcome{profile?.first_name ? `, ${profile?.first_name}` : ""}!</h1>
 			<div className="flex flex-wrap gap-4 py-8 px-4 justify-center sm:justify-start">
 				<ActionCard
 					title="CVs"
@@ -66,7 +64,7 @@ export default function Dashboard() {
 					count={coverLetters?.length || 0}
 				/>
 
-				<Card className="w-72">
+				<Card className="min-w-72 flex-1 flex flex-col">
 					<CardHeader className="pb-3">
 						<div className="flex items-center justify-between">
 							<CardTitle className="text-lg">Complete Your Profile</CardTitle>
@@ -151,7 +149,7 @@ function ActionCard({
 	count,
 }: ActionCardProps) {
 	return (
-		<Card className="w-72 flex flex-col">
+		<Card className="min-w-72 flex-1 flex flex-col">
 			<CardHeader className="pb-3">
 				<div className="flex items-center justify-between">
 					<CardTitle className="text-lg">{title}</CardTitle>
@@ -161,7 +159,7 @@ function ActionCard({
 			</CardHeader>
 			<CardContent className="pb-2 h-full">
 				<div className="flex items-center justify-between text-sm">
-					<span>Total {title}</span>
+					<span>Total {title}:</span>
 					<span className="font-medium">{count}</span>
 				</div>
 			</CardContent>

@@ -3,19 +3,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DATE_FORMATS, formatDate } from "@/lib/dates";
-import { getLastThreeDocuments } from "@/lib/supabase/documents/cvs";
+import { getLastXDocuments } from "@/lib/supabase/documents/cvs";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { Plus } from "lucide-react";
+import { FileEdit, FilePlus, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
+
+const ACTIVITY_ITEMS_LIMIT = 3;
+
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
 	const { data: profile } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
-	const { cvs, coverLetters } = await getLastThreeDocuments({ supabase });
+	const { cvs, coverLetters } = await getLastXDocuments({ supabase, limit: ACTIVITY_ITEMS_LIMIT });
 	return { user, coverLetters, cvs, profile };
 }
 
@@ -25,7 +28,7 @@ export default function Dashboard() {
 
 	const activityItems = useMemo(() => {
 		if (activeTab === "all") {
-			return [...cvs, ...coverLetters]?.slice(0, 3);
+			return [...cvs, ...coverLetters]?.slice(0, ACTIVITY_ITEMS_LIMIT);
 		}
 		if (activeTab === "cvs") {
 			return cvs;
@@ -44,8 +47,8 @@ export default function Dashboard() {
 				<ActionCard
 					title="CVs"
 					description="Create and manage your resumes"
-					icon={<Icons.cv className="h-5 w-5" />}
-					createLink="/cv/new"
+					icon={<Icons.cv className="h-3 w-5" />}
+					createLink="/cv/new" //TODO: this could be route, but it might have to change the url after creation
 					createLabel="Create New CV"
 					viewLink="/cvs"
 					viewLabel="View Your CVs"
@@ -58,7 +61,7 @@ export default function Dashboard() {
 					icon={<Icons.coverLetter className="h-5 w-5" />}
 					createLink="/cover-letter/new"
 					createLabel="Create New Cover Letter"
-					viewLink="/cvs"
+					viewLink="/cover-letters"
 					viewLabel="View Your Cover Letters"
 					count={coverLetters?.length || 0}
 				/>
@@ -182,14 +185,45 @@ interface ActivityItemProps {
 		id: string;
 		title: string;
 		created_at: string;
+		updated_at: string;
 	};
 }
 
-function ActivityItem({ cv }: ActivityItemProps) {
+export function ActivityItem({ cv }: ActivityItemProps) {
+	const isUpdated = cv.updated_at !== cv.created_at;
+
 	return (
-		<Link to={`/cvs/${cv.id}`} className="block p-4 hover:bg-muted/50">
-			<div className="font-medium">{cv.title}</div>
-			<div className="text-sm text-muted-foreground">{formatDate(cv.created_at, DATE_FORMATS.fullTime)}</div>
+		<Link
+			to={`/cvs/${cv.id}`}
+			className="block p-4 hover:bg-muted/50 rounded-md transition-colors border border-transparent hover:border-border"
+		>
+			<div className="flex items-center justify-between">
+				<div className="font-medium truncate flex-1">{cv.title}</div>
+				<div className="flex items-center gap-1.5 shrink-0">
+					<span
+						className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+							isUpdated
+								? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
+								: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+						}`}
+					>
+						{isUpdated ? (
+							<>
+								<FileEdit className="mr-1 h-3 w-3" />
+								Updated
+							</>
+						) : (
+							<>
+								<FilePlus className="mr-1 h-3 w-3" />
+								Created
+							</>
+						)}
+					</span>
+				</div>
+			</div>
+			<div className="text-sm text-muted-foreground mt-1">
+				{formatDate(isUpdated ? cv.updated_at : cv.created_at, DATE_FORMATS.fullTime)}
+			</div>
 		</Link>
 	);
 }

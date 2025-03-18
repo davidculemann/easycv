@@ -8,6 +8,7 @@ import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { FileEdit, FilePlus, Plus } from "lucide-react";
+import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 
 const ACTIVITY_ITEMS_LIMIT = 3;
@@ -46,7 +47,7 @@ export default function Dashboard() {
 					title="CVs"
 					description="Create and manage your resumes"
 					icon={<Icons.cv className="h-3 w-5" />}
-					createLink="/api/new-cv" //TODO: this could be route, but it might have to change the url after creation
+					createLink="/api/new-cv"
 					createLabel="Create New CV"
 					viewLink="/cvs"
 					viewLabel="View Your CVs"
@@ -115,7 +116,7 @@ export default function Dashboard() {
 					<CardContent className="p-0">
 						<div className="divide-y">
 							{activityItems?.length ? (
-								activityItems?.map((cv) => <ActivityItem key={cv.id} cv={cv} />)
+								activityItems?.map((cv, index) => <ActivityItem key={cv.id} cv={cv} index={index} />)
 							) : (
 								<div className="p-4 text-center text-sm text-muted-foreground">No activity yet</div>
 							)}
@@ -185,43 +186,55 @@ interface ActivityItemProps {
 		created_at: string;
 		updated_at: string;
 	};
+	index: number;
 }
 
-export function ActivityItem({ cv }: ActivityItemProps) {
+export function ActivityItem({ cv, index }: ActivityItemProps) {
 	const isUpdated = cv.updated_at !== cv.created_at;
 
 	return (
-		<Link
-			to={`/cvs/${cv.id}`}
-			className="block p-4 hover:bg-muted/50 rounded-md transition-colors border border-transparent hover:border-border"
+		<motion.div
+			key={cv.id}
+			initial={{ opacity: 0, y: 10 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{
+				delay: index * 0.05,
+				duration: 0.2,
+				ease: "easeOut",
+			}}
 		>
-			<div className="flex items-center justify-between">
-				<div className="font-medium truncate flex-1">{cv.title}</div>
-				<div className="flex items-center gap-1.5 shrink-0">
-					<span
-						className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-							isUpdated
-								? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
-								: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
-						}`}
-					>
-						{isUpdated ? (
-							<>
-								<FileEdit className="mr-1 h-3 w-3" />
-								Updated
-							</>
-						) : (
-							<>
-								<FilePlus className="mr-1 h-3 w-3" />
-								Created
-							</>
-						)}
-					</span>
+			<Link
+				to={`/cvs/${cv.id}`}
+				className="block p-4 hover:bg-muted/50 rounded-md transition-colors border border-transparent hover:border-border"
+			>
+				<div className="flex items-center justify-between">
+					<div className="font-medium truncate flex-1">{cv.title}</div>
+					<div className="flex items-center gap-1.5 shrink-0">
+						<span
+							className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+								isUpdated
+									? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400"
+									: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+							}`}
+						>
+							{isUpdated ? (
+								<>
+									<FileEdit className="mr-1 h-3 w-3" />
+									Updated
+								</>
+							) : (
+								<>
+									<FilePlus className="mr-1 h-3 w-3" />
+									Created
+								</>
+							)}
+						</span>
+					</div>
 				</div>
-			</div>
-			<div className="text-sm text-muted-foreground mt-1">
-				{formatDate(isUpdated ? cv.updated_at : cv.created_at, DATE_FORMATS.fullTime)}
-			</div>
-		</Link>
+				<div className="text-sm text-muted-foreground mt-1">
+					{formatDate(isUpdated ? cv.updated_at : cv.created_at, DATE_FORMATS.fullTime)}
+				</div>
+			</Link>
+		</motion.div>
 	);
 }

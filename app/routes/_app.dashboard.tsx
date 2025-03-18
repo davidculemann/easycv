@@ -40,13 +40,15 @@ export default function Dashboard() {
 	}, [activeTab, cvs, coverLetters]);
 
 	return (
-		<div className="container h-full pt-8 pb-8 px-4 sm:px-8">
-			<h1 className="text-xl font-bold">Welcome{profile?.first_name ? `, ${profile?.first_name}` : ""}!</h1>
-			<div className="flex flex-wrap gap-4 py-8 px-4 justify-center sm:justify-start">
+		<div className="container h-full pt-10 pb-12 px-4 sm:px-8 max-w-6xl mx-auto">
+			<h1 className="text-2xl font-bold mb-2">Welcome{profile?.first_name ? `, ${profile?.first_name}` : ""}</h1>
+			<p className="text-muted-foreground mb-8">Manage your career documents and profile</p>
+
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-12">
 				<ActionCard
 					title="CVs"
 					description="Create and manage your resumes"
-					icon={<Icons.cv className="h-3 w-5" />}
+					icon={<Icons.cv className="h-5 w-5" />}
 					createLink="/api/new-cv"
 					createLabel="Create New CV"
 					viewLink="/cvs"
@@ -65,7 +67,7 @@ export default function Dashboard() {
 					count={coverLetters?.length || 0}
 				/>
 
-				<Card className="min-w-72 flex-1 flex flex-col">
+				<Card className="flex flex-col">
 					<CardHeader className="pb-3">
 						<div className="flex items-center justify-between">
 							<CardTitle className="text-lg">Complete Your Profile</CardTitle>
@@ -73,8 +75,8 @@ export default function Dashboard() {
 						</div>
 						<CardDescription>Finish setting up your account</CardDescription>
 					</CardHeader>
-					<CardContent className="pb-2">
-						<div className="space-y-2">
+					<CardContent className="pb-2 flex-1">
+						<div className="space-y-2.5">
 							<div className="flex justify-between text-sm">
 								<span>Personal Information</span>
 								<span className="text-muted-foreground">Completed</span>
@@ -101,24 +103,26 @@ export default function Dashboard() {
 				</Card>
 			</div>
 
-			<div className="mt-8">
-				<h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+			<div>
+				<div className="flex items-center justify-between mb-4">
+					<h2 className="text-xl font-semibold">Recent Activity</h2>
 
-				<Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
-					<TabsList className="mb-4">
-						<TabsTrigger value="all">All</TabsTrigger>
-						<TabsTrigger value="cvs">CVs</TabsTrigger>
-						<TabsTrigger value="cover-letters">Cover Letters</TabsTrigger>
-					</TabsList>
-				</Tabs>
+					<Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-auto">
+						<TabsList>
+							<TabsTrigger value="all">All</TabsTrigger>
+							<TabsTrigger value="cvs">CVs</TabsTrigger>
+							<TabsTrigger value="cover-letters">Cover Letters</TabsTrigger>
+						</TabsList>
+					</Tabs>
+				</div>
 
-				<Card>
+				<Card className="overflow-hidden">
 					<CardContent className="p-0">
 						<div className="divide-y">
 							{activityItems?.length ? (
 								activityItems?.map((cv, index) => <ActivityItem key={cv.id} cv={cv} index={index} />)
 							) : (
-								<div className="p-4 text-center text-sm text-muted-foreground">No activity yet</div>
+								<div className="p-6 text-center text-sm text-muted-foreground">No activity yet</div>
 							)}
 						</div>
 					</CardContent>
@@ -150,15 +154,17 @@ function ActionCard({
 	count,
 }: ActionCardProps) {
 	return (
-		<Card className="min-w-72 flex-1 flex flex-col">
+		<Card className="flex flex-col h-full">
 			<CardHeader className="pb-3">
 				<div className="flex items-center justify-between">
 					<CardTitle className="text-lg">{title}</CardTitle>
-					{icon}
+					<div className="h-9 w-9 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+						{icon}
+					</div>
 				</div>
 				<CardDescription>{description}</CardDescription>
 			</CardHeader>
-			<CardContent className="pb-2 h-full">
+			<CardContent className="pb-2 flex-1">
 				<div className="flex items-center justify-between text-sm">
 					<span>Total {title}:</span>
 					<span className="font-medium">{count}</span>
@@ -202,10 +208,11 @@ export function ActivityItem({ cv, index }: ActivityItemProps) {
 				duration: 0.2,
 				ease: "easeOut",
 			}}
+			whileHover={{ backgroundColor: "var(--muted)" }}
 		>
 			<Link
 				to={`/cvs/${cv.id}`}
-				className="block p-4 hover:bg-muted/50 rounded-md transition-colors border border-transparent hover:border-border"
+				className="block p-4 transition-colors border-l-2 border-l-transparent hover:border-l-primary"
 			>
 				<div className="flex items-center justify-between">
 					<div className="font-medium truncate flex-1">{cv.title}</div>

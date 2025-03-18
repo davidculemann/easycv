@@ -71,7 +71,9 @@ export default function Dashboard() {
 					<CardHeader className="pb-3">
 						<div className="flex items-center justify-between">
 							<CardTitle className="text-lg">Complete Your Profile</CardTitle>
-							<Icons.profile className="h-5 w-5 text-muted-foreground" />
+							<div className="h-9 w-9 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+								<Icons.profile className="h-5 w-5" />
+							</div>
 						</div>
 						<CardDescription>Finish setting up your account</CardDescription>
 					</CardHeader>

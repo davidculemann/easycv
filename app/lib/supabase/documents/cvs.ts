@@ -37,12 +37,15 @@ export async function getCVDocuments({
 }
 
 //get the last 3 created/edited cover letters and cvs
-export async function getLastThreeDocuments({ supabase }: { supabase: SupabaseClient<Database> }) {
+export async function getLastXDocuments({
+	supabase,
+	limit = 5,
+}: { supabase: SupabaseClient<Database>; limit: number }) {
 	const { data, error } = await supabase
 		.from("cvs")
-		.select("id, title, created_at")
+		.select("id, title, created_at, updated_at")
 		.order("created_at", { ascending: false })
-		.limit(3);
+		.limit(limit);
 
 	if (error) {
 		throw new Error(error.message);
@@ -50,9 +53,9 @@ export async function getLastThreeDocuments({ supabase }: { supabase: SupabaseCl
 
 	const { data: coverLetters, error: coverLetterError } = await supabase
 		.from("cover_letters")
-		.select("id, title, created_at")
+		.select("id, title, created_at, updated_at")
 		.order("created_at", { ascending: false })
-		.limit(3);
+		.limit(limit);
 
 	if (coverLetterError) {
 		throw new Error(coverLetterError.message);

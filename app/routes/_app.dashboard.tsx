@@ -48,7 +48,7 @@ export default function Dashboard() {
 					title="CVs"
 					description="Create and manage your resumes"
 					icon={<Icons.cv className="h-3 w-5" />}
-					createLink="/cv/new" //TODO: this could be route, but it might have to change the url after creation
+					createLink="/api/new-cv" //TODO: this could be route, but it might have to change the url after creation
 					createLabel="Create New CV"
 					viewLink="/cvs"
 					viewLabel="View Your CVs"

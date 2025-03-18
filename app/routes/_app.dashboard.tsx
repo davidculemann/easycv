@@ -166,14 +166,14 @@ function ActionCard({
 				</div>
 			</CardContent>
 			<CardFooter className="flex flex-col gap-2 mt-auto">
+				<Button variant="outline" className="w-full" asChild>
+					<Link to={viewLink}>{viewLabel}</Link>
+				</Button>
 				<Button className="w-full" asChild>
 					<Link to={createLink}>
 						<Plus className="mr-2 h-4 w-4" />
 						{createLabel}
 					</Link>
-				</Button>
-				<Button variant="outline" className="w-full" asChild>
-					<Link to={viewLink}>{viewLabel}</Link>
 				</Button>
 			</CardFooter>
 		</Card>

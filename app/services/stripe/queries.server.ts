@@ -5,32 +5,6 @@ import { HOST_URL } from "../misc.server";
 import { PLANS } from "./plans";
 import { getLocaleCurrency, stripe } from "./stripe.server";
 
-//TODO - update supabase with user
-
-/**
- * Creates a Stripe customer for a user.
- */
-export async function createCustomer({ userId, request }: { userId: string; request: Request }) {
-	const { supabase } = getSupabaseWithHeaders({ request });
-
-	const { data: user, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
-
-	if (error || !user || user.customer_id) throw new Error(ERRORS.STRIPE_CUSTOMER_NOT_CREATED);
-
-	const email = user.email ?? undefined;
-	const name = user.username ?? undefined;
-	const customer = await stripe.customers.create({ email, name }).catch((err: any) => console.error(err));
-	if (!customer) throw new Error(ERRORS.STRIPE_CUSTOMER_NOT_CREATED);
-
-	const { error: updateError } = await supabase
-		.from("profiles")
-		.update({ customer_id: customer.id })
-		.eq("id", user.id);
-
-	if (updateError) throw new Error(ERRORS.STRIPE_CUSTOMER_NOT_CREATED);
-	return true;
-}
-
 /**
  * Creates a Stripe free tier subscription for a user.
  */
@@ -107,7 +81,7 @@ export async function createSubscriptionCheckout({
 
 	const { data: profile } = await supabase
 		.from("profiles")
-		.select("email, username, customer_id")
+		.select("email, customer_id, first_name, last_name")
 		.eq("id", userId)
 		.single();
 
@@ -141,7 +115,7 @@ export async function createSubscriptionCheckout({
 	} else {
 		customer = await stripe.customers.create({
 			email: profile.email,
-			name: profile.username,
+			name: `${profile.first_name} ${profile.last_name}`,
 		});
 
 		await supabase.from("profiles").update({ customer_id: customer.id }).eq("id", userId);
@@ -165,12 +139,28 @@ export async function createCustomerPortal({ userId, request }: { userId: string
 
 	const { supabase } = getSupabaseWithHeaders({ request });
 
-	const { data: profile } = await supabase.from("profiles").select("customer_id").eq("id", userId).single();
+	const { data: profile } = await supabase
+		.from("profiles")
+		.select("customer_id, email, first_name, last_name")
+		.eq("id", userId)
+		.single();
 
-	if (!profile?.customer_id) throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG);
+	if (!profile) throw new Error(ERRORS.STRIPE_SOMETHING_WENT_WRONG);
+
+	let customer: Stripe.Customer | Stripe.DeletedCustomer;
+	if (profile.customer_id) {
+		customer = await stripe.customers.retrieve(profile.customer_id);
+	} else {
+		customer = await stripe.customers.create({
+			email: profile.email,
+			name: `${profile.first_name} ${profile.last_name}`,
+		});
+
+		await supabase.from("profiles").update({ customer_id: customer.id }).eq("id", userId);
+	}
 
 	const customerPortal = await stripe.billingPortal.sessions.create({
-		customer: profile.customer_id,
+		customer: customer.id,
 		return_url: `${HOST_URL}/account/billing`,
 	});
 

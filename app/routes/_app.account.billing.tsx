@@ -30,6 +30,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	if (intent === INTENTS.SUBSCRIPTION_CREATE_CHECKOUT) {
 		const planId = String(formData.get("planId"));
 		const planInterval = String(formData.get("planInterval"));
+
 		const checkoutUrl = await createSubscriptionCheckout({
 			userId: user.id,
 			planId,
@@ -200,7 +201,7 @@ export default function Billing() {
 						<Button
 							type="submit"
 							size="sm"
-							name={INTENTS.INTENT}
+							name="intent"
 							value={INTENTS.SUBSCRIPTION_CREATE_CUSTOMER_PORTAL}
 						>
 							Manage

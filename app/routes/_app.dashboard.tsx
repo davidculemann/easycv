@@ -77,7 +77,7 @@ export default function Dashboard() {
 						</div>
 						<CardDescription>Finish setting up your account</CardDescription>
 					</CardHeader>
-					<CardContent className="pb-2 flex-1">
+					<CardContent className="pb-4 flex-1">
 						<div className="space-y-2.5">
 							<div className="flex justify-between text-sm">
 								<span>Personal Information</span>

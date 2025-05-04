@@ -254,6 +254,7 @@ export default function Profile() {
 							}}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
+							wasCompleted={checkSectionCompletion("personal")}
 						/>
 					)}
 					{/* TODO: Add other form components */}

@@ -11,16 +11,17 @@ interface PersonalInfoFormProps {
 	defaultValues: PersonalInfoFormValues;
 	isSubmitting?: boolean;
 	formType: FormType;
+	wasCompleted?: boolean;
 }
 
-export function PersonalInfoForm({ defaultValues, isSubmitting, formType }: PersonalInfoFormProps) {
+export function PersonalInfoForm({ defaultValues, isSubmitting, formType, wasCompleted }: PersonalInfoFormProps) {
 	const form = useForm<PersonalInfoFormValues>({
 		resolver: zodResolver(personalInfoSchema),
 		defaultValues,
 	});
 
 	return (
-		<BaseForm form={form} isSubmitting={isSubmitting} method="post" formType={formType}>
+		<BaseForm form={form} isSubmitting={isSubmitting} method="post" formType={formType} wasCompleted={wasCompleted}>
 			<input type="hidden" name="formType" value={formType} />
 			<div className="space-y-6">
 				<div>

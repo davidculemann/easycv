@@ -13,10 +13,19 @@ export interface BaseFormProps {
 	isSubmitting?: boolean;
 	children: React.ReactNode;
 	formType: FormType;
+	wasCompleted?: boolean;
 }
 
-export function BaseForm({ form, onSubmit, method, isSubmitting, children, formType }: BaseFormProps) {
-	const canSubmit = form.formState.isValid && form.formState.isDirty;
+export function BaseForm({
+	form,
+	onSubmit,
+	method,
+	isSubmitting,
+	children,
+	formType,
+	wasCompleted = false,
+}: BaseFormProps) {
+	const canSubmit = form.formState.isValid && (form.formState.isDirty || wasCompleted);
 
 	const sectionOrder: FormType[] = ["personal", "education", "experience", "skills", "projects"];
 	const currentIndex = sectionOrder.indexOf(formType);

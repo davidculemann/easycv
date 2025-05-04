@@ -5,22 +5,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Github, Globe, Linkedin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { BaseForm } from "./base-form";
-import { type PersonalInfoFormValues, personalInfoSchema } from "./types";
+import { type FormType, type PersonalInfoFormValues, personalInfoSchema } from "./types";
 
 interface PersonalInfoFormProps {
 	defaultValues: PersonalInfoFormValues;
-	onSubmit: (data: PersonalInfoFormValues) => void;
 	isSubmitting?: boolean;
+	formType: FormType;
 }
 
-export function PersonalInfoForm({ defaultValues, onSubmit, isSubmitting }: PersonalInfoFormProps) {
+export function PersonalInfoForm({ defaultValues, isSubmitting, formType }: PersonalInfoFormProps) {
 	const form = useForm<PersonalInfoFormValues>({
 		resolver: zodResolver(personalInfoSchema),
 		defaultValues,
 	});
 
 	return (
-		<BaseForm form={form} onSubmit={onSubmit} isSubmitting={isSubmitting}>
+		<BaseForm form={form} isSubmitting={isSubmitting} method="post">
+			<input type="hidden" name="formType" value={formType} />
 			<div className="space-y-6">
 				<div>
 					<h3 className="text-lg font-medium">Personal Information</h3>

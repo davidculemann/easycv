@@ -2,13 +2,13 @@ import SidebarNav from "@/components/account/sidebar-nav";
 import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
 import type { FormType } from "@/components/forms/profile/types";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 type ActionData = {
@@ -116,6 +116,16 @@ export default function Profile() {
 	const currentIndex = sectionOrder.indexOf(selectedTab);
 	const nextSection = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
 
+	const completionPercentage = useMemo(() => {
+		return (
+			(sectionOrder.reduce((acc, section) => {
+				return acc + (checkSectionCompletion(section) ? 1 : 0);
+			}, 0) /
+				sectionOrder.length) *
+			100
+		);
+	}, [sectionOrder]);
+
 	const handleNext = () => {
 		if (nextSection) {
 			setSelectedTab(nextSection);
@@ -138,7 +148,7 @@ export default function Profile() {
 		}
 	}, [actionData]);
 
-	const checkSectionCompletion = (section: FormType): boolean => {
+	function checkSectionCompletion(section: FormType): boolean {
 		if (!profile) return false;
 
 		switch (section) {
@@ -159,7 +169,7 @@ export default function Profile() {
 			default:
 				return false;
 		}
-	};
+	}
 
 	const sidebarItems = [
 		{
@@ -195,12 +205,19 @@ export default function Profile() {
 	};
 
 	return (
-		<div>
+		<div className="flex flex-col gap-4">
 			<CardHeader className="p-2">
 				<CardTitle className="text-3xl font-bold">Profile</CardTitle>
 				<CardDescription>Complete your profile information to create a professional CV</CardDescription>
 			</CardHeader>
-			<Separator className="my-4 lg:my-6" />
+
+			<div>
+				<div className="flex items-center justify-between mb-2">
+					<span className="text-sm font-medium text-gray-700">Profile completion</span>
+					<span className="text-sm font-medium text-gray-700">{completionPercentage.toFixed(0)}%</span>
+				</div>
+				<Progress value={completionPercentage} className="my-1 lg:my-2" />
+			</div>
 
 			<div className="grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
 				<aside className="hidden w-[200px] flex-col md:flex">

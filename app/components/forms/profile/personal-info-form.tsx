@@ -20,7 +20,7 @@ export function PersonalInfoForm({ defaultValues, isSubmitting, formType }: Pers
 	});
 
 	return (
-		<BaseForm form={form} isSubmitting={isSubmitting} method="post">
+		<BaseForm form={form} isSubmitting={isSubmitting} method="post" formType={formType}>
 			<input type="hidden" name="formType" value={formType} />
 			<div className="space-y-6">
 				<div>

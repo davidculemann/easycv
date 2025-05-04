@@ -32,28 +32,6 @@ CREATE TABLE public.cv_profiles (
   CONSTRAINT cv_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 ) TABLESPACE pg_default;
 
--- 3. Function for on_auth_user_created (legacy)
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-BEGIN
-  INSERT INTO public.profiles (id, username, avatar_url)
-  VALUES (
-    NEW.id,
-    NEW.raw_user_meta_data->>'full_name',
-    NEW.raw_user_meta_data->>'avatar_url'
-  );
-  RETURN NEW;
-END;
-$$;
-
--- 4. Trigger for handle_new_user()
-CREATE TRIGGER on_auth_user_created
-AFTER INSERT ON auth.users
-FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-
 -- 5. Function for extended signup
 CREATE OR REPLACE FUNCTION public.handle_new_user_signup()
 RETURNS TRIGGER

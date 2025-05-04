@@ -33,7 +33,7 @@ import {
 	User,
 	Wrench,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -61,6 +61,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function Profile() {
 	const actionData = useActionData<typeof action>();
+	const [selectedTab, setSelectedTab] = useState("profile");
 
 	useEffect(() => {
 		if (actionData?.message) {
@@ -95,27 +96,27 @@ export default function Profile() {
 		{
 			title: "Profile",
 			icon: <IconUser size={18} />,
-			href: "/profile",
+			id: "profile",
 		},
 		{
 			title: "Education",
 			icon: <GraduationCap size={18} />,
-			href: "/profile/education",
+			id: "education",
 		},
 		{
 			title: "Experience",
 			icon: <Briefcase size={18} />,
-			href: "/profile/experience",
+			id: "experience",
 		},
 		{
 			title: "Skills",
 			icon: <Wrench size={18} />,
-			href: "/profile/skills",
+			id: "skills",
 		},
 		{
 			title: "Projects",
 			icon: <IconBrandGithub size={18} />,
-			href: "/profile/projects",
+			id: "projects",
 		},
 	];
 
@@ -129,7 +130,12 @@ export default function Profile() {
 
 			<div className="flex flex-1 flex-col space-y-8 md:space-y-2 md:overflow-hidden lg:flex-row lg:space-x-12 lg:space-y-0">
 				<aside className="top-0 lg:sticky lg:w-1/5">
-					<SidebarNav items={sidebarNavItems} />
+					<SidebarNav
+						items={sidebarNavItems}
+						selectedItem={selectedTab}
+						onSelectItem={setSelectedTab}
+						useNavigation={false}
+					/>
 				</aside>
 				<FormUI {...form}>
 					<RemixForm method="POST" className="flex-1">

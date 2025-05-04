@@ -64,7 +64,8 @@ export async function updateUserProfile({
 
 	const { id, user_id, created_at, ...updatableProfile } = profile;
 
-	const { data, error } = await supabase.from("cv_profiles").update(updatableProfile).eq("user_id", user.id).single();
+	const { error } = await supabase.from("cv_profiles").update(updatableProfile).eq("user_id", user.id).single();
+
 	if (error) {
 		throw new Error(error.message);
 	}

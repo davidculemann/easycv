@@ -26,7 +26,7 @@ export default function SidebarNav({
 }: SidebarNavProps) {
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
-	const [val, setVal] = useState(pathname ?? "/settings");
+	const [val, setVal] = useState(useNavigation ? pathname : selectedItem);
 
 	const handleSelect = (e: string) => {
 		setVal(e);

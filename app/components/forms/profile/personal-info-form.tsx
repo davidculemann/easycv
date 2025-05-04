@@ -1,28 +1,14 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { validatePhone } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Github, Globe, Linkedin, Mail, MapPin, Phone, User } from "lucide-react";
+import { Github, Globe, Linkedin } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { BaseForm } from "./base-form";
-
-const personalInfoSchema = z.object({
-	firstName: z.string().min(1, "First name is required"),
-	lastName: z.string().min(1, "Last name is required"),
-	email: z.string().email("Invalid email address"),
-	phone: z.string().refine(validatePhone, "Invalid phone number"),
-	address: z.string().optional(),
-	linkedin: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
-	github: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
-	website: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
-});
-
-type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>;
+import { type PersonalInfoFormValues, personalInfoSchema } from "./types";
 
 interface PersonalInfoFormProps {
-	defaultValues: Partial<PersonalInfoFormValues>;
+	defaultValues: PersonalInfoFormValues;
 	onSubmit: (data: PersonalInfoFormValues) => void;
 	isSubmitting?: boolean;
 }
@@ -31,183 +17,146 @@ export function PersonalInfoForm({ defaultValues, onSubmit, isSubmitting }: Pers
 	const form = useForm<PersonalInfoFormValues>({
 		resolver: zodResolver(personalInfoSchema),
 		defaultValues,
-		mode: "onBlur",
 	});
 
 	return (
 		<BaseForm form={form} onSubmit={onSubmit} isSubmitting={isSubmitting}>
-			<div>
-				<h3 className="text-lg font-medium mb-2">Personal Information</h3>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div>
-						<FormField
-							control={form.control}
-							name="firstName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>First Name</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input className="pl-10" placeholder="John" {...field} />
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-					<div>
-						<FormField
-							control={form.control}
-							name="lastName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Last Name</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<User className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input className="pl-10" placeholder="Doe" {...field} />
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
+			<div className="space-y-6">
+				<div>
+					<h3 className="text-lg font-medium">Personal Information</h3>
+					<p className="text-sm text-muted-foreground">Update your personal details</p>
 				</div>
-			</div>
-
-			<Separator />
-
-			<div>
-				<h3 className="text-lg font-medium mb-2">Contact Information</h3>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div>
-						<FormField
-							control={form.control}
-							name="email"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Email</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input
-												type="email"
-												className="pl-10"
-												placeholder="john.doe@example.com"
-												{...field}
-											/>
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-					<div>
-						<FormField
-							control={form.control}
-							name="phone"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Phone</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input className="pl-10" placeholder="+1 (555) 123-4567" {...field} />
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-					<div className="md:col-span-2">
-						<FormField
-							control={form.control}
-							name="address"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Address</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input
-												className="pl-10"
-												placeholder="123 Main St, City, Country"
-												{...field}
-											/>
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
+				<Separator />
+				<div className="grid gap-4 md:grid-cols-2">
+					<FormField
+						control={form.control}
+						name="firstName"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>First Name</FormLabel>
+								<FormControl>
+									<Input {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="lastName"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Last Name</FormLabel>
+								<FormControl>
+									<Input {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 				</div>
-			</div>
 
-			<Separator />
+				<div>
+					<h3 className="text-lg font-medium">Contact Information</h3>
+					<p className="text-sm text-muted-foreground">Update your contact details</p>
+				</div>
+				<Separator />
+				<div className="grid gap-4 md:grid-cols-2">
+					<FormField
+						control={form.control}
+						name="email"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Email</FormLabel>
+								<FormControl>
+									<Input type="email" {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="phone"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Phone</FormLabel>
+								<FormControl>
+									<Input type="tel" {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="address"
+						render={({ field }) => (
+							<FormItem className="md:col-span-2">
+								<FormLabel>Address</FormLabel>
+								<FormControl>
+									<Input {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</div>
 
-			<div>
-				<h3 className="text-lg font-medium mb-2">Online Presence</h3>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div>
-						<FormField
-							control={form.control}
-							name="linkedin"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>LinkedIn</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<Linkedin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input className="pl-10" placeholder="linkedin.com/in/johndoe" {...field} />
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-					<div>
-						<FormField
-							control={form.control}
-							name="github"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>GitHub</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<Github className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input className="pl-10" placeholder="github.com/johndoe" {...field} />
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-					<div className="md:col-span-2">
-						<FormField
-							control={form.control}
-							name="website"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Personal Website</FormLabel>
-									<FormControl>
-										<div className="relative">
-											<Globe className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-											<Input className="pl-10" placeholder="johndoe.com" {...field} />
-										</div>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
+				<div>
+					<h3 className="text-lg font-medium">Online Presence</h3>
+					<p className="text-sm text-muted-foreground">Add your professional profiles</p>
+				</div>
+				<Separator />
+				<div className="grid gap-4 md:grid-cols-2">
+					<FormField
+						control={form.control}
+						name="linkedin"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel className="flex items-center gap-2">
+									<Linkedin className="h-4 w-4" />
+									LinkedIn
+								</FormLabel>
+								<FormControl>
+									<Input type="url" placeholder="https://linkedin.com/in/..." {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="github"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel className="flex items-center gap-2">
+									<Github className="h-4 w-4" />
+									GitHub
+								</FormLabel>
+								<FormControl>
+									<Input type="url" placeholder="https://github.com/..." {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="website"
+						render={({ field }) => (
+							<FormItem className="md:col-span-2">
+								<FormLabel className="flex items-center gap-2">
+									<Globe className="h-4 w-4" />
+									Personal Website
+								</FormLabel>
+								<FormControl>
+									<Input type="url" placeholder="https://..." {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 				</div>
 			</div>
 		</BaseForm>

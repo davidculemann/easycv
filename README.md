@@ -97,6 +97,18 @@ pnpm run seed
 supabase gen types typescript --project-id <your_supabase_project_id> > db_types.ts
 ```
 
+### Offline dev
+
+For self hosting Supabase with docker for local dev, refer to this article: https://supabase.com/docs/guides/local-development?utm_source=chatgpt.com&queryGroups=package-manager&package-manager=pnpm
+
+1. Install docker
+2. Run `pnpm run dev:offline`
+3. Copy the `service_role key` and `anon key` from the console and paste them into the `.env` file (only when using the local db), as well as `SUPABASE_URL=http://localhost:54321`
+4. Run `pnpx supabase db reset`
+5. Run `pnpm run seed`
+
+You can now view the supabase instance at http://localhost:54323/project/default
+
 ### Documentation
 
 This project includes a documentation page, which is configured to point to a markdown file in a GitHub repo. If you don't want to use this, simply remove all `_landing.docs.*` files from the `app/routes` directory, as well as `$.tsx`.

@@ -7,7 +7,7 @@ import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/prof
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
-import { Briefcase, Folder, GraduationCap, User, Wrench } from "lucide-react";
+import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -125,6 +125,29 @@ export default function Profile() {
 		}
 	}, [actionData]);
 
+	const checkSectionCompletion = (section: FormType): boolean => {
+		if (!profile) return false;
+
+		switch (section) {
+			case "personal":
+				return Boolean(profile.first_name && profile.last_name && profile.email && profile.phone);
+			case "education":
+				// TODO: Implement education completion check
+				return false;
+			case "experience":
+				// TODO: Implement experience completion check
+				return false;
+			case "skills":
+				// TODO: Implement skills completion check
+				return false;
+			case "projects":
+				// TODO: Implement projects completion check
+				return false;
+			default:
+				return false;
+		}
+	};
+
 	const sidebarItems = [
 		{
 			title: "Personal Info",
@@ -169,7 +192,18 @@ export default function Profile() {
 			<div className="grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
 				<aside className="hidden w-[200px] flex-col md:flex">
 					<SidebarNav
-						items={sidebarItems}
+						items={sidebarItems.map((item) => {
+							const isCompleted = checkSectionCompletion(item.id as FormType);
+							return {
+								...item,
+								title: (
+									<div className="flex items-center gap-2">
+										<span>{item.title}</span>
+										{isCompleted && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+									</div>
+								),
+							};
+						})}
 						selectedItem={selectedTab}
 						onSelectItem={handleSelect}
 						useNavigation={false}

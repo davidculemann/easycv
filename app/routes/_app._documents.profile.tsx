@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigation } from "@remix-run/react";
+import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import { Briefcase, Folder, GraduationCap, User, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -104,11 +104,19 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Profile() {
-	const [selectedTab, setSelectedTab] = useState<FormType>("personal");
 	const actionData = useActionData<typeof action>();
 	const { profile } = useLoaderData<typeof loader>();
 	const navigation = useNavigation();
 	const isSubmitting = navigation.state === "submitting";
+	const [searchParams, setSearchParams] = useSearchParams();
+	const sectionParam = searchParams.get("section") as FormType | null;
+	const [selectedTab, setSelectedTab] = useState<FormType>(sectionParam ?? "personal");
+
+	useEffect(() => {
+		if (sectionParam && ["personal", "education", "experience", "skills", "projects"].includes(sectionParam)) {
+			setSelectedTab(sectionParam);
+		}
+	}, [sectionParam]);
 
 	useEffect(() => {
 		if (actionData) {
@@ -147,6 +155,7 @@ export default function Profile() {
 
 	const handleSelect = (id: string) => {
 		setSelectedTab(id as FormType);
+		setSearchParams({ section: id });
 	};
 
 	return (

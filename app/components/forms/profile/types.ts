@@ -58,7 +58,7 @@ export const projectsSchema = z.object({
 export type ProjectsFormValues = z.infer<typeof projectsSchema>;
 
 // Form Types
-export type FormType = "profile" | "education" | "experience" | "skills" | "projects";
+export type FormType = "personal" | "education" | "experience" | "skills" | "projects";
 
 export interface BaseFormProps {
 	form: UseFormReturn<any>;

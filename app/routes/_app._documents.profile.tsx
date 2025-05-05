@@ -220,7 +220,7 @@ export default function Profile() {
 			</div>
 
 			<div className="grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
-				<aside className="hidden w-[200px] flex-col md:flex">
+				<aside className="md:w-[200px] flex-col md:flex">
 					<SidebarNav
 						items={sidebarItems.map((item) => {
 							const isCompleted = checkSectionCompletion(item.id as FormType);

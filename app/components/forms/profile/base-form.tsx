@@ -34,10 +34,10 @@ export function BaseForm({
 	const getNextSectionName = (section: FormType | null): string => {
 		if (!section) return "";
 		const names: Record<FormType, string> = {
-			personal: "Education",
-			education: "Experience",
-			experience: "Skills",
-			skills: "Projects",
+			personal: "Personal",
+			education: "Education",
+			experience: "Experience",
+			skills: "Skills",
 			projects: "Complete",
 		};
 		return names[section];

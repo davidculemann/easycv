@@ -152,7 +152,7 @@ npm run dev
 For self hosting Supabase with docker for local dev, refer to this article: https://supabase.com/docs/guides/local-development?utm_source=chatgpt.com&queryGroups=package-manager&package-manager=pnpm
 
 1. Install and run docker
-2. Start the supabase service
+2. Start the Supabase instance:
 
 ```sh
 pnpx supabase start
@@ -160,7 +160,7 @@ pnpx supabase start
 
 3. Copy the `service_role key` and `anon key` from the console and paste them into the `.env` file (only when using the local db), as well as `SUPABASE_URL=http://localhost:54321`
 
-4. Seed the local instance with the seed script
+4. Seed the local instance with the seed script:
 
 ```sh
 pnpm run seed
@@ -168,7 +168,7 @@ pnpm run seed
 
 You can now view the Supabase instance at http://localhost:54323/project/default, and the api at http://localhost:54321/rest/v1/
 
-stop the supabase service with
+Stop the Supabase instance with:
 
 ```sh
 pnpx supabase stop

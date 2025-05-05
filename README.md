@@ -97,19 +97,7 @@ pnpm run seed
 supabase gen types typescript --project-id <your_supabase_project_id> > db_types.ts
 ```
 
-### Offline dev
-
-For self hosting Supabase with docker for local dev, refer to this article: https://supabase.com/docs/guides/local-development?utm_source=chatgpt.com&queryGroups=package-manager&package-manager=pnpm
-
-1. Install docker
-2. Run `pnpm run dev:offline`
-3. Copy the `service_role key` and `anon key` from the console and paste them into the `.env` file (only when using the local db), as well as `SUPABASE_URL=http://localhost:54321`
-4. Run `pnpx supabase db reset`
-5. Run `pnpm run seed`
-
-You can now view the supabase instance at http://localhost:54323/project/default
-
-### Documentation
+## Documentation
 
 This project includes a documentation page, which is configured to point to a markdown file in a GitHub repo. If you don't want to use this, simply remove all `_landing.docs.*` files from the `app/routes` directory, as well as `$.tsx`.
 
@@ -122,7 +110,7 @@ SOURCE_REPO=https://github.com/davidculemann/remix-shadcn-supabase-boilerplate-d
 GITHUB_TOKEN=ghp_1234567890abcdef1234567890abcdef1234567890
 ```
 
-### Email
+## Email
 
 - Supabase aggressively rate limits your email sending on the free plan, so you'll need to use a third-party email service. I recommend [Resend](https://resend.com) for this. Add the supabase integration here: https://resend.com/settings/integrations.
 
@@ -157,6 +145,33 @@ pnpm run seed
 
 ```sh
 npm run dev
+```
+
+### Offline dev
+
+For self hosting Supabase with docker for local dev, refer to this article: https://supabase.com/docs/guides/local-development?utm_source=chatgpt.com&queryGroups=package-manager&package-manager=pnpm
+
+1. Install and run docker
+2. Start the supabase service
+
+```sh
+pnpx supabase start
+```
+
+3. Copy the `service_role key` and `anon key` from the console and paste them into the `.env` file (only when using the local db), as well as `SUPABASE_URL=http://localhost:54321`
+
+4. Seed the local instance with the seed script
+
+```sh
+pnpm run seed
+```
+
+You can now view the Supabase instance at http://localhost:54323/project/default, and the api at http://localhost:54321/rest/v1/
+
+stop the supabase service with
+
+```sh
+pnpx supabase stop
 ```
 
 ## Deployment

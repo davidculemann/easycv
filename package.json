@@ -14,8 +14,7 @@
 		"lint-check": "npx @biomejs/biome check .",
 		"sync-db-types": "npx supabase gen types --lang=typescript --project-id rhcnxneqoqidlhhorrvu --schema public > db_types.ts",
 		"seed": "dotenv -- tsx app/lib/supabase/seed.ts",
-		"stripe-listen": "stripe listen --skip-verify --forward-to localhost:3000/api/webhook",
-		"dev:offline": "pnpx supabase start"
+		"stripe-listen": "stripe listen --skip-verify --forward-to localhost:3000/api/webhook"
 	},
 	"dependencies": {
 		"@ai-sdk/deepseek": "^0.1.15",

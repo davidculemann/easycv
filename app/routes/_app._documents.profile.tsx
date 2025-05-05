@@ -15,6 +15,7 @@ type ActionData = {
 	success?: boolean;
 	error?: string;
 	message?: string;
+	noNavigate?: boolean;
 };
 
 type LoaderData = {
@@ -60,6 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	const formData = await request.formData();
 	const formType = formData.get("formType") as FormType;
+	const noNavigate = !!formData.get("saveChanges");
 
 	switch (formType) {
 		case "personal": {
@@ -73,31 +75,31 @@ export async function action({ request }: ActionFunctionArgs) {
 				github: formData.get("github"),
 				website: formData.get("website"),
 			};
-
+			console.log(updatedProfile);
 			try {
 				await updateUserProfile({
 					supabase,
 					profile: updatedProfile as any,
 				});
 			} catch (error) {
-				console.error(error);
+				console.log(error);
 				return json<ActionData>({ message: "Failed to update profile", success: false });
 			}
 
-			return json<ActionData>({ success: true }, { headers });
+			return json<ActionData>({ success: true, noNavigate }, { headers });
 		}
 		case "education":
 			// TODO: Implement education form submission
-			return json<ActionData>({ success: true }, { headers });
+			return json<ActionData>({ success: true, noNavigate }, { headers });
 		case "experience":
 			// TODO: Implement experience form submission
-			return json<ActionData>({ success: true }, { headers });
+			return json<ActionData>({ success: true, noNavigate }, { headers });
 		case "skills":
 			// TODO: Implement skills form submission
-			return json<ActionData>({ success: true }, { headers });
+			return json<ActionData>({ success: true, noNavigate }, { headers });
 		case "projects":
 			// TODO: Implement projects form submission
-			return json<ActionData>({ success: true }, { headers });
+			return json<ActionData>({ success: true, noNavigate }, { headers });
 		default:
 			return json<ActionData>({ error: "Invalid form type" }, { status: 400, headers });
 	}
@@ -143,7 +145,7 @@ export default function Profile() {
 		if (actionData) {
 			if (actionData.success) {
 				toast.success("Profile updated successfully");
-				handleNext();
+				if (!actionData.noNavigate) handleNext();
 			} else if (actionData.message) toast.error(actionData.message);
 		}
 	}, [actionData]);

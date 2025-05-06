@@ -1,4 +1,5 @@
 import SidebarNav from "@/components/account/sidebar-nav";
+import { EducationForm } from "@/components/forms/profile/education-form";
 import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
 import type { FormType } from "@/components/forms/profile/types";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,14 @@ type LoaderData = {
 		linkedin: string | null;
 		github: string | null;
 		website: string | null;
+		education?: {
+			school: string;
+			degree: string;
+			startDate: string;
+			endDate: string;
+			location?: string;
+			description?: string;
+		};
 	} | null;
 };
 
@@ -87,9 +96,42 @@ export async function action({ request }: ActionFunctionArgs) {
 
 			return json<ActionData>({ success: true, noNavigate }, { headers });
 		}
-		case "education":
-			// TODO: Implement education form submission
+		case "education": {
+			// Get the existing profile data
+			let profile: Omit<LoaderData["profile"], "education"> & { education?: any };
+			try {
+				profile = await getUserProfile({ supabase });
+			} catch (error) {
+				console.log(error);
+				return json<ActionData>({ message: "Failed to get profile", success: false });
+			}
+
+			// Create education data
+			const educationData = {
+				school: formData.get("school"),
+				degree: formData.get("degree"),
+				startDate: formData.get("startDate"),
+				endDate: formData.get("endDate"),
+				location: formData.get("location"),
+				description: formData.get("description"),
+			};
+
+			// Update profile with education data
+			try {
+				await updateUserProfile({
+					supabase,
+					profile: {
+						...profile,
+						education: educationData,
+					} as any,
+				});
+			} catch (error) {
+				console.log(error);
+				return json<ActionData>({ message: "Failed to update education", success: false });
+			}
+
 			return json<ActionData>({ success: true, noNavigate }, { headers });
+		}
 		case "experience":
 			// TODO: Implement experience form submission
 			return json<ActionData>({ success: true, noNavigate }, { headers });
@@ -156,8 +198,12 @@ export default function Profile() {
 			case "personal":
 				return Boolean(profile.first_name && profile.last_name && profile.email && profile.phone);
 			case "education":
-				// TODO: Implement education completion check
-				return false;
+				return Boolean(
+					profile.education?.school &&
+						profile.education?.degree &&
+						profile.education?.startDate &&
+						profile.education?.endDate,
+				);
 			case "experience":
 				// TODO: Implement experience completion check
 				return false;
@@ -256,6 +302,21 @@ export default function Profile() {
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion("personal")}
+						/>
+					)}
+					{selectedTab === "education" && (
+						<EducationForm
+							defaultValues={{
+								school: profile?.education?.school || "",
+								degree: profile?.education?.degree || "",
+								startDate: profile?.education?.startDate || "",
+								endDate: profile?.education?.endDate || "",
+								location: profile?.education?.location || "",
+								description: profile?.education?.description || "",
+							}}
+							isSubmitting={isSubmitting}
+							formType={selectedTab}
+							wasCompleted={checkSectionCompletion("education")}
 						/>
 					)}
 					{/* TODO: Add other form components */}

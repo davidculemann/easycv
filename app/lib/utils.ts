@@ -19,6 +19,20 @@ export function validatePassword(password: string | undefined) {
 
 export function validatePhone(phone: string | undefined) {
 	if (!phone) return false;
-	const phoneRegex = new RegExp(/^(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/);
-	return phoneRegex.test(phone);
+
+	const cleanedPhone = phone.replace(/\D/g, "");
+
+	if (cleanedPhone.length === 11 && cleanedPhone.startsWith("0")) {
+		return true;
+	}
+
+	if (cleanedPhone.length === 10) {
+		return true;
+	}
+
+	if (cleanedPhone.length >= 11 && cleanedPhone.length <= 12) {
+		return true;
+	}
+
+	return false;
 }

@@ -18,6 +18,7 @@ export function PersonalInfoForm({ defaultValues, isSubmitting, formType, wasCom
 	const form = useForm<PersonalInfoFormValues>({
 		resolver: zodResolver(personalInfoSchema),
 		defaultValues,
+		mode: "onChange",
 	});
 
 	return (
@@ -84,7 +85,15 @@ export function PersonalInfoForm({ defaultValues, isSubmitting, formType, wasCom
 							<FormItem>
 								<FormLabel>Phone</FormLabel>
 								<FormControl>
-									<Input type="tel" {...field} />
+									<Input
+										type="tel"
+										placeholder="Enter 10-12 digit phone number"
+										{...field}
+										onChange={(e) => {
+											field.onChange(e);
+											form.trigger("phone");
+										}}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>

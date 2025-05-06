@@ -53,7 +53,7 @@ export async function createUserProfile({
 export async function updateUserProfile({
 	supabase,
 	profile,
-}: { supabase: SupabaseClient<Database>; profile: Database["public"]["Tables"]["cv_profiles"]["Row"] }) {
+}: { supabase: SupabaseClient<Database>; profile: CVProfileInput }) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
@@ -62,9 +62,31 @@ export async function updateUserProfile({
 		throw new Error("User not found");
 	}
 
-	const { id, user_id, created_at, ...updatableProfile } = profile;
+	const { created_at, ...updatableProfile } = profile;
 
-	const { error } = await supabase.from("cv_profiles").update(updatableProfile).eq("user_id", user.id).single();
+	const { data: existingProfile, error: fetchError } = await supabase
+		.from("cv_profiles")
+		.select("id")
+		.eq("user_id", user.id)
+		.single();
+
+	if (fetchError && fetchError.code !== "PGRST116") {
+		throw new Error(fetchError.message);
+	}
+
+	let error: { message: string } | null = null;
+
+	if (existingProfile) {
+		const result = await supabase
+			.from("cv_profiles")
+			.update(updatableProfile)
+			.eq("id", existingProfile.id)
+			.eq("user_id", user.id);
+		error = result.error;
+	} else {
+		const result = await supabase.from("cv_profiles").insert({ ...updatableProfile, user_id: user.id });
+		error = result.error;
+	}
 
 	if (error) {
 		throw new Error(error.message);

@@ -75,7 +75,6 @@ export async function action({ request }: ActionFunctionArgs) {
 				github: formData.get("github"),
 				website: formData.get("website"),
 			};
-			console.log(updatedProfile);
 			try {
 				await updateUserProfile({
 					supabase,

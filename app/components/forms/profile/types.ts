@@ -25,7 +25,7 @@ export const educationSchema = z.object({
 			startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
 			endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
 			location: z.string().optional(),
-			description: z.string().optional(),
+			description: z.array(z.string()).optional(),
 		}),
 	),
 });

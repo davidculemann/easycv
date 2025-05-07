@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Calendar, GraduationCap, MapPin, Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -22,7 +21,7 @@ const EMPTY_EDUCATION = {
 	startDate: "",
 	endDate: "",
 	location: "",
-	description: "",
+	description: [""],
 };
 
 export function EducationForm({ defaultValues, isSubmitting, formType, wasCompleted }: EducationFormProps) {
@@ -161,17 +160,47 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 
 						<FormField
 							control={form.control}
-							{...form.register(`educations.${index}.description` as const)}
+							name={`educations.${index}.description`}
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Description</FormLabel>
-									<FormControl>
-										<Textarea
-											placeholder="Describe relevant coursework, achievements, etc."
-											{...field}
-											className="min-h-28"
-										/>
-									</FormControl>
+									<div className="space-y-2">
+										{field.value?.map((_, bulletIndex) => (
+											<div key={bulletIndex} className="flex gap-2">
+												<FormControl>
+													<Input
+														placeholder="Enter a bullet point"
+														{...form.register(
+															`educations.${index}.description.${bulletIndex}` as const,
+														)}
+													/>
+												</FormControl>
+												<Button
+													type="button"
+													variant="ghost"
+													size="sm"
+													onClick={() => {
+														const newValue = [...(field.value || [])];
+														newValue.splice(bulletIndex, 1);
+														field.onChange(newValue);
+													}}
+												>
+													<Trash2 className="h-4 w-4" />
+												</Button>
+											</div>
+										))}
+										<Button
+											type="button"
+											variant="outline"
+											size="sm"
+											onClick={() => {
+												field.onChange([...(field.value || []), ""]);
+											}}
+										>
+											<Plus className="h-4 w-4 mr-2" />
+											Add Bullet Point
+										</Button>
+									</div>
 									<FormMessage />
 								</FormItem>
 							)}

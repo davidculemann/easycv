@@ -1,5 +1,5 @@
-import ConfirmOTP from "@/components/forms/confirm-otp";
 import { Icons } from "@/components/icons";
+import ConfirmOTP from "@/components/shared/confirm-otp";
 import { LoadingButton } from "@/components/shared/loading-button";
 import ProviderLoginButton from "@/components/shared/provider-login-button";
 import { Input } from "@/components/ui/input";

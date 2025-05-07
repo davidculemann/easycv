@@ -36,7 +36,8 @@
 			},
 			"correctness": {
 				"noEmptyPattern": "off",
-				"useExhaustiveDependencies": "off"
+				"useExhaustiveDependencies": "off",
+				"noChildrenProp": "off"
 			},
 			"complexity": {
 				"noForEach": "off"

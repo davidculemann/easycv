@@ -75,7 +75,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 						<div className="grid gap-4 md:grid-cols-2">
 							<FormField
 								control={form.control}
-								name={`educations.${index}.school`}
+								{...form.register(`educations.${index}.school` as const, { required: true })}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 							/>
 							<FormField
 								control={form.control}
-								name={`educations.${index}.degree`}
+								{...form.register(`educations.${index}.degree` as const, { required: true })}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Degree/Field of Study</FormLabel>
@@ -110,7 +110,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 						<div className="grid gap-4 md:grid-cols-2">
 							<FormField
 								control={form.control}
-								name={`educations.${index}.startDate`}
+								{...form.register(`educations.${index}.startDate` as const, { required: true })}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 							/>
 							<FormField
 								control={form.control}
-								name={`educations.${index}.endDate`}
+								{...form.register(`educations.${index}.endDate` as const, { required: true })}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 
 						<FormField
 							control={form.control}
-							name={`educations.${index}.location`}
+							{...form.register(`educations.${index}.location` as const)}
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 
 						<FormField
 							control={form.control}
-							name={`educations.${index}.description`}
+							{...form.register(`educations.${index}.description` as const)}
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>Description</FormLabel>

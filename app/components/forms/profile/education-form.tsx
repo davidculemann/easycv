@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { Calendar, GraduationCap, MapPin, Plus, Trash2 } from "lucide-react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { BaseForm } from "./base-form";
@@ -111,14 +115,40 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 								control={form.control}
 								{...form.register(`educations.${index}.startDate` as const, { required: true })}
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="flex flex-col">
 										<FormLabel className="flex items-center gap-2">
 											<Calendar className="h-4 w-4" />
 											Start Date
 										</FormLabel>
-										<FormControl>
-											<Input type="date" {...field} />
-										</FormControl>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant={"outline"}
+														className={cn(
+															"w-full pl-3 text-left font-normal",
+															!field.value && "text-muted-foreground",
+														)}
+													>
+														{field.value ? (
+															format(new Date(field.value), "PPP")
+														) : (
+															<span>Pick a date</span>
+														)}
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent className="w-auto p-0" align="start">
+												<CalendarComponent
+													mode="single"
+													selected={field.value ? new Date(field.value) : undefined}
+													onSelect={(date) =>
+														field.onChange(date?.toISOString().split("T")[0])
+													}
+													initialFocus
+												/>
+											</PopoverContent>
+										</Popover>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -127,14 +157,37 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 								control={form.control}
 								{...form.register(`educations.${index}.endDate` as const, { required: true })}
 								render={({ field }) => (
-									<FormItem>
+									<FormItem className="flex flex-col">
 										<FormLabel className="flex items-center gap-2">
 											<Calendar className="h-4 w-4" />
 											End Date (or expected)
 										</FormLabel>
-										<FormControl>
-											<Input type="date" {...field} />
-										</FormControl>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant={"outline"}
+														className={cn(!field.value && "text-muted-foreground")}
+													>
+														{field.value ? (
+															format(new Date(field.value), "PPP")
+														) : (
+															<span>Pick a date</span>
+														)}
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent className="w-auto p-0" align="start">
+												<CalendarComponent
+													mode="single"
+													selected={field.value ? new Date(field.value) : undefined}
+													onSelect={(date) =>
+														field.onChange(date?.toISOString().split("T")[0])
+													}
+													initialFocus
+												/>
+											</PopoverContent>
+										</Popover>
 										<FormMessage />
 									</FormItem>
 								)}

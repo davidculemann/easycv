@@ -18,12 +18,16 @@ export type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>;
 
 // Education Schema
 export const educationSchema = z.object({
-	school: z.string().min(1, "School name is required"),
-	degree: z.string().min(1, "Degree is required"),
-	startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-	endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-	location: z.string().optional(),
-	description: z.string().optional(),
+	educations: z.array(
+		z.object({
+			school: z.string().min(1, "School name is required"),
+			degree: z.string().min(1, "Degree is required"),
+			startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+			endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+			location: z.string().optional(),
+			description: z.string().optional(),
+		}),
+	),
 });
 
 export type EducationFormValues = z.infer<typeof educationSchema>;

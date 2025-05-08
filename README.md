@@ -1,29 +1,33 @@
-# Boilerplate for Remix + Vite + shadcn/ui + Supabase
+# EasyCV
 
-## Demo
+An AI-powered CV and cover letter generation platform built with Remix, Vite, shadcn/ui, Vercel's AI sdk and Supabase.
 
-Live app: [remix-shadcn-boilerplate.vercel.app](https://remix-shadcn-boilerplate.vercel.app)
+## About
+
+EasyCV helps users create professional, ATS-friendly CVs and cover letters in minutes. The platform leverages AI to analyze user experience and suggest the best way to present skills and qualifications.
+
+This project is based on [remix-shadcn-boilerplate](https://github.com/davidculemann/remix-shadcn-boilerplate).
 
 ## What's inside?
 
-- A fullstack app with [Remix](https://remix.run), [Vite](https://vitejs.dev), [shadcn/ui](https://shadcn/ui), and [Supabase](https://supabase.io)
+- A full-featured AI CV and cover letter generation platform
 - Complete authentication flow with Supabase
   - Signup with email, Google, Github
   - Login with email, Google, Github
   - Forgot password flow
   - Logout
 - Protected routes
-- A beautiful and professional dashboard layout, credit to [shadcn-ui-sidebar](https://github.com/salimi-my/shadcn-ui-sidebar)
-- A documentation page, configurable to point to your own markdown files in a GitHub repo.
-- A customisable pricing page with Stripe integration.
-- Easily configurable for your own project
+- Professional dashboard layout for CV management
+- Beautiful landing page explaining the platform's features
+- Interactive CV profile builder with completion tracking
+- CV export and formatting options
 
 ## Setup
 
 - Clone the repo:
 
 ```sh
-git clone git@github.com:davidculemann/remix-shadcn-boilerplate.git
+git clone git@github.com:yourusername/easycv.git
 ```
 
 - Install dependencies:
@@ -97,19 +101,6 @@ pnpm run seed
 supabase gen types typescript --project-id <your_supabase_project_id> > db_types.ts
 ```
 
-## Documentation
-
-This project includes a documentation page, which is configured to point to a markdown file in a GitHub repo. If you don't want to use this, simply remove all `_landing.docs.*` files from the `app/routes` directory, as well as `$.tsx`.
-
-To use this feature, you'll need to set the `SOURCE_REPO` environment variable in `.env` as a URL to the GitHub repo you want to use, and add the `GITHUB_TOKEN` environment variable to increase your rate limit (generate one [here](https://github.com/settings/tokens/new)).
-
-for example:
-
-```sh
-SOURCE_REPO=https://github.com/davidculemann/remix-shadcn-supabase-boilerplate-docs
-GITHUB_TOKEN=ghp_1234567890abcdef1234567890abcdef1234567890
-```
-
 ## Email
 
 - Supabase aggressively rate limits your email sending on the free plan, so you'll need to use a third-party email service. I recommend [Resend](https://resend.com) for this. Add the supabase integration here: https://resend.com/settings/integrations.
@@ -147,82 +138,17 @@ pnpm run seed
 npm run dev
 ```
 
-### Offline dev
-
-For self hosting Supabase with docker for local dev, refer to this article: https://supabase.com/docs/guides/local-development?utm_source=chatgpt.com&queryGroups=package-manager&package-manager=pnpm
-
-1. Install and run docker
-2. Start the Supabase instance:
-
-```sh
-pnpx supabase start
-```
-
-3. Copy the `service_role key` and `anon key` from the console and paste them into the `.env` file (only when using the local db), as well as `SUPABASE_URL=http://localhost:54321`
-
-4. Seed the local instance with the seed script:
-
-```sh
-pnpm run seed
-```
-
-You can now view the Supabase instance at http://localhost:54323/project/default, and the api at http://localhost:54321/rest/v1/
-
-Stop the Supabase instance with:
-
-```sh
-pnpx supabase stop
-```
-
-## Deployment
-
-### With Vercel
-
-1. First, install the Vercel CLI:
-
-```sh
-npm install -g vercel
-```
-
-2. Then deploy your app:
-
-```sh
-vercel
-```
-
-### Manual Deployment
-
-1. First, build your app for production:
-
-```sh
-npm run build
-```
-
-2. Setup your environment:
-
-```sh
-NODE_ENV='production'
-```
-
-3. Then run the app in production mode:
-
-```sh
-npm start
-```
-
-Now you'll need to pick a host to deploy it to.
-
 ## Stack
 
 - [Remix](https://remix.run)
 - [Vite](https://vitejs.dev)
-- [shadcn/ui](https://shadcn/ui)
+- [shadcn/ui](https://ui.shadcn.com)
 - [Supabase](https://supabase.io)
+- [OpenAI](https://openai.com) (AI integration)
 - [React Query](https://react-query.tanstack.com)
 - [Framer Motion](https://www.framer.com/motion)
 - [Resend](https://resend.io)
 - [zustand](https://zustand.surge.sh)
-- [Logoipsum](https://logoipsum.com)
 - [Stripe](https://stripe.com)
 
 ## Tooling
@@ -234,8 +160,5 @@ Now you'll need to pick a host to deploy it to.
 
 ## Credits
 
+- [remix-shadcn-boilerplate](https://github.com/davidculemann/remix-shadcn-boilerplate): The original boilerplate this project is based on.
 - [shadcn-ui-sidebar](https://github.com/salimi-my/shadcn-ui-sidebar): Professional yet beautiful dashboard layout built with shadcn, adapted from Next-js.
-- [remix-docs-template](https://github.com/boomerang-io/remix-docs-template): A powerful and customisable template for Remix documentation sites.
-- [pricing-page-shadcn](https://github.com/m4nute/pricing-page-shadcn): A pricing page built with shadcn, adapted from Next-js.
-- [shadcn-admin](https://github.com/satnaing/shadcn-admin): Very useful layouts for settings screens.
-- [remix-saas](https://remix-saas.fly.dev/): The best Remix starter I've seen so far, took some inspiration from the landing page and stripe implementation, adapated from Prisma to Supabase.

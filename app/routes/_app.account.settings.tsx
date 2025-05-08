@@ -4,10 +4,10 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { formatDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
-import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -101,7 +101,7 @@ export default function Settings() {
 											)}
 										>
 											{field.value ? (
-												dayjs(field.value).format("MMM D, YYYY")
+												formatDate(field.value.toISOString(), "MMM D, YYYY")
 											) : (
 												<span>Pick a date</span>
 											)}

@@ -3,6 +3,42 @@ import type { Database } from "db_types";
 
 export type CVProfileInput = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "id" | "user_id">;
 
+// Helper function to safely parse JSON fields
+function parseJsonFields(profile: any) {
+	const jsonFields = ["education", "experience", "skills", "projects", "completion"];
+
+	const parsedProfile = { ...profile };
+
+	for (const field of jsonFields) {
+		try {
+			if (typeof parsedProfile[field] === "string") {
+				parsedProfile[field] = JSON.parse(parsedProfile[field]);
+			} else if (parsedProfile[field] === null) {
+				// Initialize empty values based on expected types
+				if (field === "skills" || field === "experience" || field === "projects") {
+					parsedProfile[field] = [];
+				} else if (field === "completion") {
+					parsedProfile[field] = {};
+				} else {
+					parsedProfile[field] = null;
+				}
+			}
+		} catch (e) {
+			console.error(`Error parsing ${field}:`, e);
+			// Initialize with empty values on parse error
+			if (field === "skills" || field === "experience" || field === "projects") {
+				parsedProfile[field] = [];
+			} else if (field === "completion") {
+				parsedProfile[field] = {};
+			} else {
+				parsedProfile[field] = null;
+			}
+		}
+	}
+
+	return parsedProfile;
+}
+
 export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Database> }) {
 	const {
 		data: { user },
@@ -19,7 +55,8 @@ export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Da
 
 	const { user_id, ...cvData } = data;
 
-	return cvData;
+	// Parse JSON fields before returning
+	return parseJsonFields(cvData);
 }
 
 export async function createUserProfile({
@@ -47,7 +84,10 @@ export async function createUserProfile({
 		throw new Error(error.message);
 	}
 
-	return data;
+	const { user_id: _, ...cvData } = data;
+
+	// Parse JSON fields before returning
+	return parseJsonFields(cvData);
 }
 
 export async function updateUserProfile({

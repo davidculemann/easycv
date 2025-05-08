@@ -302,16 +302,7 @@ export default function Profile() {
 					{selectedTab === "education" && (
 						<EducationForm
 							defaultValues={{
-								educations: [
-									{
-										school: profile?.education?.school || "",
-										degree: profile?.education?.degree || "",
-										startDate: profile?.education?.startDate || "",
-										endDate: profile?.education?.endDate || "",
-										location: profile?.education?.location || "",
-										description: [profile?.education?.description || ""],
-									},
-								],
+								educations: profile?.education as unknown as Education[],
 							}}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}

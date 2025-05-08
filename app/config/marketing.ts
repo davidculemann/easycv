@@ -10,9 +10,5 @@ export const marketingConfig: MarketingConfig = {
 			title: "Updates",
 			href: "/updates",
 		},
-		{
-			title: "Documentation",
-			href: "/docs/en/main",
-		},
 	],
 };

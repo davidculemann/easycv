@@ -141,11 +141,6 @@ export default function Index() {
 							<Link to="/signin">
 								<Button size="lg">Create Your CV</Button>
 							</Link>
-							<Link to="/docs">
-								<Button variant="outline" size="lg">
-									Learn More
-								</Button>
-							</Link>
 						</div>
 					</div>
 				</motion.section>

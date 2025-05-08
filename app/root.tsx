@@ -24,7 +24,6 @@ import clsx from "clsx";
 import { useEffect } from "react";
 import { GlobalPendingIndicator } from "./components/layout/global-pending-indicator";
 import { Toaster } from "./components/ui/sonner";
-import { isProductionHost, removeTrailingSlashes } from "./lib/docs-utils/http.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const { session, headers } = await getSupabaseWithSessionHeaders({
@@ -33,9 +32,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const env = getSupabaseEnv();
 	const completeEnv = process.env;
 
-	removeTrailingSlashes(request);
-
-	const isDevHost = !isProductionHost(request);
 	const url = new URL(request.url);
 
 	return json(
@@ -50,8 +46,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 				},
 			},
 			host: url.host,
-			isProductionHost: !isDevHost,
-			noIndex: isDevHost,
 		},
 		{ headers },
 	);

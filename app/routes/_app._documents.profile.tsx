@@ -1,12 +1,12 @@
 import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
-import type { FormType } from "@/components/forms/profile/types";
+import type { EducationFormValues, EducationItem, FormType } from "@/components/forms/profile/types";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { type CVProfileInput, getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { type ActionFunctionArgs, type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
 import type { Json } from "db_types";
 import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
@@ -20,15 +20,6 @@ type ActionData = {
 	noNavigate?: boolean;
 };
 
-type Education = {
-	school: string;
-	degree: string;
-	startDate: string;
-	endDate: string;
-	location?: string;
-	description?: string;
-};
-
 type ProfileData = {
 	first_name: string | null;
 	last_name: string | null;
@@ -38,7 +29,7 @@ type ProfileData = {
 	linkedin: string | null;
 	github: string | null;
 	website: string | null;
-	education?: Education | null;
+	education?: EducationItem[] | null;
 	experience?: Json | null;
 	projects?: Json | null;
 	skills?: string[] | null;
@@ -61,15 +52,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	try {
 		const dbProfile = await getUserProfile({ supabase });
-
-		const profile: ProfileData = {
-			...dbProfile,
-			education: dbProfile.education as unknown as Education,
-		};
-
-		return json<LoaderData>({ profile }, { headers });
+		return new Response(JSON.stringify({ profile: dbProfile }), {
+			headers: {
+				...headers,
+				"Content-Type": "application/json",
+			},
+		});
 	} catch (error) {
-		return json<LoaderData>({ profile: null }, { headers });
+		console.error("Error loading profile:", error);
+		return new Response(JSON.stringify({ profile: null }), {
+			headers: {
+				...headers,
+				"Content-Type": "application/json",
+			},
+		});
 	}
 }
 
@@ -102,42 +98,101 @@ export async function action({ request }: ActionFunctionArgs) {
 			try {
 				await updateUserProfile({
 					supabase,
-					profile: updatedProfile as CVProfileInput,
+					profile: updatedProfile,
 				});
 			} catch (error) {
-				console.log(error);
-				return json<ActionData>({ message: "Failed to update profile", success: false });
+				console.error("Failed to update profile:", error);
+				return new Response(JSON.stringify({ message: "Failed to update profile", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
 			}
 
-			return json<ActionData>({ success: true, noNavigate }, { headers });
+			return new Response(JSON.stringify({ success: true, noNavigate }), {
+				headers: {
+					...headers,
+					"Content-Type": "application/json",
+				},
+			});
 		}
 		case "education": {
-			const educations = formData.get("educations");
+			let dbProfile: CVProfileInput;
+			try {
+				dbProfile = await getUserProfile({ supabase });
+			} catch (error) {
+				console.error("Failed to get profile:", error);
+				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
+			const educationsJson = formData.get("educations") as string;
+			let educations = null;
+
+			if (educationsJson) {
+				try {
+					educations = JSON.parse(educationsJson);
+				} catch (e) {
+					console.error("Error parsing educations JSON:", e);
+					return new Response(JSON.stringify({ message: "Invalid education data format", success: false }), {
+						headers: { "Content-Type": "application/json" },
+					});
+				}
+			}
+
 			try {
 				await updateUserProfile({
 					supabase,
 					profile: {
-						education: educations as unknown as Json,
+						...dbProfile,
+						education: educations,
 					},
 				});
 			} catch (error) {
-				console.log(error);
-				return json<ActionData>({ message: "Failed to update education", success: false });
+				console.error("Failed to update education:", error);
+				return new Response(JSON.stringify({ message: "Failed to update education", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
 			}
 
-			return json<ActionData>({ success: true, noNavigate }, { headers });
+			return new Response(JSON.stringify({ success: true, noNavigate }), {
+				headers: {
+					...headers,
+					"Content-Type": "application/json",
+				},
+			});
 		}
 		case "experience":
 			// TODO: Implement experience form submission
-			return json<ActionData>({ success: true, noNavigate }, { headers });
+			return new Response(JSON.stringify({ success: true, noNavigate }), {
+				headers: {
+					...headers,
+					"Content-Type": "application/json",
+				},
+			});
 		case "skills":
 			// TODO: Implement skills form submission
-			return json<ActionData>({ success: true, noNavigate }, { headers });
+			return new Response(JSON.stringify({ success: true, noNavigate }), {
+				headers: {
+					...headers,
+					"Content-Type": "application/json",
+				},
+			});
 		case "projects":
 			// TODO: Implement projects form submission
-			return json<ActionData>({ success: true, noNavigate }, { headers });
+			return new Response(JSON.stringify({ success: true, noNavigate }), {
+				headers: {
+					...headers,
+					"Content-Type": "application/json",
+				},
+			});
 		default:
-			return json<ActionData>({ error: "Invalid form type" }, { status: 400, headers });
+			return new Response(JSON.stringify({ error: "Invalid form type" }), {
+				status: 400,
+				headers: {
+					...headers,
+					"Content-Type": "application/json",
+				},
+			});
 	}
 }
 
@@ -162,7 +217,7 @@ export default function Profile() {
 				sectionOrder.length) *
 			100
 		);
-	}, [sectionOrder]);
+	}, [profile, sectionOrder]);
 
 	const handleNext = () => {
 		if (nextSection) {
@@ -192,13 +247,17 @@ export default function Profile() {
 		switch (section) {
 			case "personal":
 				return Boolean(profile.first_name && profile.last_name && profile.email && profile.phone);
-			case "education":
-				return Boolean(
-					profile.education?.school &&
-						profile.education?.degree &&
-						profile.education?.startDate &&
-						profile.education?.endDate,
-				);
+			case "education": {
+				if (Array.isArray(profile.education) && profile.education.length > 0) {
+					return Boolean(
+						profile.education[0].school &&
+							profile.education[0].degree &&
+							profile.education[0].startDate &&
+							profile.education[0].endDate,
+					);
+				}
+				return false;
+			}
 			case "experience":
 				// TODO: Implement experience completion check
 				return false;
@@ -212,6 +271,24 @@ export default function Profile() {
 				return false;
 		}
 	}
+
+	const getEducationFormData = (): EducationFormValues => {
+		if (!profile || !profile.education) {
+			return {
+				educations: [{ school: "", degree: "", startDate: "", endDate: "", location: "", description: [""] }],
+			};
+		}
+		return {
+			educations: profile.education.map((edu: EducationItem) => ({
+				school: edu.school || "",
+				degree: edu.degree || "",
+				startDate: edu.startDate || "",
+				endDate: edu.endDate || "",
+				location: edu.location || "",
+				description: Array.isArray(edu.description) ? edu.description : [edu.description || ""],
+			})),
+		};
+	};
 
 	const sidebarItems = [
 		{
@@ -301,9 +378,7 @@ export default function Profile() {
 					)}
 					{selectedTab === "education" && (
 						<EducationForm
-							defaultValues={{
-								educations: profile?.education as unknown as Education[],
-							}}
+							defaultValues={getEducationFormData()}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion("education")}

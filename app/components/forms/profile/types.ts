@@ -1,4 +1,3 @@
-import { validatePhone } from "@/lib/utils";
 import type { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
@@ -7,7 +6,10 @@ export const personalInfoSchema = z.object({
 	firstName: z.string().min(1, "First name is required"),
 	lastName: z.string().min(1, "Last name is required"),
 	email: z.string().email("Invalid email address"),
-	phone: z.string().refine(validatePhone, "Invalid phone number"),
+	phone: z
+		.string()
+		.min(1, "Phone number is required")
+		.regex(/^\+?[0-9\s()-]{10,15}$/, "Enter a valid phone number"),
 	address: z.string().optional(),
 	linkedin: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
 	github: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
@@ -16,20 +18,20 @@ export const personalInfoSchema = z.object({
 
 export type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>;
 
-// Education Schema
-export const educationSchema = z.object({
-	educations: z.array(
-		z.object({
-			school: z.string().min(1, "School name is required"),
-			degree: z.string().min(1, "Degree is required"),
-			startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-			endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-			location: z.string().optional(),
-			description: z.array(z.string()).optional(),
-		}),
-	),
+export const educationItemSchema = z.object({
+	school: z.string().min(1, "School name is required"),
+	degree: z.string().min(1, "Degree is required"),
+	startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+	endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+	location: z.string().optional(),
+	description: z.array(z.string()).optional(),
 });
 
+export const educationSchema = z.object({
+	educations: z.array(educationItemSchema),
+});
+
+export type EducationItem = z.infer<typeof educationItemSchema>;
 export type EducationFormValues = z.infer<typeof educationSchema>;
 
 // Experience Schema

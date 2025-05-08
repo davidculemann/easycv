@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { Calendar, GraduationCap, MapPin, Plus, Trash2 } from "lucide-react";
+import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { BaseForm } from "./base-form";
 import { type EducationFormValues, type FormType, educationSchema } from "./types";
@@ -32,7 +33,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 	const form = useForm<EducationFormValues>({
 		resolver: zodResolver(educationSchema),
 		defaultValues: {
-			educations: defaultValues.educations || [EMPTY_EDUCATION],
+			educations: defaultValues.educations?.length ? defaultValues.educations : [EMPTY_EDUCATION],
 		},
 		mode: "onChange",
 	});
@@ -40,6 +41,13 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 	const { fields, append, remove } = useFieldArray({ control: form.control, name: "educations" });
 
 	const educations = form.watch("educations");
+
+	useEffect(() => {
+		const hiddenInput = document.querySelector('input[name="educations"]') as HTMLInputElement;
+		if (hiddenInput) {
+			hiddenInput.value = JSON.stringify(educations);
+		}
+	}, [educations]);
 
 	function onAddEducation() {
 		append(EMPTY_EDUCATION);
@@ -56,7 +64,6 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="educations" value={JSON.stringify(educations)} />
-
 			<div className="space-y-6">
 				<div>
 					<h3 className="text-lg font-medium">Education</h3>
@@ -65,11 +72,14 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 				<Separator />
 
 				{fields.map((field, index) => (
-					<div key={field.id} className="space-y-6 p-4 border rounded-lg">
+					<div key={field.id} className="rounded-lg border p-4 space-y-4">
 						<div className="flex justify-between items-center">
-							<h4 className="font-medium">Education ({index + 1})</h4>
+							<div className="flex items-center gap-2">
+								<GraduationCap className="h-5 w-5 text-primary" />
+								<h4 className="font-medium">{`Education ${index + 1}`}</h4>
+							</div>
 							{fields.length > 1 && (
-								<Button type="button" variant="ghost" size="sm" onClick={() => remove(index)}>
+								<Button variant="outline" size="icon" type="button" onClick={() => remove(index)}>
 									<Trash2 className="h-4 w-4" />
 								</Button>
 							)}
@@ -78,15 +88,12 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 						<div className="grid gap-4 md:grid-cols-2">
 							<FormField
 								control={form.control}
-								{...form.register(`educations.${index}.school` as const, { required: true })}
+								name={`educations.${index}.school`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="flex items-center gap-2">
-											<GraduationCap className="h-4 w-4" />
-											School/University
-										</FormLabel>
+										<FormLabel>Institution</FormLabel>
 										<FormControl>
-											<Input placeholder="University or school name" {...field} />
+											<Input placeholder="University/College name" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -94,15 +101,12 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 							/>
 							<FormField
 								control={form.control}
-								{...form.register(`educations.${index}.degree` as const, { required: true })}
+								name={`educations.${index}.degree`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Degree/Field of Study</FormLabel>
+										<FormLabel>Degree</FormLabel>
 										<FormControl>
-											<Input
-												placeholder="e.g. Bachelor of Science in Computer Science"
-												{...field}
-											/>
+											<Input placeholder="Degree / Field of Study" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -113,20 +117,17 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 						<div className="grid gap-4 md:grid-cols-2">
 							<FormField
 								control={form.control}
-								{...form.register(`educations.${index}.startDate` as const, { required: true })}
+								name={`educations.${index}.startDate`}
 								render={({ field }) => (
 									<FormItem className="flex flex-col">
-										<FormLabel className="flex items-center gap-2">
-											<Calendar className="h-4 w-4" />
-											Start Date
-										</FormLabel>
+										<FormLabel>Start Date</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
-														variant={"outline"}
+														variant="outline"
 														className={cn(
-															"w-full pl-3 text-left font-normal",
+															"text-left font-normal",
 															!field.value && "text-muted-foreground",
 														)}
 													>
@@ -135,6 +136,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 														) : (
 															<span>Pick a date</span>
 														)}
+														<Calendar className="ml-auto h-4 w-4 opacity-50" />
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
@@ -142,9 +144,11 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 												<CalendarComponent
 													mode="single"
 													selected={field.value ? new Date(field.value) : undefined}
-													onSelect={(date) =>
-														field.onChange(date?.toISOString().split("T")[0])
-													}
+													onSelect={(date) => {
+														if (date) {
+															field.onChange(format(date, "yyyy-MM-dd"));
+														}
+													}}
 													initialFocus
 												/>
 											</PopoverContent>
@@ -155,25 +159,26 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 							/>
 							<FormField
 								control={form.control}
-								{...form.register(`educations.${index}.endDate` as const, { required: true })}
+								name={`educations.${index}.endDate`}
 								render={({ field }) => (
 									<FormItem className="flex flex-col">
-										<FormLabel className="flex items-center gap-2">
-											<Calendar className="h-4 w-4" />
-											End Date (or expected)
-										</FormLabel>
+										<FormLabel>End Date</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
-														variant={"outline"}
-														className={cn(!field.value && "text-muted-foreground")}
+														variant="outline"
+														className={cn(
+															"text-left font-normal",
+															!field.value && "text-muted-foreground",
+														)}
 													>
 														{field.value ? (
 															format(new Date(field.value), "PPP")
 														) : (
 															<span>Pick a date</span>
 														)}
+														<Calendar className="ml-auto h-4 w-4 opacity-50" />
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
@@ -181,9 +186,11 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 												<CalendarComponent
 													mode="single"
 													selected={field.value ? new Date(field.value) : undefined}
-													onSelect={(date) =>
-														field.onChange(date?.toISOString().split("T")[0])
-													}
+													onSelect={(date) => {
+														if (date) {
+															field.onChange(format(date, "yyyy-MM-dd"));
+														}
+													}}
 													initialFocus
 												/>
 											</PopoverContent>
@@ -196,76 +203,59 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 
 						<FormField
 							control={form.control}
-							{...form.register(`educations.${index}.location` as const)}
+							name={`educations.${index}.location`}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="flex items-center gap-2">
-										<MapPin className="h-4 w-4" />
-										Location
-									</FormLabel>
+									<FormLabel>Location</FormLabel>
 									<FormControl>
-										<Input placeholder="City, Country" {...field} />
+										<div className="relative">
+											<MapPin className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+											<Input className="pl-8" placeholder="City, Country" {...field} />
+										</div>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 
-						<FormField
-							control={form.control}
-							name={`educations.${index}.description`}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Description</FormLabel>
-									<div className="space-y-2">
-										{field.value?.map((_, bulletIndex) => (
-											<div key={bulletIndex} className="flex gap-2">
-												<FormControl>
-													<Input
-														placeholder="Enter a bullet point"
-														{...form.register(
-															`educations.${index}.description.${bulletIndex}` as const,
-														)}
-													/>
-												</FormControl>
-												<Button
-													type="button"
-													variant="ghost"
-													size="sm"
-													onClick={() => {
-														const newValue = [...(field.value || [])];
-														newValue.splice(bulletIndex, 1);
-														field.onChange(newValue);
-													}}
-												>
-													<Trash2 className="h-4 w-4" />
-												</Button>
-											</div>
-										))}
-										<Button
-											type="button"
-											variant="outline"
-											size="sm"
-											onClick={() => {
-												field.onChange([...(field.value || []), ""]);
-											}}
-										>
-											<Plus className="h-4 w-4 mr-2" />
-											Add Bullet Point
-										</Button>
-									</div>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<div className="space-y-2">
+							<FormLabel>Description</FormLabel>
+							{form.watch(`educations.${index}.description`)?.map((_, descIndex) => (
+								<FormField
+									key={`${field.id}-desc-${descIndex}`}
+									control={form.control}
+									name={`educations.${index}.description.${descIndex}`}
+									render={({ field: descField }) => (
+										<FormItem>
+											<FormControl>
+												<Input placeholder="Achievement or responsibility" {...descField} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							))}
+							<Button
+								type="button"
+								variant="outline"
+								size="sm"
+								className="mt-2"
+								onClick={() => {
+									const currentDesc = form.getValues(`educations.${index}.description`) || [];
+									form.setValue(`educations.${index}.description`, [...currentDesc, ""]);
+								}}
+							>
+								<Plus className="mr-2 h-4 w-4" />
+								Add Description
+							</Button>
+						</div>
 					</div>
 				))}
-				<div className="flex flex-1 justify-end">
-					<Button type="button" variant="outline" size="sm" onClick={onAddEducation}>
-						<Plus className="h-4 w-4 mr-2" />
-						Add Education
-					</Button>
-				</div>
+
+				<Button type="button" variant="outline" onClick={onAddEducation}>
+					<Plus className="mr-2 h-4 w-4" />
+					Add Education
+				</Button>
 			</div>
 		</BaseForm>
 	);

@@ -3,30 +3,42 @@ import type { Database } from "db_types";
 
 export type CVProfileInput = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "id" | "user_id">;
 
-// Helper function to safely parse JSON fields
+/**
+ * Parse JSON fields from the database response
+ * Handles both string-encoded JSON and native JSON objects
+ */
 function parseJsonFields(profile: any) {
-	const jsonFields = ["education", "experience", "skills", "projects", "completion"];
+	if (!profile) return null;
 
+	const jsonFields = ["education", "experience", "skills", "projects", "completion"];
 	const parsedProfile = { ...profile };
 
 	for (const field of jsonFields) {
 		try {
 			if (typeof parsedProfile[field] === "string") {
 				parsedProfile[field] = JSON.parse(parsedProfile[field]);
-			} else if (parsedProfile[field] === null) {
-				// Initialize empty values based on expected types
-				if (field === "skills" || field === "experience" || field === "projects") {
+			}
+
+			if (parsedProfile[field] === null) {
+				if (field === "skills") {
+					parsedProfile[field] = [];
+				} else if (field === "experience" || field === "projects") {
 					parsedProfile[field] = [];
 				} else if (field === "completion") {
 					parsedProfile[field] = {};
-				} else {
-					parsedProfile[field] = null;
+				} else if (field === "education") {
+					parsedProfile[field] = [];
+				}
+			}
+
+			if (field === "skills" || field === "experience" || field === "projects" || field === "education") {
+				if (!Array.isArray(parsedProfile[field]) && parsedProfile[field] !== null) {
+					parsedProfile[field] = [parsedProfile[field]];
 				}
 			}
 		} catch (e) {
 			console.error(`Error parsing ${field}:`, e);
-			// Initialize with empty values on parse error
-			if (field === "skills" || field === "experience" || field === "projects") {
+			if (field === "skills" || field === "experience" || field === "projects" || field === "education") {
 				parsedProfile[field] = [];
 			} else if (field === "completion") {
 				parsedProfile[field] = {};
@@ -86,7 +98,6 @@ export async function createUserProfile({
 
 	const { user_id: _, ...cvData } = data;
 
-	// Parse JSON fields before returning
 	return parseJsonFields(cvData);
 }
 
@@ -111,11 +122,14 @@ export async function updateUserProfile({
 	let error: { message: string } | null = null;
 
 	if (existingProfile) {
+		const { id, ...updateData } = profile as any;
+
 		const result = await supabase
 			.from("cv_profiles")
-			.update(profile)
+			.update(updateData)
 			.eq("id", existingProfile.id)
 			.eq("user_id", user.id);
+
 		error = result.error;
 	} else {
 		const result = await supabase.from("cv_profiles").insert({ ...profile, user_id: user.id });

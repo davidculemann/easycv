@@ -10,8 +10,7 @@ import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useOutletContext, useParams } from "@remix-run/react";
-import { IconPdf } from "@tabler/icons-react";
-import { Download, FileJson } from "lucide-react";
+import { Download, FileJson, FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
@@ -156,7 +155,7 @@ export default function CV() {
 							onClick={() => generatePDF(false)}
 							className="flex gap-2"
 						>
-							<IconPdf className="h-4 w-4" />
+							<FileText className="h-4 w-4" />
 							{isGeneratingPdf ? "Generating PDF..." : "Generate & View PDF"}
 						</Button>
 
@@ -189,7 +188,7 @@ export default function CV() {
 								onClick={() => setViewMode("pdf")}
 								className="flex gap-2"
 							>
-								<IconPdf className="h-4 w-4" />
+								<FileText className="h-4 w-4" />
 								PDF View
 							</Button>
 						</div>

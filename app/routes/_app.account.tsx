@@ -4,9 +4,8 @@ import { Separator } from "@/components/ui/separator";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet, useOutletContext } from "@remix-run/react";
-import { IconCreditCard, IconTool, IconUser } from "@tabler/icons-react";
+import { CreditCard, Settings, User } from "lucide-react";
 import type { Currency, Subscription } from "types/stripe";
-
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 
@@ -43,17 +42,17 @@ export default function Account() {
 const sidebarNavItems = [
 	{
 		title: "Profile",
-		icon: <IconUser size={18} />,
+		icon: <User size={18} />,
 		href: "/account",
 	},
 	{
 		title: "Settings",
-		icon: <IconTool size={18} />,
+		icon: <Settings size={18} />,
 		href: "/account/settings",
 	},
 	{
 		title: "Billing",
-		icon: <IconCreditCard size={18} />,
+		icon: <CreditCard size={18} />,
 		href: "/account/billing",
 	},
 ];

@@ -4,10 +4,11 @@ import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form"
 import type { FormType } from "@/components/forms/profile/types";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
+import { type CVProfileInput, getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
+import type { Json } from "db_types";
 import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -19,25 +20,33 @@ type ActionData = {
 	noNavigate?: boolean;
 };
 
+type Education = {
+	school: string;
+	degree: string;
+	startDate: string;
+	endDate: string;
+	location?: string;
+	description?: string;
+};
+
+type ProfileData = {
+	first_name: string | null;
+	last_name: string | null;
+	email: string;
+	phone: string | null;
+	address: string | null;
+	linkedin: string | null;
+	github: string | null;
+	website: string | null;
+	education?: Education | null;
+	experience?: Json | null;
+	projects?: Json | null;
+	skills?: string[] | null;
+	completion?: Json | null;
+};
+
 type LoaderData = {
-	profile: {
-		first_name: string | null;
-		last_name: string | null;
-		email: string;
-		phone: string | null;
-		address: string | null;
-		linkedin: string | null;
-		github: string | null;
-		website: string | null;
-		education?: {
-			school: string;
-			degree: string;
-			startDate: string;
-			endDate: string;
-			location?: string;
-			description?: string;
-		};
-	} | null;
+	profile: ProfileData | null;
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -51,7 +60,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	}
 
 	try {
-		const profile = await getUserProfile({ supabase });
+		const dbProfile = await getUserProfile({ supabase });
+
+		const profile: ProfileData = {
+			...dbProfile,
+			education: dbProfile.education as unknown as Education,
+		};
+
 		return json<LoaderData>({ profile }, { headers });
 	} catch (error) {
 		return json<LoaderData>({ profile: null }, { headers });
@@ -74,20 +89,20 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	switch (formType) {
 		case "personal": {
-			const updatedProfile = {
-				first_name: formData.get("firstName"),
-				last_name: formData.get("lastName"),
-				email: formData.get("email"),
-				phone: formData.get("phone"),
-				address: formData.get("address"),
-				linkedin: formData.get("linkedin"),
-				github: formData.get("github"),
-				website: formData.get("website"),
+			const updatedProfile: Partial<CVProfileInput> = {
+				first_name: formData.get("firstName") as string,
+				last_name: formData.get("lastName") as string,
+				email: formData.get("email") as string,
+				phone: formData.get("phone") as string,
+				address: formData.get("address") as string,
+				linkedin: formData.get("linkedin") as string,
+				github: formData.get("github") as string,
+				website: formData.get("website") as string,
 			};
 			try {
 				await updateUserProfile({
 					supabase,
-					profile: updatedProfile as any,
+					profile: updatedProfile as CVProfileInput,
 				});
 			} catch (error) {
 				console.log(error);
@@ -98,9 +113,9 @@ export async function action({ request }: ActionFunctionArgs) {
 		}
 		case "education": {
 			// Get the existing profile data
-			let profile: Omit<LoaderData["profile"], "education"> & { education?: any };
+			let dbProfile: CVProfileInput;
 			try {
-				profile = await getUserProfile({ supabase });
+				dbProfile = await getUserProfile({ supabase });
 			} catch (error) {
 				console.log(error);
 				return json<ActionData>({ message: "Failed to get profile", success: false });
@@ -108,12 +123,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
 			// Create education data
 			const educationData = {
-				school: formData.get("school"),
-				degree: formData.get("degree"),
-				startDate: formData.get("startDate"),
-				endDate: formData.get("endDate"),
-				location: formData.get("location"),
-				description: formData.get("description"),
+				school: formData.get("school") as string,
+				degree: formData.get("degree") as string,
+				startDate: formData.get("startDate") as string,
+				endDate: formData.get("endDate") as string,
+				location: formData.get("location") as string,
+				description: formData.get("description") as string,
 			};
 
 			// Update profile with education data
@@ -121,9 +136,9 @@ export async function action({ request }: ActionFunctionArgs) {
 				await updateUserProfile({
 					supabase,
 					profile: {
-						...profile,
-						education: educationData,
-					} as any,
+						...dbProfile,
+						education: educationData as unknown as Json,
+					},
 				});
 			} catch (error) {
 				console.log(error);
@@ -307,12 +322,16 @@ export default function Profile() {
 					{selectedTab === "education" && (
 						<EducationForm
 							defaultValues={{
-								school: profile?.education?.school || "",
-								degree: profile?.education?.degree || "",
-								startDate: profile?.education?.startDate || "",
-								endDate: profile?.education?.endDate || "",
-								location: profile?.education?.location || "",
-								description: profile?.education?.description || "",
+								educations: [
+									{
+										school: profile?.education?.school || "",
+										degree: profile?.education?.degree || "",
+										startDate: profile?.education?.startDate || "",
+										endDate: profile?.education?.endDate || "",
+										location: profile?.education?.location || "",
+										description: [profile?.education?.description || ""],
+									},
+								],
 							}}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}

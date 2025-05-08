@@ -62,7 +62,7 @@ export async function updateUserProfile({
 		throw new Error("User not found");
 	}
 
-	const { created_at, ...updatableProfile } = profile;
+	const { created_at, updated_at, id, ...updatableProfile } = profile;
 
 	const { data: existingProfile, error: fetchError } = await supabase
 		.from("cv_profiles")

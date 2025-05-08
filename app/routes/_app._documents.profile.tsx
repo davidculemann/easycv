@@ -1,7 +1,14 @@
 import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
+import { ExperienceForm } from "@/components/forms/profile/experience-form";
 import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
-import type { EducationFormValues, EducationItem, FormType } from "@/components/forms/profile/types";
+import type {
+	EducationFormValues,
+	EducationItem,
+	ExperienceFormValues,
+	ExperienceItem,
+	FormType,
+} from "@/components/forms/profile/types";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { type CVProfileInput, getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
@@ -30,7 +37,7 @@ type ProfileData = {
 	github: string | null;
 	website: string | null;
 	education?: EducationItem[] | null;
-	experience?: Json | null;
+	experience?: ExperienceItem[] | null;
 	projects?: Json | null;
 	skills?: string[] | null;
 	completion?: Json | null;
@@ -161,14 +168,53 @@ export async function action({ request }: ActionFunctionArgs) {
 				},
 			});
 		}
-		case "experience":
-			// TODO: Implement experience form submission
+		case "experience": {
+			let dbProfile: CVProfileInput;
+			try {
+				dbProfile = await getUserProfile({ supabase });
+			} catch (error) {
+				console.error("Failed to get profile:", error);
+				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
+			const experiencesJson = formData.get("experiences") as string;
+			let experiences = null;
+
+			if (experiencesJson) {
+				try {
+					experiences = JSON.parse(experiencesJson);
+				} catch (e) {
+					console.error("Error parsing experiences JSON:", e);
+					return new Response(JSON.stringify({ message: "Invalid experience data format", success: false }), {
+						headers: { "Content-Type": "application/json" },
+					});
+				}
+			}
+
+			try {
+				await updateUserProfile({
+					supabase,
+					profile: {
+						...dbProfile,
+						experience: experiences,
+					},
+				});
+			} catch (error) {
+				console.error("Failed to update experience:", error);
+				return new Response(JSON.stringify({ message: "Failed to update experience", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
 			return new Response(JSON.stringify({ success: true, noNavigate }), {
 				headers: {
 					...headers,
 					"Content-Type": "application/json",
 				},
 			});
+		}
 		case "skills":
 			// TODO: Implement skills form submission
 			return new Response(JSON.stringify({ success: true, noNavigate }), {
@@ -258,9 +304,17 @@ export default function Profile() {
 				}
 				return false;
 			}
-			case "experience":
-				// TODO: Implement experience completion check
+			case "experience": {
+				if (Array.isArray(profile.experience) && profile.experience.length > 0) {
+					return Boolean(
+						profile.experience[0].company &&
+							profile.experience[0].role &&
+							profile.experience[0].startDate &&
+							profile.experience[0].endDate,
+					);
+				}
 				return false;
+			}
 			case "skills":
 				// TODO: Implement skills completion check
 				return false;
@@ -286,6 +340,24 @@ export default function Profile() {
 				endDate: edu.endDate || "",
 				location: edu.location || "",
 				description: Array.isArray(edu.description) ? edu.description : [edu.description || ""],
+			})),
+		};
+	};
+
+	const getExperienceFormData = (): ExperienceFormValues => {
+		if (!profile || !profile.experience) {
+			return {
+				experiences: [{ company: "", role: "", startDate: "", endDate: "", location: "", description: [""] }],
+			};
+		}
+		return {
+			experiences: profile.experience.map((exp: ExperienceItem) => ({
+				company: exp.company || "",
+				role: exp.role || "",
+				startDate: exp.startDate || "",
+				endDate: exp.endDate || "",
+				location: exp.location || "",
+				description: Array.isArray(exp.description) ? exp.description : [exp.description || ""],
 			})),
 		};
 	};
@@ -382,6 +454,14 @@ export default function Profile() {
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion("education")}
+						/>
+					)}
+					{selectedTab === "experience" && (
+						<ExperienceForm
+							defaultValues={getExperienceFormData()}
+							isSubmitting={isSubmitting}
+							formType={selectedTab}
+							wasCompleted={checkSectionCompletion("experience")}
 						/>
 					)}
 					{/* TODO: Add other form components */}

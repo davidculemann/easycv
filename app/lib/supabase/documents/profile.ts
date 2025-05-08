@@ -22,12 +22,10 @@ function parseJsonFields(profile: any) {
 			if (parsedProfile[field] === null) {
 				if (field === "skills") {
 					parsedProfile[field] = [];
-				} else if (field === "experience" || field === "projects") {
+				} else if (field === "experience" || field === "projects" || field === "education") {
 					parsedProfile[field] = [];
 				} else if (field === "completion") {
 					parsedProfile[field] = {};
-				} else if (field === "education") {
-					parsedProfile[field] = [];
 				}
 			}
 
@@ -65,6 +63,7 @@ export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Da
 		throw new Error(error.message);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { user_id, ...cvData } = data;
 
 	// Parse JSON fields before returning

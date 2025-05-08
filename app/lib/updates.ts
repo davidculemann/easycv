@@ -53,12 +53,13 @@ export const timelineItems: Update[] = [
 		},
 	},
 	{
+		status: "done",
 		headings: [
 			{ side: "left", text: "Add AI CV Generation" },
-			{ side: "right", text: "In Progress", variant: "secondary" },
+			{ side: "right", text: "Started (01/02/2025)", variant: "secondary" },
 		],
-		dotStatus: "current",
-		lineDone: false,
+		dotStatus: "done",
+		lineDone: true,
 		content: {
 			content: [
 				{
@@ -71,6 +72,26 @@ export const timelineItems: Update[] = [
 							text: " for the MVP CV generation feature.",
 						},
 					],
+				},
+			],
+		},
+	},
+	{
+		headings: [
+			{ side: "left", text: "User Profile Forms" },
+			{ side: "right", text: "Started (1/04/2025)", variant: "secondary" },
+		],
+		dotStatus: "current",
+		lineDone: false,
+		content: {
+			content: [
+				{
+					type: "paragraph",
+					text: "Building comprehensive forms to collect user information needed for CV and cover letter generation. This includes structured data collection for: personal information, work experience, education, skills, certifications, projects, and languages.",
+				},
+				{
+					type: "paragraph",
+					text: "Using React Hook Form with Zod validation to ensure data quality and a smooth user experience. The collected information will feed into the AI generation system to create more accurate and personalized career documents.",
 				},
 			],
 		},

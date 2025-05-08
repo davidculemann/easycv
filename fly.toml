@@ -1,4 +1,4 @@
-app = "remix-shadcn"
+app = "easycv"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
@@ -7,7 +7,7 @@ processes = []
 PORT = "3000"
 
 [mounts]
-source = "remix_shadcn_data"
+source = "easycv_data"
 destination = "/data"
 
 [[services]]

@@ -53,7 +53,7 @@ export async function createUserProfile({
 export async function updateUserProfile({
 	supabase,
 	profile,
-}: { supabase: SupabaseClient<Database>; profile: CVProfileInput }) {
+}: { supabase: SupabaseClient<Database>; profile: Partial<CVProfileInput> }) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
@@ -62,29 +62,23 @@ export async function updateUserProfile({
 		throw new Error("User not found");
 	}
 
-	const { created_at, updated_at, id, ...updatableProfile } = profile;
-
 	const { data: existingProfile, error: fetchError } = await supabase
 		.from("cv_profiles")
 		.select("id")
 		.eq("user_id", user.id)
 		.single();
 
-	if (fetchError && fetchError.code !== "PGRST116") {
-		throw new Error(fetchError.message);
-	}
-
 	let error: { message: string } | null = null;
 
 	if (existingProfile) {
 		const result = await supabase
 			.from("cv_profiles")
-			.update(updatableProfile)
+			.update(profile)
 			.eq("id", existingProfile.id)
 			.eq("user_id", user.id);
 		error = result.error;
 	} else {
-		const result = await supabase.from("cv_profiles").insert({ ...updatableProfile, user_id: user.id });
+		const result = await supabase.from("cv_profiles").insert({ ...profile, user_id: user.id });
 		error = result.error;
 	}
 

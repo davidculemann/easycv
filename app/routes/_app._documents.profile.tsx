@@ -32,7 +32,7 @@ type Education = {
 type ProfileData = {
 	first_name: string | null;
 	last_name: string | null;
-	email: string;
+	email: string | null;
 	phone: string | null;
 	address: string | null;
 	linkedin: string | null;
@@ -112,32 +112,12 @@ export async function action({ request }: ActionFunctionArgs) {
 			return json<ActionData>({ success: true, noNavigate }, { headers });
 		}
 		case "education": {
-			// Get the existing profile data
-			let dbProfile: CVProfileInput;
-			try {
-				dbProfile = await getUserProfile({ supabase });
-			} catch (error) {
-				console.log(error);
-				return json<ActionData>({ message: "Failed to get profile", success: false });
-			}
-
-			// Create education data
-			const educationData = {
-				school: formData.get("school") as string,
-				degree: formData.get("degree") as string,
-				startDate: formData.get("startDate") as string,
-				endDate: formData.get("endDate") as string,
-				location: formData.get("location") as string,
-				description: formData.get("description") as string,
-			};
-
-			// Update profile with education data
+			const educations = formData.get("educations");
 			try {
 				await updateUserProfile({
 					supabase,
 					profile: {
-						...dbProfile,
-						education: educationData as unknown as Json,
+						education: educations as unknown as Json,
 					},
 				});
 			} catch (error) {

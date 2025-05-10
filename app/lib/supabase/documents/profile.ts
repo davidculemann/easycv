@@ -1,12 +1,7 @@
+import type { CVProfileInput, ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
-export type CVProfileInput = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "id" | "user_id">;
-
-/**
- * Parse JSON fields from the database response
- * Handles both string-encoded JSON and native JSON objects
- */
 function parseJsonFields(profile: any) {
 	if (!profile) return null;
 
@@ -49,7 +44,7 @@ function parseJsonFields(profile: any) {
 	return parsedProfile;
 }
 
-export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Database> }) {
+export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Database> }): Promise<ParsedCVProfile> {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
@@ -63,10 +58,8 @@ export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Da
 		throw new Error(error.message);
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const { user_id, ...cvData } = data;
 
-	// Parse JSON fields before returning
 	return parseJsonFields(cvData);
 }
 

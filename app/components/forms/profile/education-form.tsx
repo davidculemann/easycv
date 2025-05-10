@@ -10,7 +10,7 @@ import { BaseForm } from "./base-form";
 import { BulletPoints } from "./bullet-points";
 import { DateField } from "./date-field";
 import { LocationField } from "./location-field";
-import { type EducationFormValues, type FormType, educationSchema } from "./types";
+import { type EducationFormValues, type FormType, educationSchema } from "./logic/types";
 
 interface EducationFormProps {
 	defaultValues: EducationFormValues;

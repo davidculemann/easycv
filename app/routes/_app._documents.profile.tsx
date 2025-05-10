@@ -1,17 +1,12 @@
 import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
+import type { CVProfileInput, EducationItem, ExperienceItem, FormType } from "@/components/forms/profile/logic/types";
+import { getEducationFormData, getExperienceFormData } from "@/components/forms/profile/logic/utils";
 import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
-import type {
-	EducationFormValues,
-	EducationItem,
-	ExperienceFormValues,
-	ExperienceItem,
-	FormType,
-} from "@/components/forms/profile/types";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { type CVProfileInput, getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
+import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
@@ -316,7 +311,14 @@ export default function Profile() {
 				return false;
 			}
 			case "projects":
-				// TODO: Implement projects completion check
+				if (Array.isArray(profile.projects) && profile.projects.length > 0) {
+					return Boolean(
+						profile.projects[0].name &&
+							profile.projects[0].description &&
+							profile.projects[0].skills &&
+							profile.projects[0].link,
+					);
+				}
 				return false;
 			case "skills":
 				// TODO: Implement skills completion check
@@ -325,42 +327,6 @@ export default function Profile() {
 				return false;
 		}
 	}
-
-	const getEducationFormData = (): EducationFormValues => {
-		if (!profile || !profile.education) {
-			return {
-				educations: [{ school: "", degree: "", startDate: "", endDate: "", location: "", description: [""] }],
-			};
-		}
-		return {
-			educations: profile.education.map((edu: EducationItem) => ({
-				school: edu.school || "",
-				degree: edu.degree || "",
-				startDate: edu.startDate || "",
-				endDate: edu.endDate || "",
-				location: edu.location || "",
-				description: Array.isArray(edu.description) ? edu.description : [edu.description || ""],
-			})),
-		};
-	};
-
-	const getExperienceFormData = (): ExperienceFormValues => {
-		if (!profile || !profile.experience) {
-			return {
-				experiences: [{ company: "", role: "", startDate: "", endDate: "", location: "", description: [""] }],
-			};
-		}
-		return {
-			experiences: profile.experience.map((exp: ExperienceItem) => ({
-				company: exp.company || "",
-				role: exp.role || "",
-				startDate: exp.startDate || "",
-				endDate: exp.endDate || "",
-				location: exp.location || "",
-				description: Array.isArray(exp.description) ? exp.description : [exp.description || ""],
-			})),
-		};
-	};
 
 	const sidebarItems = [
 		{
@@ -450,7 +416,7 @@ export default function Profile() {
 					)}
 					{selectedTab === "education" && (
 						<EducationForm
-							defaultValues={getEducationFormData()}
+							defaultValues={getEducationFormData(profile)}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion("education")}
@@ -458,7 +424,7 @@ export default function Profile() {
 					)}
 					{selectedTab === "experience" && (
 						<ExperienceForm
-							defaultValues={getExperienceFormData()}
+							defaultValues={getExperienceFormData(profile)}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion("experience")}

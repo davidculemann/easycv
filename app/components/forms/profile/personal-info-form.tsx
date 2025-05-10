@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Github, Globe, Linkedin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { BaseForm } from "./base-form";
-import { type FormType, type PersonalInfoFormValues, personalInfoSchema } from "./types";
+import { type FormType, type PersonalInfoFormValues, personalInfoSchema } from "./logic/types";
 
 interface PersonalInfoFormProps {
 	defaultValues: PersonalInfoFormValues;

@@ -10,7 +10,7 @@ import { BaseForm } from "./base-form";
 import { BulletPoints } from "./bullet-points";
 import { DateField } from "./date-field";
 import { LocationField } from "./location-field";
-import { type ExperienceFormValues, type FormType, experienceSchema } from "./types";
+import { type ExperienceFormValues, type FormType, experienceSchema } from "./logic/types";
 
 interface ExperienceFormProps {
 	defaultValues: ExperienceFormValues;

@@ -5,7 +5,7 @@ import { type FormMethod, Form as RemixForm, useSearchParams } from "@remix-run/
 import { ChevronRight, SaveIcon } from "lucide-react";
 import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import type { FormType } from "./types";
+import type { FormType } from "./logic/types";
 
 export interface BaseFormProps {
 	form: UseFormReturn<any>;

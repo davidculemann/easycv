@@ -1,5 +1,6 @@
 import { FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Kbd } from "@/components/ui/kbd";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { useRef, useState } from "react";
@@ -102,7 +103,7 @@ export function FormTagList({
 					</div>
 				))}
 
-				<div className="flex-1 min-w-[120px]">
+				<div className="flex-1 min-w-[120px] relative">
 					<div className="flex items-center">
 						<Input
 							ref={inputRef}
@@ -112,9 +113,17 @@ export function FormTagList({
 							onKeyDown={handleKeyDown}
 							onFocus={() => setIsFocused(true)}
 							onBlur={() => setIsFocused(false)}
-							placeholder={tags.length === 0 ? placeholder : ""}
-							className="border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-7 text-sm"
+							placeholder=""
+							className="border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-7 text-sm bg-transparent"
 						/>
+						{inputValue === "" && !isFocused && tags.length === 0 && (
+							<div
+								className="absolute left-0 top-1/2 -translate-y-1/2 pointer-events-none flex items-center text-muted-foreground text-sm pl-2 gap-2"
+								style={{ zIndex: 1 }}
+							>
+								Type and submit with<Kbd>↵ Enter</Kbd>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

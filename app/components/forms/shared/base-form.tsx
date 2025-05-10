@@ -6,6 +6,7 @@ import { ChevronRight, SaveIcon } from "lucide-react";
 import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import type { FormType } from "../profile/logic/types";
+import { getNextSectionName, sectionOrder } from "../profile/logic/utils";
 
 export interface BaseFormProps {
 	form: UseFormReturn<any>;
@@ -37,21 +38,8 @@ export function BaseForm({
 	const canSubmit = form.formState.isValid && (form.formState.isDirty || wasCompleted);
 	const shouldSkip = !form.formState.isDirty && wasCompleted;
 
-	const sectionOrder: FormType[] = ["personal", "education", "experience", "skills", "projects"];
 	const currentIndex = sectionOrder.indexOf(formType);
 	const nextSection = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
-
-	function getNextSectionName(section: FormType | null): string {
-		if (!section) return "";
-		const names: Record<FormType, string> = {
-			personal: "Personal",
-			education: "Education",
-			experience: "Experience",
-			skills: "Skills",
-			projects: "Complete",
-		};
-		return names[section];
-	}
 
 	function handleNext() {
 		if (nextSection) setSearchParams({ section: nextSection });

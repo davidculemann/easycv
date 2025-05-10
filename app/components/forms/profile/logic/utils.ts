@@ -3,10 +3,35 @@ import type {
 	EducationItem,
 	ExperienceFormValues,
 	ExperienceItem,
+	FormType,
 	ParsedCVProfile,
 	ProjectsFormValues,
 	ProjectsItem,
 } from "./types";
+
+export const sections = {
+	personal: "personal",
+	education: "education",
+	experience: "experience",
+	projects: "projects",
+	skills: "skills",
+} as const;
+
+export const sectionNames = {
+	personal: "Personal",
+	education: "Education",
+	experience: "Experience",
+	projects: "Projects",
+	skills: "Skills",
+} as const;
+
+export const sectionOrder = Object.values(sections);
+
+export function getNextSectionName(section: FormType | null): string {
+	if (!section) return "";
+
+	return sectionNames[section];
+}
 
 export const getEducationFormData = (profile: ParsedCVProfile): EducationFormValues => {
 	if (!profile || !profile.education) {

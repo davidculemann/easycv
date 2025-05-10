@@ -1,6 +1,7 @@
 import type { Database } from "db_types";
 import type { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
+import type { sections } from "./utils";
 
 export type CVProfileInput = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "id" | "user_id">;
 
@@ -72,8 +73,8 @@ export type SkillsFormValues = z.infer<typeof skillsSchema>;
 // Projects Schema
 export const projectsItemSchema = z.object({
 	name: z.string().min(1, "Project name is required"),
-	description: z.string(),
-	skills: z.array(z.string()).min(1, "At least one skill is required"),
+	description: z.string().optional(),
+	skills: z.array(z.string()).optional(),
 	link: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
 });
 
@@ -85,7 +86,7 @@ export type ProjectsItem = z.infer<typeof projectsItemSchema>;
 export type ProjectsFormValues = z.infer<typeof projectsSchema>;
 
 // Form Types
-export type FormType = "personal" | "education" | "experience" | "skills" | "projects";
+export type FormType = keyof typeof sections;
 
 export interface BaseFormProps {
 	form: UseFormReturn<any>;

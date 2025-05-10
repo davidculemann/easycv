@@ -1,7 +1,7 @@
 import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
-import type { CVProfileInput, EducationItem, ExperienceItem, FormType } from "@/components/forms/profile/logic/types";
+import type { CVProfileInput, FormType } from "@/components/forms/profile/logic/types";
 import {
 	getEducationFormData,
 	getExperienceFormData,
@@ -15,33 +15,9 @@ import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/prof
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
-import type { Json } from "db_types";
 import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-
-type ActionData = {
-	success?: boolean;
-	error?: string;
-	message?: string;
-	noNavigate?: boolean;
-};
-
-type ProfileData = {
-	first_name: string | null;
-	last_name: string | null;
-	email: string | null;
-	phone: string | null;
-	address: string | null;
-	linkedin: string | null;
-	github: string | null;
-	website: string | null;
-	education?: EducationItem[] | null;
-	experience?: ExperienceItem[] | null;
-	projects?: Json | null;
-	skills?: string[] | null;
-	completion?: Json | null;
-};
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
@@ -328,7 +304,7 @@ export default function Profile() {
 		}
 	}
 
-	const sidebarItems = [
+	const sidebarItems: { title: string; id: FormType; icon: JSX.Element }[] = [
 		{
 			title: "Personal Info",
 			id: "personal",

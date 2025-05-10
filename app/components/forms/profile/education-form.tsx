@@ -6,10 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { GraduationCap, Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { BaseForm } from "./base-form";
-import { BulletPoints } from "./bullet-points";
-import { DateField } from "./date-field";
-import { LocationField } from "./location-field";
+import { BaseForm } from "../shared/base-form";
+import { BulletPoints } from "../shared/bullet-points";
+import { DateField } from "../shared/date-field";
+import { LocationField } from "../shared/location-field";
 import { type EducationFormValues, type FormType, educationSchema } from "./logic/types";
 
 interface EducationFormProps {

@@ -2,13 +2,14 @@ import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Briefcase, Plus, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { BaseForm } from "./base-form";
+import { BaseForm } from "../shared/base-form";
+import FormTagList from "../shared/form-tag-list";
 import { type FormType, type ProjectsFormValues, projectsSchema } from "./logic/types";
-
 interface ProjectsFormProps {
 	defaultValues: ProjectsFormValues;
 	isSubmitting?: boolean;
@@ -96,6 +97,22 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 								</FormItem>
 							)}
 						/>
+
+						<FormField
+							control={form.control}
+							name={`projects.${index}.description`}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Description</FormLabel>
+									<FormControl>
+										<Textarea placeholder="Project description" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormTagList fieldName={`projects.${index}.skills`} tagLabel="Add Skill" label="Skills" />
 					</div>
 				))}
 

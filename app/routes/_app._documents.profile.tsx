@@ -189,13 +189,6 @@ export async function action({ request }: ActionFunctionArgs) {
 				},
 			});
 		}
-		case "skills":
-			return new Response(JSON.stringify({ success: true, noNavigate }), {
-				headers: {
-					...headers,
-					"Content-Type": "application/json",
-				},
-			});
 		case "projects": {
 			let dbProfile: CVProfileInput;
 			try {
@@ -232,6 +225,53 @@ export async function action({ request }: ActionFunctionArgs) {
 			} catch (error) {
 				console.error("Failed to update projects:", error);
 				return new Response(JSON.stringify({ message: "Failed to update projects", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
+			return new Response(JSON.stringify({ success: true, noNavigate }), {
+				headers: {
+					...headers,
+					"Content-Type": "application/json",
+				},
+			});
+		}
+		case "skills": {
+			let dbProfile: CVProfileInput;
+			try {
+				dbProfile = await getUserProfile({ supabase });
+			} catch (error) {
+				console.error("Failed to get profile:", error);
+				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
+			const skillsJson = formData.get("skills") as string;
+			let skills = null;
+
+			if (skillsJson) {
+				try {
+					skills = JSON.parse(skillsJson);
+				} catch (e) {
+					console.error("Error parsing skills JSON:", e);
+					return new Response(JSON.stringify({ message: "Invalid skills data format", success: false }), {
+						headers: { "Content-Type": "application/json" },
+					});
+				}
+			}
+
+			try {
+				await updateUserProfile({
+					supabase,
+					profile: {
+						...dbProfile,
+						skills: skills,
+					},
+				});
+			} catch (error) {
+				console.error("Failed to update skills:", error);
+				return new Response(JSON.stringify({ message: "Failed to update skills", success: false }), {
 					headers: { "Content-Type": "application/json" },
 				});
 			}
@@ -337,7 +377,9 @@ export default function Profile() {
 				}
 				return false;
 			case "skills":
-				// TODO: Implement skills completion check
+				if (Array.isArray(profile.skills) && profile.skills.length > 0) {
+					return Boolean(profile.skills[0]);
+				}
 				return false;
 			default:
 				return false;

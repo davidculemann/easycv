@@ -14,6 +14,7 @@ import { SkillsForm } from "@/components/forms/profile/skills-form";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
+import { handleProfileSectionUpdate } from "@/lib/supabase/profile-action-helpers";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
@@ -95,194 +96,38 @@ export async function action({ request }: ActionFunctionArgs) {
 				},
 			});
 		}
-		case "education": {
-			let dbProfile: CVProfileInput;
-			try {
-				dbProfile = await getUserProfile({ supabase });
-			} catch (error) {
-				console.error("Failed to get profile:", error);
-				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			const educationsJson = formData.get("educations") as string;
-			let educations = null;
-
-			if (educationsJson) {
-				try {
-					educations = JSON.parse(educationsJson);
-				} catch (e) {
-					console.error("Error parsing educations JSON:", e);
-					return new Response(JSON.stringify({ message: "Invalid education data format", success: false }), {
-						headers: { "Content-Type": "application/json" },
-					});
-				}
-			}
-
-			try {
-				await updateUserProfile({
-					supabase,
-					profile: {
-						...dbProfile,
-						education: educations,
-					},
-				});
-			} catch (error) {
-				console.error("Failed to update education:", error);
-				return new Response(JSON.stringify({ message: "Failed to update education", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			return new Response(JSON.stringify({ success: true, noNavigate }), {
-				headers: {
-					...headers,
-					"Content-Type": "application/json",
-				},
+		case "education":
+			return handleProfileSectionUpdate({
+				supabase,
+				headers,
+				formData,
+				sectionKey: "education",
+				formKey: "educations",
 			});
-		}
-		case "experience": {
-			let dbProfile: CVProfileInput;
-			try {
-				dbProfile = await getUserProfile({ supabase });
-			} catch (error) {
-				console.error("Failed to get profile:", error);
-				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			const experiencesJson = formData.get("experiences") as string;
-			let experiences = null;
-
-			if (experiencesJson) {
-				try {
-					experiences = JSON.parse(experiencesJson);
-				} catch (e) {
-					console.error("Error parsing experiences JSON:", e);
-					return new Response(JSON.stringify({ message: "Invalid experience data format", success: false }), {
-						headers: { "Content-Type": "application/json" },
-					});
-				}
-			}
-
-			try {
-				await updateUserProfile({
-					supabase,
-					profile: {
-						...dbProfile,
-						experience: experiences,
-					},
-				});
-			} catch (error) {
-				console.error("Failed to update experience:", error);
-				return new Response(JSON.stringify({ message: "Failed to update experience", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			return new Response(JSON.stringify({ success: true, noNavigate }), {
-				headers: {
-					...headers,
-					"Content-Type": "application/json",
-				},
+		case "experience":
+			return handleProfileSectionUpdate({
+				supabase,
+				headers,
+				formData,
+				sectionKey: "experience",
+				formKey: "experiences",
 			});
-		}
-		case "projects": {
-			let dbProfile: CVProfileInput;
-			try {
-				dbProfile = await getUserProfile({ supabase });
-			} catch (error) {
-				console.error("Failed to get profile:", error);
-				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			const projectsJson = formData.get("projects") as string;
-			let projects = null;
-
-			if (projectsJson) {
-				try {
-					projects = JSON.parse(projectsJson);
-				} catch (e) {
-					console.error("Error parsing projects JSON:", e);
-					return new Response(JSON.stringify({ message: "Invalid projects data format", success: false }), {
-						headers: { "Content-Type": "application/json" },
-					});
-				}
-			}
-
-			try {
-				await updateUserProfile({
-					supabase,
-					profile: {
-						...dbProfile,
-						projects: projects,
-					},
-				});
-			} catch (error) {
-				console.error("Failed to update projects:", error);
-				return new Response(JSON.stringify({ message: "Failed to update projects", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			return new Response(JSON.stringify({ success: true, noNavigate }), {
-				headers: {
-					...headers,
-					"Content-Type": "application/json",
-				},
+		case "projects":
+			return handleProfileSectionUpdate({
+				supabase,
+				headers,
+				formData,
+				sectionKey: "projects",
+				formKey: "projects",
 			});
-		}
-		case "skills": {
-			let dbProfile: CVProfileInput;
-			try {
-				dbProfile = await getUserProfile({ supabase });
-			} catch (error) {
-				console.error("Failed to get profile:", error);
-				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			const skillsJson = formData.get("skills") as string;
-			let skills = null;
-
-			if (skillsJson) {
-				try {
-					skills = JSON.parse(skillsJson);
-				} catch (e) {
-					console.error("Error parsing skills JSON:", e);
-					return new Response(JSON.stringify({ message: "Invalid skills data format", success: false }), {
-						headers: { "Content-Type": "application/json" },
-					});
-				}
-			}
-
-			try {
-				await updateUserProfile({
-					supabase,
-					profile: {
-						...dbProfile,
-						skills: skills,
-					},
-				});
-			} catch (error) {
-				console.error("Failed to update skills:", error);
-				return new Response(JSON.stringify({ message: "Failed to update skills", success: false }), {
-					headers: { "Content-Type": "application/json" },
-				});
-			}
-
-			return new Response(JSON.stringify({ success: true, noNavigate }), {
-				headers: {
-					...headers,
-					"Content-Type": "application/json",
-				},
+		case "skills":
+			return handleProfileSectionUpdate({
+				supabase,
+				headers,
+				formData,
+				sectionKey: "skills",
+				formKey: "skills",
 			});
-		}
 		default:
 			return new Response(JSON.stringify({ error: "Invalid form type" }), {
 				headers: {

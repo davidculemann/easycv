@@ -64,7 +64,7 @@ export function BaseForm({
 								<SaveIcon />
 							</Button>
 						)}
-						{!isFinalSection && shouldSkip && (
+						{!(isFinalSection && shouldSkip) && (
 							<Button
 								type={shouldSkip ? "button" : "submit"}
 								disabled={!canSubmit || isSubmitting}

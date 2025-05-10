@@ -194,17 +194,55 @@ export async function action({ request }: ActionFunctionArgs) {
 					"Content-Type": "application/json",
 				},
 			});
-		case "projects":
-			// TODO: Implement projects form submission
+		case "projects": {
+			let dbProfile: CVProfileInput;
+			try {
+				dbProfile = await getUserProfile({ supabase });
+			} catch (error) {
+				console.error("Failed to get profile:", error);
+				return new Response(JSON.stringify({ message: "Failed to get profile", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
+			const projectsJson = formData.get("projects") as string;
+			let projects = null;
+
+			if (projectsJson) {
+				try {
+					projects = JSON.parse(projectsJson);
+				} catch (e) {
+					console.error("Error parsing projects JSON:", e);
+					return new Response(JSON.stringify({ message: "Invalid projects data format", success: false }), {
+						headers: { "Content-Type": "application/json" },
+					});
+				}
+			}
+
+			try {
+				await updateUserProfile({
+					supabase,
+					profile: {
+						...dbProfile,
+						projects: projects,
+					},
+				});
+			} catch (error) {
+				console.error("Failed to update projects:", error);
+				return new Response(JSON.stringify({ message: "Failed to update projects", success: false }), {
+					headers: { "Content-Type": "application/json" },
+				});
+			}
+
 			return new Response(JSON.stringify({ success: true, noNavigate }), {
 				headers: {
 					...headers,
 					"Content-Type": "application/json",
 				},
 			});
+		}
 		default:
 			return new Response(JSON.stringify({ error: "Invalid form type" }), {
-				status: 400,
 				headers: {
 					...headers,
 					"Content-Type": "application/json",

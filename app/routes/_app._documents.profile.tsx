@@ -2,8 +2,13 @@ import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
 import type { CVProfileInput, EducationItem, ExperienceItem, FormType } from "@/components/forms/profile/logic/types";
-import { getEducationFormData, getExperienceFormData } from "@/components/forms/profile/logic/utils";
+import {
+	getEducationFormData,
+	getExperienceFormData,
+	getProjectsFormData,
+} from "@/components/forms/profile/logic/utils";
 import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
+import { ProjectsForm } from "@/components/forms/profile/projects-form";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
@@ -428,6 +433,14 @@ export default function Profile() {
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion("experience")}
+						/>
+					)}
+					{selectedTab === "projects" && (
+						<ProjectsForm
+							defaultValues={getProjectsFormData(profile)}
+							isSubmitting={isSubmitting}
+							formType={selectedTab}
+							wasCompleted={checkSectionCompletion("projects")}
 						/>
 					)}
 					{/* TODO: Add other form components */}

@@ -28,9 +28,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return { user, coverLetters, cvs, profile: parsedProfile };
 }
 
+type ActivityTab = "all" | "cvs" | "cover-letters";
+
 export default function Dashboard() {
 	const { coverLetters, cvs, profile } = useLoaderData<typeof loader>();
-	const [activeTab, setActiveTab] = useState<string>("all");
+	const [activeTab, setActiveTab] = useState<ActivityTab>("all");
 
 	const activityItems = useMemo(() => {
 		if (activeTab === "all") {
@@ -84,7 +86,12 @@ export default function Dashboard() {
 				<div className="flex items-center justify-between mb-4">
 					<h2 className="text-xl font-semibold">Recent Activity</h2>
 
-					<Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-auto">
+					<Tabs
+						defaultValue="all"
+						value={activeTab}
+						onValueChange={(value) => setActiveTab(value as ActivityTab)}
+						className="w-auto"
+					>
 						<TabsList>
 							<TabsTrigger value="all">All</TabsTrigger>
 							<TabsTrigger value="cvs">CVs</TabsTrigger>
@@ -99,7 +106,16 @@ export default function Dashboard() {
 							{activityItems?.length ? (
 								activityItems?.map((cv, index) => <ActivityItem key={cv.id} cv={cv} index={index} />)
 							) : (
-								<div className="p-6 text-center text-sm text-muted-foreground">No activity yet</div>
+								<div className="flex flex-col items-center justify-center h-full gap-2 p-6">
+									<div className="text-center text-sm text-muted-foreground">No activity yet</div>
+									<Link
+										to={activeTab === "cover-letters" ? "/cover-letter/new" : "/api/new-cv"}
+										className="w-full text-center text-sm hover:underline underline-offset-4 flex items-center justify-center gap-2"
+									>
+										Create your first {activeTab === "cover-letters" ? "cover letter" : "CV"}
+										<Plus className="w-4 h-4" />
+									</Link>
+								</div>
 							)}
 						</div>
 					</CardContent>

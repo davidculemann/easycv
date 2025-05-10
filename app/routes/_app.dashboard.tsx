@@ -1,7 +1,9 @@
-import { getSectionStats } from "@/components/forms/profile/logic/utils";
+import type { FormType, ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { checkSectionCompletion } from "@/components/forms/profile/logic/utils";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DATE_FORMATS, formatDate } from "@/lib/dates";
 import { getLastXDocuments } from "@/lib/supabase/documents/cvs";
@@ -75,42 +77,7 @@ export default function Dashboard() {
 					}}
 				/>
 
-				<Card className="flex flex-col">
-					<CardHeader className="pb-3">
-						<div className="flex items-center justify-between">
-							<CardTitle className="text-lg">Complete Your Profile</CardTitle>
-							<div className="h-9 w-9 flex items-center justify-center rounded-full bg-primary/10 text-primary">
-								<Icons.profile className="h-5 w-5" />
-							</div>
-						</div>
-						<CardDescription>Finish setting up your account</CardDescription>
-					</CardHeader>
-					<CardContent className="pb-4 flex-1">
-						<div className="space-y-2.5">
-							<div className="flex justify-between text-sm">
-								<span>Personal Information</span>
-								<span className="text-muted-foreground">{getSectionStats(profile).personal}</span>
-							</div>
-							<div className="flex justify-between text-sm">
-								<span>Work Experience</span>
-								<span className="text-muted-foreground">{getSectionStats(profile).experience}</span>
-							</div>
-							<div className="flex justify-between text-sm">
-								<span>Education</span>
-								<span className="text-muted-foreground">{getSectionStats(profile).education}</span>
-							</div>
-							<div className="flex justify-between text-sm">
-								<span>Skills & Certifications</span>
-								<span className="text-muted-foreground">{getSectionStats(profile).skills}</span>
-							</div>
-						</div>
-					</CardContent>
-					<CardFooter>
-						<Button className="w-full" asChild>
-							<Link to="/profile">Continue Setup</Link>
-						</Button>
-					</CardFooter>
-				</Card>
+				<ProfileCard profile={profile} icon={<Icons.profile className="h-5 w-5" />} />
 			</div>
 
 			<div>
@@ -139,6 +106,50 @@ export default function Dashboard() {
 				</Card>
 			</div>
 		</div>
+	);
+}
+
+type ProfileCardProps = {
+	profile: ParsedCVProfile;
+	icon: React.ReactNode;
+};
+
+export function ProfileCard({ profile, icon }: ProfileCardProps) {
+	const sections: FormType[] = ["personal", "experience", "education", "projects", "skills"];
+	const completed = sections.filter((section) => checkSectionCompletion(profile, section)).length;
+	const completionPercentage = Math.round((completed / sections.length) * 100);
+
+	return (
+		<Card className="flex flex-col h-full">
+			<CardHeader className="pb-3">
+				<div className="flex items-center justify-between">
+					<CardTitle className="text-lg">Complete Your Profile</CardTitle>
+					<div className="h-9 w-9 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+						{icon}
+					</div>
+				</div>
+				<CardDescription>Finish setting up your account</CardDescription>
+			</CardHeader>
+			<CardContent className="pb-4 flex-1 flex flex-col justify-center">
+				<div className="mb-4">
+					<div className="flex justify-between items-center text-sm mb-1.5">
+						<span>Profile Completion</span>
+						<div className="flex items-center gap-2">
+							<span className="text-primary font-medium">{completionPercentage}%</span>
+						</div>
+					</div>
+					<Progress value={completionPercentage} className="h-2" />
+				</div>
+			</CardContent>
+			<CardFooter>
+				<Button className="w-full relative overflow-hidden group" asChild>
+					<Link to="/profile">
+						<div className="absolute inset-0 bg-primary/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+						<span className="relative">Continue Setup</span>
+					</Link>
+				</Button>
+			</CardFooter>
+		</Card>
 	);
 }
 

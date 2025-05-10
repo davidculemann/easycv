@@ -31,7 +31,7 @@ export function BaseForm({
 	const [, setSearchParams] = useSearchParams();
 
 	useEffect(() => {
-		form.reset({}, { keepValues: true });
+		form.reset(defaultValues, { keepValues: true });
 	}, [defaultValues]);
 
 	const canSubmit = form.formState.isValid && (form.formState.isDirty || wasCompleted);

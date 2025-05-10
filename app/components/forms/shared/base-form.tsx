@@ -40,6 +40,7 @@ export function BaseForm({
 
 	const currentIndex = sectionOrder.indexOf(formType);
 	const nextSection = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
+	const isFinalSection = nextSection === null;
 
 	function handleNext() {
 		if (nextSection) setSearchParams({ section: nextSection });
@@ -63,17 +64,19 @@ export function BaseForm({
 								<SaveIcon />
 							</Button>
 						)}
-						<Button
-							type={shouldSkip ? "button" : "submit"}
-							disabled={!canSubmit || isSubmitting}
-							className="group relative"
-							{...(shouldSkip && {
-								onClick: handleNext,
-							})}
-						>
-							Next: {getNextSectionName(nextSection)}
-							<ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-						</Button>
+						{!isFinalSection && shouldSkip && (
+							<Button
+								type={shouldSkip ? "button" : "submit"}
+								disabled={!canSubmit || isSubmitting}
+								className="group relative"
+								{...(shouldSkip && {
+									onClick: handleNext,
+								})}
+							>
+								{isFinalSection ? "Finish" : `Next: ${getNextSectionName(nextSection)}`}
+								<ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+							</Button>
+						)}
 					</div>
 				</CardFooter>
 			</RemixForm>

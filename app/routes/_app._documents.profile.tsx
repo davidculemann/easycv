@@ -1,8 +1,9 @@
 import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
-import type { CVProfileInput, FormType } from "@/components/forms/profile/logic/types";
+import type { CVProfileInput, FormType, ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import {
+	checkSectionCompletion,
 	getEducationFormData,
 	getExperienceFormData,
 	getProjectsFormData,
@@ -140,7 +141,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Profile() {
 	const actionData = useActionData<typeof action>();
-	const { profile } = useLoaderData<typeof loader>();
+	const { profile } = useLoaderData<typeof loader>() as { profile: ParsedCVProfile };
 	const navigation = useNavigation();
 	const isSubmitting = navigation.state === "submitting";
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -154,7 +155,7 @@ export default function Profile() {
 	const completionPercentage = useMemo(() => {
 		return (
 			(sectionOrder.reduce((acc, section) => {
-				return acc + (checkSectionCompletion(section) ? 1 : 0);
+				return acc + (checkSectionCompletion(profile, section) ? 1 : 0);
 			}, 0) /
 				sectionOrder.length) *
 			100
@@ -182,54 +183,6 @@ export default function Profile() {
 			} else if (actionData.message) toast.error(actionData.message);
 		}
 	}, [actionData]);
-
-	function checkSectionCompletion(section: FormType): boolean {
-		if (!profile) return false;
-
-		switch (section) {
-			case "personal":
-				return Boolean(profile.first_name && profile.last_name && profile.email && profile.phone);
-			case "education": {
-				if (Array.isArray(profile.education) && profile.education.length > 0) {
-					return Boolean(
-						profile.education[0].school &&
-							profile.education[0].degree &&
-							profile.education[0].startDate &&
-							profile.education[0].endDate,
-					);
-				}
-				return false;
-			}
-			case "experience": {
-				if (Array.isArray(profile.experience) && profile.experience.length > 0) {
-					return Boolean(
-						profile.experience[0].company &&
-							profile.experience[0].role &&
-							profile.experience[0].startDate &&
-							profile.experience[0].endDate,
-					);
-				}
-				return false;
-			}
-			case "projects":
-				if (Array.isArray(profile.projects) && profile.projects.length > 0) {
-					return Boolean(
-						profile.projects[0].name &&
-							profile.projects[0].description &&
-							profile.projects[0].skills &&
-							profile.projects[0].link,
-					);
-				}
-				return false;
-			case "skills":
-				if (Array.isArray(profile.skills) && profile.skills.length > 0) {
-					return Boolean(profile.skills[0]);
-				}
-				return false;
-			default:
-				return false;
-		}
-	}
 
 	const sidebarItems: { title: string; id: FormType; icon: JSX.Element }[] = [
 		{
@@ -283,7 +236,7 @@ export default function Profile() {
 				<aside className="md:w-[200px] flex-col md:flex">
 					<SidebarNav
 						items={sidebarItems.map((item) => {
-							const isCompleted = checkSectionCompletion(item.id as FormType);
+							const isCompleted = checkSectionCompletion(profile, item.id as FormType);
 							return {
 								...item,
 								title: (
@@ -314,7 +267,7 @@ export default function Profile() {
 							}}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
-							wasCompleted={checkSectionCompletion("personal")}
+							wasCompleted={checkSectionCompletion(profile, "personal")}
 						/>
 					)}
 					{selectedTab === "education" && (
@@ -322,7 +275,7 @@ export default function Profile() {
 							defaultValues={getEducationFormData(profile)}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
-							wasCompleted={checkSectionCompletion("education")}
+							wasCompleted={checkSectionCompletion(profile, "education")}
 						/>
 					)}
 					{selectedTab === "experience" && (
@@ -330,7 +283,7 @@ export default function Profile() {
 							defaultValues={getExperienceFormData(profile)}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
-							wasCompleted={checkSectionCompletion("experience")}
+							wasCompleted={checkSectionCompletion(profile, "experience")}
 						/>
 					)}
 					{selectedTab === "projects" && (
@@ -338,7 +291,7 @@ export default function Profile() {
 							defaultValues={getProjectsFormData(profile)}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
-							wasCompleted={checkSectionCompletion("projects")}
+							wasCompleted={checkSectionCompletion(profile, "projects")}
 						/>
 					)}
 					{selectedTab === "skills" && (
@@ -346,7 +299,7 @@ export default function Profile() {
 							defaultValues={getSkillsFormData(profile)}
 							isSubmitting={isSubmitting}
 							formType={selectedTab}
-							wasCompleted={checkSectionCompletion("skills")}
+							wasCompleted={checkSectionCompletion(profile, "skills")}
 						/>
 					)}
 				</main>

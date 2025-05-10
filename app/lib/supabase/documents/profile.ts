@@ -2,7 +2,7 @@ import type { CVProfileInput, ParsedCVProfile } from "@/components/forms/profile
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
-function parseJsonFields(profile: any) {
+export function parseJsonFields(profile: any) {
 	if (!profile) return null;
 
 	const jsonFields = ["education", "experience", "skills", "projects", "completion"];

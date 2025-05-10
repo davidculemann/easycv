@@ -96,3 +96,71 @@ export const getSkillsFormData = (profile: ParsedCVProfile): SkillsFormValues =>
 		skills: profile.skills,
 	};
 };
+
+export function checkSectionCompletion(profile: ParsedCVProfile, section: FormType): boolean {
+	if (!profile) return false;
+
+	switch (section) {
+		case "personal":
+			return Boolean(profile.first_name && profile.last_name && profile.email && profile.phone);
+		case "education":
+			return (
+				Array.isArray(profile.education) &&
+				profile.education.length > 0 &&
+				Boolean(
+					profile.education[0].school &&
+						profile.education[0].degree &&
+						profile.education[0].startDate &&
+						profile.education[0].endDate,
+				)
+			);
+		case "experience":
+			return (
+				Array.isArray(profile.experience) &&
+				profile.experience.length > 0 &&
+				Boolean(
+					profile.experience[0].company &&
+						profile.experience[0].role &&
+						profile.experience[0].startDate &&
+						profile.experience[0].endDate,
+				)
+			);
+		case "projects":
+			return (
+				Array.isArray(profile.projects) &&
+				profile.projects.length > 0 &&
+				Boolean(
+					profile.projects[0].name &&
+						profile.projects[0].description &&
+						profile.projects[0].skills &&
+						profile.projects[0].link,
+				)
+			);
+		case "skills":
+			return Array.isArray(profile.skills) && profile.skills.length > 0 && Boolean(profile.skills[0]);
+		default:
+			return false;
+	}
+}
+
+export function getSectionStats(profile: ParsedCVProfile) {
+	return {
+		personal: checkSectionCompletion(profile, "personal") ? "Completed" : "Not Started",
+		education:
+			Array.isArray(profile?.education) && profile.education.length > 0
+				? `${profile.education.length} Item${profile.education.length > 1 ? "s" : ""}`
+				: "Not Started",
+		experience:
+			Array.isArray(profile?.experience) && profile.experience.length > 0
+				? `${profile.experience.length} Item${profile.experience.length > 1 ? "s" : ""}`
+				: "Not Started",
+		projects:
+			Array.isArray(profile?.projects) && profile.projects.length > 0
+				? `${profile.projects.length} Item${profile.projects.length > 1 ? "s" : ""}`
+				: "Not Started",
+		skills:
+			Array.isArray(profile?.skills) && profile.skills.length > 0
+				? `${profile.skills.length} Skill${profile.skills.length > 1 ? "s" : ""}`
+				: "Not Started",
+	};
+}

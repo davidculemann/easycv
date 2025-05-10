@@ -24,14 +24,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	} = await supabase.auth.getUser();
 	const { data: profile } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
 	const parsedProfile = parseJsonFields(profile);
-	const { cvs, coverLetters } = await getLastXDocuments({ supabase, limit: ACTIVITY_ITEMS_LIMIT });
-	return { user, coverLetters, cvs, profile: parsedProfile };
+	const { cvs, coverLetters, totalCvs, totalCoverLetters } = await getLastXDocuments({
+		supabase,
+		limit: ACTIVITY_ITEMS_LIMIT,
+	});
+	return { user, coverLetters, cvs, profile: parsedProfile, totalCvs, totalCoverLetters };
 }
 
 type ActivityTab = "all" | "cvs" | "cover-letters";
 
 export default function Dashboard() {
-	const { coverLetters, cvs, profile } = useLoaderData<typeof loader>();
+	const { coverLetters, cvs, profile, totalCvs, totalCoverLetters } = useLoaderData<typeof loader>();
 	const [activeTab, setActiveTab] = useState<ActivityTab>("all");
 
 	const activityItems = useMemo(() => {
@@ -60,7 +63,7 @@ export default function Dashboard() {
 					createLabel="New CV"
 					viewLink="/cvs"
 					viewLabel="View CVs"
-					count={cvs?.length || 0}
+					count={totalCvs}
 				/>
 
 				<ActionCard
@@ -71,7 +74,7 @@ export default function Dashboard() {
 					createLabel="New Cover Letter"
 					viewLink="/cover-letters"
 					viewLabel="View Cover Letters"
-					count={coverLetters?.length || 0}
+					count={totalCoverLetters}
 					banner={{
 						variant: "warning",
 						text: "A tailored cover letter can increase your interview chances by 40%",

@@ -41,9 +41,18 @@ export async function getLastXDocuments({
 	supabase,
 	limit = 5,
 }: { supabase: SupabaseClient<Database>; limit: number }) {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		throw new Error("User not found");
+	}
+
 	const { data, error } = await supabase
 		.from("cvs")
 		.select("id, title, created_at, updated_at")
+		.eq("user_id", user.id)
 		.order("created_at", { ascending: false })
 		.limit(limit);
 
@@ -54,6 +63,7 @@ export async function getLastXDocuments({
 	const { data: coverLetters, error: coverLetterError } = await supabase
 		.from("cover_letters")
 		.select("id, title, created_at, updated_at")
+		.eq("user_id", user.id)
 		.order("created_at", { ascending: false })
 		.limit(limit);
 
@@ -61,9 +71,21 @@ export async function getLastXDocuments({
 		throw new Error(coverLetterError.message);
 	}
 
+	const { count: totalCvsCount } = await supabase
+		.from("cvs")
+		.select("*", { count: "exact", head: true })
+		.eq("user_id", user.id);
+
+	const { count: totalCoverLettersCount } = await supabase
+		.from("cover_letters")
+		.select("*", { count: "exact", head: true })
+		.eq("user_id", user.id);
+
 	return {
 		cvs: data,
 		coverLetters: coverLetters,
+		totalCvs: totalCvsCount || 0,
+		totalCoverLetters: totalCoverLettersCount || 0,
 	};
 }
 

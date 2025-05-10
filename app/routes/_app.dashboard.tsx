@@ -1,13 +1,15 @@
+import { getSectionStats } from "@/components/forms/profile/logic/utils";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DATE_FORMATS, formatDate } from "@/lib/dates";
 import { getLastXDocuments } from "@/lib/supabase/documents/cvs";
+import { parseJsonFields } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { FileEdit, FilePlus, Plus } from "lucide-react";
+import { FileEdit, FilePlus, Info, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 
@@ -19,8 +21,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		data: { user },
 	} = await supabase.auth.getUser();
 	const { data: profile } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
+	const parsedProfile = parseJsonFields(profile);
 	const { cvs, coverLetters } = await getLastXDocuments({ supabase, limit: ACTIVITY_ITEMS_LIMIT });
-	return { user, coverLetters, cvs, profile };
+	return { user, coverLetters, cvs, profile: parsedProfile };
 }
 
 export default function Dashboard() {
@@ -65,6 +68,11 @@ export default function Dashboard() {
 					viewLink="/cover-letters"
 					viewLabel="View Your Cover Letters"
 					count={coverLetters?.length || 0}
+					banner={{
+						variant: "warning",
+						text: "A tailored cover letter can increase your interview chances by 40%",
+						show: coverLetters?.length === 0,
+					}}
 				/>
 
 				<Card className="flex flex-col">
@@ -81,19 +89,19 @@ export default function Dashboard() {
 						<div className="space-y-2.5">
 							<div className="flex justify-between text-sm">
 								<span>Personal Information</span>
-								<span className="text-muted-foreground">Completed</span>
+								<span className="text-muted-foreground">{getSectionStats(profile).personal}</span>
 							</div>
 							<div className="flex justify-between text-sm">
 								<span>Work Experience</span>
-								<span className="text-muted-foreground">2/3 Items</span>
+								<span className="text-muted-foreground">{getSectionStats(profile).experience}</span>
 							</div>
 							<div className="flex justify-between text-sm">
 								<span>Education</span>
-								<span className="text-muted-foreground">1/2 Items</span>
+								<span className="text-muted-foreground">{getSectionStats(profile).education}</span>
 							</div>
 							<div className="flex justify-between text-sm">
 								<span>Skills & Certifications</span>
-								<span className="text-muted-foreground">Not Started</span>
+								<span className="text-muted-foreground">{getSectionStats(profile).skills}</span>
 							</div>
 						</div>
 					</CardContent>
@@ -143,6 +151,11 @@ interface ActionCardProps {
 	viewLink: string;
 	viewLabel: string;
 	count: number;
+	banner?: {
+		variant: "warning" | "success" | "info";
+		text: string;
+		show: boolean;
+	};
 }
 
 function ActionCard({
@@ -154,6 +167,7 @@ function ActionCard({
 	viewLink,
 	viewLabel,
 	count,
+	banner,
 }: ActionCardProps) {
 	return (
 		<Card className="flex flex-col h-full">
@@ -171,6 +185,14 @@ function ActionCard({
 					<span>Total {title}:</span>
 					<span className="font-medium">{count}</span>
 				</div>
+				{banner?.show && (
+					<div className="mt-3 bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 text-xs p-2 rounded-md flex items-start gap-2">
+						<span className={`${banner.variant === "warning" ? "text-amber-500" : "text-emerald-500"}`}>
+							<Info className="w-4 h-4" />
+						</span>
+						<span>{banner.text}</span>
+					</div>
+				)}
 			</CardContent>
 			<CardFooter className="flex flex-col gap-2 mt-auto">
 				<Button variant="outline" className="w-full" asChild>

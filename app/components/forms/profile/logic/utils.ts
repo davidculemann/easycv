@@ -7,6 +7,7 @@ import type {
 	ParsedCVProfile,
 	ProjectsFormValues,
 	ProjectsItem,
+	SkillsFormValues,
 } from "./types";
 
 export const sections = {
@@ -82,5 +83,16 @@ export const getProjectsFormData = (profile: ParsedCVProfile): ProjectsFormValue
 			skills: project.skills || [],
 			link: project.link || "",
 		})),
+	};
+};
+
+export const getSkillsFormData = (profile: ParsedCVProfile): SkillsFormValues => {
+	if (!profile || !profile.skills) {
+		return {
+			skills: [""],
+		};
+	}
+	return {
+		skills: profile.skills,
 	};
 };

@@ -6,9 +6,11 @@ import {
 	getEducationFormData,
 	getExperienceFormData,
 	getProjectsFormData,
+	getSkillsFormData,
 } from "@/components/forms/profile/logic/utils";
 import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
 import { ProjectsForm } from "@/components/forms/profile/projects-form";
+import { SkillsForm } from "@/components/forms/profile/skills-form";
 import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
@@ -452,7 +454,14 @@ export default function Profile() {
 							wasCompleted={checkSectionCompletion("projects")}
 						/>
 					)}
-					{/* TODO: Add other form components */}
+					{selectedTab === "skills" && (
+						<SkillsForm
+							defaultValues={getSkillsFormData(profile)}
+							isSubmitting={isSubmitting}
+							formType={selectedTab}
+							wasCompleted={checkSectionCompletion("skills")}
+						/>
+					)}
 				</main>
 			</div>
 		</div>

@@ -10,6 +10,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { BaseForm } from "../shared/base-form";
 import FormTagList from "../shared/form-tag-list";
 import { type FormType, type ProjectsFormValues, projectsSchema } from "./logic/types";
+
 interface ProjectsFormProps {
 	defaultValues: ProjectsFormValues;
 	isSubmitting?: boolean;

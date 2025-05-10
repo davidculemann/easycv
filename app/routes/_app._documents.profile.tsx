@@ -43,10 +43,6 @@ type ProfileData = {
 	completion?: Json | null;
 };
 
-type LoaderData = {
-	profile: ProfileData | null;
-};
-
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
 	const {
@@ -216,7 +212,6 @@ export async function action({ request }: ActionFunctionArgs) {
 			});
 		}
 		case "skills":
-			// TODO: Implement skills form submission
 			return new Response(JSON.stringify({ success: true, noNavigate }), {
 				headers: {
 					...headers,
@@ -350,14 +345,14 @@ export default function Profile() {
 			icon: <Briefcase size={18} />,
 		},
 		{
-			title: "Skills",
-			id: "skills",
-			icon: <Wrench size={18} />,
-		},
-		{
 			title: "Projects",
 			id: "projects",
 			icon: <Folder size={18} />,
+		},
+		{
+			title: "Skills",
+			id: "skills",
+			icon: <Wrench size={18} />,
 		},
 	];
 

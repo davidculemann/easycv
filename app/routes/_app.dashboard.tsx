@@ -11,7 +11,7 @@ import { parseJsonFields } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { FileEdit, FilePlus, Info, Plus } from "lucide-react";
+import { ArrowRight, FileEdit, FilePlus, Info, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
 
@@ -57,9 +57,9 @@ export default function Dashboard() {
 					description="Create and manage your resumes"
 					icon={<Icons.cv className="h-5 w-5" />}
 					createLink="/api/new-cv"
-					createLabel="Create New CV"
+					createLabel="New CV"
 					viewLink="/cvs"
-					viewLabel="View Your CVs"
+					viewLabel="View CVs"
 					count={cvs?.length || 0}
 				/>
 
@@ -68,9 +68,9 @@ export default function Dashboard() {
 					description="Craft personalized cover letters"
 					icon={<Icons.coverLetter className="h-5 w-5" />}
 					createLink="/cover-letter/new"
-					createLabel="Create New Cover Letter"
+					createLabel="New Cover Letter"
 					viewLink="/cover-letters"
-					viewLabel="View Your Cover Letters"
+					viewLabel="View Cover Letters"
 					count={coverLetters?.length || 0}
 					banner={{
 						variant: "warning",
@@ -162,6 +162,7 @@ export function ProfileCard({ profile, icon }: ProfileCardProps) {
 					<Link to="/profile">
 						<div className="absolute inset-0 bg-primary/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
 						<span className="relative">Continue Setup</span>
+						<ArrowRight className="w-4 h-4 hover-slide-x" />
 					</Link>
 				</Button>
 			</CardFooter>

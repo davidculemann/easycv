@@ -79,3 +79,13 @@ html body[data-scroll-locked] {
 .font-heading {
 	font-family: "Cal Sans", sans-serif;
 }
+
+/*
+  Custom utility: Smooth slide-x on group hover
+  Usage: <element className="hover-slide-x" /> inside a group
+*/
+@layer utilities {
+	.hover-slide-x {
+		@apply group-hover:translate-x-1 transition-transform duration-300 ease-out;
+	}
+}

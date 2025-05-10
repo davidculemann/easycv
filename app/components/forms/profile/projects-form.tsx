@@ -112,7 +112,7 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 							)}
 						/>
 
-						<FormTagList fieldName={`projects.${index}.skills`} tagLabel="Add Skill" label="Skills" />
+						<FormTagList fieldName={`projects.${index}.skills`} label="Skills" maxTags={5} />
 					</div>
 				))}
 

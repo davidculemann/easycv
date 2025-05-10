@@ -7,7 +7,6 @@ import { useFormContext } from "react-hook-form";
 
 export interface FormTagListProps {
 	className?: string;
-	tagLabel?: string;
 	fieldName: string;
 	label: string;
 	maxTags?: number;
@@ -17,7 +16,6 @@ export interface FormTagListProps {
 export function FormTagList({
 	fieldName,
 	className,
-	tagLabel = "Add tag",
 	label,
 	maxTags = 20,
 	placeholder = "Type and press Enter",

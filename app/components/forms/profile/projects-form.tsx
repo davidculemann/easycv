@@ -113,6 +113,20 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 						/>
 
 						<FormTagList fieldName={`projects.${index}.skills`} label="Skills" maxTags={5} />
+
+						<FormField
+							control={form.control}
+							name={`projects.${index}.link`}
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Link</FormLabel>
+									<FormControl>
+										<Input placeholder="Project link" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 				))}
 

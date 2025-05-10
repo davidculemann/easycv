@@ -1,5 +1,16 @@
+import type { Database } from "db_types";
 import type { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
+
+export type CVProfileInput = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "id" | "user_id">;
+
+export type ParsedCVProfile = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "user_id"> & {
+	education: any[];
+	experience: any[];
+	skills: string[];
+	projects: any[];
+	completion: Record<string, any>;
+};
 
 // Personal Info Schema
 export const personalInfoSchema = z.object({
@@ -59,13 +70,18 @@ export const skillsSchema = z.object({
 export type SkillsFormValues = z.infer<typeof skillsSchema>;
 
 // Projects Schema
-export const projectsSchema = z.object({
+export const projectsItemSchema = z.object({
 	name: z.string().min(1, "Project name is required"),
 	description: z.string(),
-	startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-	endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
+	skills: z.array(z.string()).min(1, "At least one skill is required"),
+	link: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
 });
 
+export const projectsSchema = z.object({
+	projects: z.array(projectsItemSchema),
+});
+
+export type ProjectsItem = z.infer<typeof projectsItemSchema>;
 export type ProjectsFormValues = z.infer<typeof projectsSchema>;
 
 // Form Types

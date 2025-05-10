@@ -251,7 +251,7 @@ export default function Profile() {
 	const sectionParam = searchParams.get("section") as FormType | null;
 	const [selectedTab, setSelectedTab] = useState<FormType>(sectionParam ?? "personal");
 
-	const sectionOrder: FormType[] = ["personal", "education", "experience", "skills", "projects"];
+	const sectionOrder: FormType[] = ["personal", "education", "experience", "projects", "skills"];
 	const currentIndex = sectionOrder.indexOf(selectedTab);
 	const nextSection = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
 
@@ -273,7 +273,7 @@ export default function Profile() {
 	};
 
 	useEffect(() => {
-		if (sectionParam && ["personal", "education", "experience", "skills", "projects"].includes(sectionParam)) {
+		if (sectionParam && sectionOrder.includes(sectionParam)) {
 			setSelectedTab(sectionParam);
 		}
 	}, [sectionParam]);
@@ -315,11 +315,11 @@ export default function Profile() {
 				}
 				return false;
 			}
-			case "skills":
-				// TODO: Implement skills completion check
-				return false;
 			case "projects":
 				// TODO: Implement projects completion check
+				return false;
+			case "skills":
+				// TODO: Implement skills completion check
 				return false;
 			default:
 				return false;

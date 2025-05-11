@@ -299,9 +299,12 @@ function formatSkillsForLatex(skills: string[] = []): string {
 	return result || "No skills listed";
 }
 
-// Escape special LaTeX characters to prevent compilation errors
-function escapeLatex(text: string): string {
+function escapeLatex(text: string | string[] | null | undefined): string {
 	if (!text) return "";
+
+	if (Array.isArray(text)) {
+		text = text.join(", ");
+	}
 
 	return text
 		.replace(/\\/g, "\\textbackslash{}")

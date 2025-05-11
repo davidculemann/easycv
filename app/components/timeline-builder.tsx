@@ -42,10 +42,8 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
 		};
 	}, []);
 
-	// Map status to line completion
 	const lineDone = status === "done";
 
-	// Format the display date
 	const displayDate = `${startedDate ? `Started (${startedDate})` : ""}`;
 
 	const headings = [
@@ -85,7 +83,7 @@ export const TimelineBuilder: React.FC<TimelineBuilderProps> = ({ children, alte
 			setIsMobile(window.innerWidth <= 768);
 		};
 
-		handleResize(); // Check initial window size
+		handleResize();
 		window.addEventListener("resize", handleResize);
 
 		return () => {
@@ -93,13 +91,11 @@ export const TimelineBuilder: React.FC<TimelineBuilderProps> = ({ children, alte
 		};
 	}, []);
 
-	// Apply alternating sides to each TimelineEntry child
 	const childrenWithAlternatingSides = React.Children.map(children, (child, index) => {
 		if (!alternating || !React.isValidElement(child)) {
 			return child;
 		}
 
-		// Apply alternating sides (even indexes left, odd indexes right)
 		const side = index % 2 === 0 ? "left" : "right";
 
 		// Clone the child and add the content side prop

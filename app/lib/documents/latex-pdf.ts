@@ -290,24 +290,15 @@ function formatSkillsForLatex(skills: string[] = []): string {
 
 	let result = "";
 
-	// Add categorized skills
 	if (skillMap.size > 0) {
 		skillMap?.forEach((skills, category) => {
 			result += `\\textbf{${escapeLatex(category)}:} ${escapeLatex(skills.join(", "))}\\\\`;
 		});
 	}
 
-	// Add uncategorized skills in Frontend/Backend format to match your CV
 	if (uncategorizedSkills?.length > 0) {
 		if (skillMap.size > 0) result += "\\\\"; // Add separation if there were categorized skills
-
-		// Split skills into two groups to mimic your CV format
-		const halfwayIndex = Math.ceil(uncategorizedSkills.length / 2);
-		const firstHalf = uncategorizedSkills.slice(0, halfwayIndex);
-		const secondHalf = uncategorizedSkills.slice(halfwayIndex);
-
-		result += `\\textbf{Frontend:} ${escapeLatex(firstHalf.join(", "))}\\\\`;
-		result += `\\textbf{Backend:} ${escapeLatex(secondHalf.join(", "))}`;
+		result += `${escapeLatex(uncategorizedSkills.join(", "))}\\\\`;
 	}
 
 	return result || "No skills listed";

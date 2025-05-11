@@ -1,14 +1,12 @@
 import type {
 	EducationFormValues,
-	EducationItem,
 	ExperienceFormValues,
-	ExperienceItem,
 	FormType,
 	ParsedCVProfile,
 	ProjectsFormValues,
-	ProjectsItem,
 	SkillsFormValues,
 } from "./types";
+import { ensureValidProfile } from "./types";
 
 export const sections = {
 	personal: "personal",
@@ -34,133 +32,151 @@ export function getNextSectionName(section: FormType | null): string {
 	return sectionNames[section];
 }
 
-export const getEducationFormData = (profile: ParsedCVProfile): EducationFormValues => {
-	if (!profile || !profile.education) {
+export const getEducationFormData = (profile: ParsedCVProfile | null | undefined): EducationFormValues => {
+	const validProfile = profile ? ensureValidProfile(profile) : ensureValidProfile(null);
+
+	// If no education entries exist, return default
+	if (validProfile.education.length === 0) {
 		return {
 			educations: [{ school: "", degree: "", startDate: "", endDate: "", location: "", description: [""] }],
 		};
 	}
+
 	return {
-		educations: profile.education.map((edu: EducationItem) => ({
+		educations: validProfile.education.map((edu) => ({
 			school: edu.school || "",
 			degree: edu.degree || "",
 			startDate: edu.startDate || "",
 			endDate: edu.endDate || "",
 			location: edu.location || "",
-			description: Array.isArray(edu.description) ? edu.description : [edu.description || ""],
+			description: Array.isArray(edu.description)
+				? edu.description
+				: typeof edu.description === "string"
+					? [edu.description]
+					: [""],
 		})),
 	};
 };
 
-export const getExperienceFormData = (profile: ParsedCVProfile): ExperienceFormValues => {
-	if (!profile || !profile.experience) {
+export const getExperienceFormData = (profile: ParsedCVProfile | null | undefined): ExperienceFormValues => {
+	const validProfile = profile ? ensureValidProfile(profile) : ensureValidProfile(null);
+
+	if (validProfile.experience.length === 0) {
 		return {
 			experiences: [{ company: "", role: "", startDate: "", endDate: "", location: "", description: [""] }],
 		};
 	}
+
 	return {
-		experiences: profile.experience.map((exp: ExperienceItem) => ({
+		experiences: validProfile.experience.map((exp) => ({
 			company: exp.company || "",
 			role: exp.role || "",
 			startDate: exp.startDate || "",
 			endDate: exp.endDate || "",
 			location: exp.location || "",
-			description: Array.isArray(exp.description) ? exp.description : [exp.description || ""],
+			description: Array.isArray(exp.description)
+				? exp.description
+				: typeof exp.description === "string"
+					? [exp.description]
+					: [""],
 		})),
 	};
 };
 
-export const getProjectsFormData = (profile: ParsedCVProfile): ProjectsFormValues => {
-	if (!profile || !profile.projects) {
+export const getProjectsFormData = (profile: ParsedCVProfile | null | undefined): ProjectsFormValues => {
+	const validProfile = profile ? ensureValidProfile(profile) : ensureValidProfile(null);
+
+	if (validProfile.projects.length === 0) {
 		return {
 			projects: [{ name: "", description: "", skills: [], link: "" }],
 		};
 	}
+
 	return {
-		projects: profile.projects.map((project: ProjectsItem) => ({
+		projects: validProfile.projects.map((project) => ({
 			name: project.name || "",
 			description: project.description || "",
-			skills: project.skills || [],
+			skills: Array.isArray(project.skills) ? project.skills : [],
 			link: project.link || "",
 		})),
 	};
 };
 
-export const getSkillsFormData = (profile: ParsedCVProfile): SkillsFormValues => {
-	if (!profile || !profile.skills) {
-		return {
-			skills: [""],
-		};
+export const getSkillsFormData = (profile: ParsedCVProfile | null | undefined): SkillsFormValues => {
+	const validProfile = profile ? ensureValidProfile(profile) : ensureValidProfile(null);
+
+	if (validProfile.skills.length === 0) {
+		return { skills: [""] };
 	}
-	return {
-		skills: profile.skills,
-	};
+
+	return { skills: validProfile.skills };
 };
 
-export function checkSectionCompletion(profile: ParsedCVProfile, section: FormType): boolean {
-	if (!profile) return false;
+export function checkSectionCompletion(profile: ParsedCVProfile | null | undefined, section: FormType): boolean {
+	const validProfile = profile ? ensureValidProfile(profile) : ensureValidProfile(null);
 
 	switch (section) {
 		case "personal":
-			return Boolean(profile.first_name && profile.last_name && profile.email && profile.phone);
+			return Boolean(
+				validProfile.first_name && validProfile.last_name && validProfile.email && validProfile.phone,
+			);
 		case "education":
 			return (
-				Array.isArray(profile.education) &&
-				profile.education.length > 0 &&
+				Array.isArray(validProfile.education) &&
+				validProfile.education.length > 0 &&
 				Boolean(
-					profile.education[0].school &&
-						profile.education[0].degree &&
-						profile.education[0].startDate &&
-						profile.education[0].endDate,
+					validProfile.education[0].school &&
+						validProfile.education[0].degree &&
+						validProfile.education[0].startDate &&
+						validProfile.education[0].endDate,
 				)
 			);
 		case "experience":
 			return (
-				Array.isArray(profile.experience) &&
-				profile.experience.length > 0 &&
+				Array.isArray(validProfile.experience) &&
+				validProfile.experience.length > 0 &&
 				Boolean(
-					profile.experience[0].company &&
-						profile.experience[0].role &&
-						profile.experience[0].startDate &&
-						profile.experience[0].endDate,
+					validProfile.experience[0].company &&
+						validProfile.experience[0].role &&
+						validProfile.experience[0].startDate &&
+						validProfile.experience[0].endDate,
 				)
 			);
 		case "projects":
 			return (
-				Array.isArray(profile.projects) &&
-				profile.projects.length > 0 &&
-				Boolean(
-					profile.projects[0].name &&
-						profile.projects[0].description &&
-						profile.projects[0].skills &&
-						profile.projects[0].link,
-				)
+				Array.isArray(validProfile.projects) &&
+				validProfile.projects.length > 0 &&
+				Boolean(validProfile.projects[0].name)
 			);
 		case "skills":
-			return Array.isArray(profile.skills) && profile.skills.length > 0 && Boolean(profile.skills[0]);
+			return (
+				Array.isArray(validProfile.skills) && validProfile.skills.length > 0 && Boolean(validProfile.skills[0])
+			);
 		default:
 			return false;
 	}
 }
 
-export function getSectionStats(profile: ParsedCVProfile) {
+export function getSectionStats(profile: ParsedCVProfile | null | undefined) {
+	const validProfile = profile ? ensureValidProfile(profile) : ensureValidProfile(null);
+
 	return {
-		personal: checkSectionCompletion(profile, "personal") ? "Completed" : "Not Started",
+		personal: checkSectionCompletion(validProfile, "personal") ? "Completed" : "Not Started",
 		education:
-			Array.isArray(profile?.education) && profile.education.length > 0
-				? `${profile.education.length} Item${profile.education.length > 1 ? "s" : ""}`
+			Array.isArray(validProfile.education) && validProfile.education.length > 0
+				? `${validProfile.education.length} Item${validProfile.education.length > 1 ? "s" : ""}`
 				: "Not Started",
 		experience:
-			Array.isArray(profile?.experience) && profile.experience.length > 0
-				? `${profile.experience.length} Item${profile.experience.length > 1 ? "s" : ""}`
+			Array.isArray(validProfile.experience) && validProfile.experience.length > 0
+				? `${validProfile.experience.length} Item${validProfile.experience.length > 1 ? "s" : ""}`
 				: "Not Started",
 		projects:
-			Array.isArray(profile?.projects) && profile.projects.length > 0
-				? `${profile.projects.length} Item${profile.projects.length > 1 ? "s" : ""}`
+			Array.isArray(validProfile.projects) && validProfile.projects.length > 0
+				? `${validProfile.projects.length} Item${validProfile.projects.length > 1 ? "s" : ""}`
 				: "Not Started",
 		skills:
-			Array.isArray(profile?.skills) && profile.skills.length > 0
-				? `${profile.skills.length} Skill${profile.skills.length > 1 ? "s" : ""}`
+			Array.isArray(validProfile.skills) && validProfile.skills.length > 0
+				? `${validProfile.skills.length} Skill${validProfile.skills.length > 1 ? "s" : ""}`
 				: "Not Started",
 	};
 }

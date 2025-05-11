@@ -1,11 +1,14 @@
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 
-export function generateLatexTemplate(data: ParsedCVProfile) {
-	const { email, phone, website, linkedin, github, education, experience, skills, projects } = data;
+export function generateLatexTemplate(data: ParsedCVProfile | null | undefined) {
+	const validData = data ? ensureValidProfile(data) : ensureValidProfile(null);
 
-	//temporary hardcode
-	const firstName = "John";
-	const lastName = "Doe";
+	const { email, phone, website, linkedin, github, education, experience, skills, projects, first_name, last_name } =
+		validData;
+
+	const firstName = first_name || "John";
+	const lastName = last_name || "Doe";
 
 	const userName = `${firstName || ""} ${lastName || ""}`.trim() || "Your Name";
 	const userEmail = email || "email@example.com";
@@ -237,20 +240,14 @@ export function generateLatexTemplate(data: ParsedCVProfile) {
 		projects?.length > 0
 			? projects
 					.map((project) => {
-						// Handle date formatting - some projects may not have dates
-						const dateRange = project.startDate
-							? `${escapeLatex(project.startDate)}${project.endDate ? ` -- ${escapeLatex(project.endDate)}` : " -- Present"}`
-							: "";
-
 						return `
       \\resumeProjectHeading
-      {\\textbf{${escapeLatex(project.name)}}}${dateRange ? ` {${dateRange}}` : " {}"}
+      {\\textbf{${escapeLatex(project.name)}}}
       ${
-			project.description &&
-			(Array.isArray(project.description) ? project.description.length > 0 : project.description)
+			project.description
 				? `
       \\resumeItemListStart
-        \\resumeItem{${escapeLatex(project.description)}}
+        \\resumeItem{${escapeLatex(formatDescription(project.description))}}
       \\resumeItemListEnd`
 				: ""
 		}
@@ -264,7 +261,7 @@ export function generateLatexTemplate(data: ParsedCVProfile) {
 		}
     `;
 					})
-					.join("\n")
+					.join("\n\n")
 			: "\\resumeProjectHeading{No projects listed}{}"
 	}
     \\resumeSubHeadingListEnd
@@ -305,6 +302,16 @@ function formatSkillsForLatex(skills: string[] = []): string {
 	}
 
 	return result || "No skills listed";
+}
+
+function formatDescription(description: string | string[] | undefined): string {
+	if (!description) return "";
+
+	if (Array.isArray(description)) {
+		return description.join("\\\\");
+	}
+
+	return description;
 }
 
 function escapeLatex(text: string | string[] | null | undefined): string {

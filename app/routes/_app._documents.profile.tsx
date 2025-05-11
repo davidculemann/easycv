@@ -2,6 +2,7 @@ import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
 import type { CVProfileInput, FormType, ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import {
 	checkSectionCompletion,
 	getEducationFormData,
@@ -43,7 +44,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		});
 	} catch (error) {
 		console.error("Error loading profile:", error);
-		return new Response(JSON.stringify({ profile: null }), {
+		return new Response(JSON.stringify({ profile: ensureValidProfile(null) }), {
 			headers: {
 				...headers,
 				"Content-Type": "application/json",
@@ -141,7 +142,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Profile() {
 	const actionData = useActionData<typeof action>();
-	const { profile } = useLoaderData<typeof loader>() as { profile: ParsedCVProfile };
+	const { profile: rawProfile } = useLoaderData<typeof loader>() as { profile: ParsedCVProfile };
+	const profile = ensureValidProfile(rawProfile);
 	const navigation = useNavigation();
 	const isSubmitting = navigation.state === "submitting";
 	const [searchParams, setSearchParams] = useSearchParams();

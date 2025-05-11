@@ -1,9 +1,10 @@
 import type { CVProfileInput, ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
-export function parseJsonFields(profile: any) {
-	if (!profile) return null;
+export function parseJsonFields(profile: any): ParsedCVProfile {
+	if (!profile) return ensureValidProfile(null);
 
 	const jsonFields = ["education", "experience", "skills", "projects", "completion"];
 	const parsedProfile = { ...profile };
@@ -13,25 +14,11 @@ export function parseJsonFields(profile: any) {
 			if (typeof parsedProfile[field] === "string") {
 				parsedProfile[field] = JSON.parse(parsedProfile[field]);
 			}
-
-			if (parsedProfile[field] === null) {
-				if (field === "skills") {
-					parsedProfile[field] = [];
-				} else if (field === "experience" || field === "projects" || field === "education") {
-					parsedProfile[field] = [];
-				} else if (field === "completion") {
-					parsedProfile[field] = {};
-				}
-			}
-
-			if (field === "skills" || field === "experience" || field === "projects" || field === "education") {
-				if (!Array.isArray(parsedProfile[field]) && parsedProfile[field] !== null) {
-					parsedProfile[field] = [parsedProfile[field]];
-				}
-			}
 		} catch (e) {
 			console.error(`Error parsing ${field}:`, e);
-			if (field === "skills" || field === "experience" || field === "projects" || field === "education") {
+			if (field === "skills") {
+				parsedProfile[field] = [];
+			} else if (field === "experience" || field === "projects" || field === "education") {
 				parsedProfile[field] = [];
 			} else if (field === "completion") {
 				parsedProfile[field] = {};
@@ -41,7 +28,7 @@ export function parseJsonFields(profile: any) {
 		}
 	}
 
-	return parsedProfile;
+	return ensureValidProfile(parsedProfile);
 }
 
 export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Database> }): Promise<ParsedCVProfile> {
@@ -53,14 +40,20 @@ export async function getUserProfile({ supabase }: { supabase: SupabaseClient<Da
 		throw new Error("User not found");
 	}
 
-	const { data, error } = await supabase.from("cv_profiles").select("*").eq("user_id", user.id).single();
-	if (error) {
-		throw new Error(error.message);
+	try {
+		const { data, error } = await supabase.from("cv_profiles").select("*").eq("user_id", user.id).single();
+
+		if (error) {
+			console.warn("Error fetching profile:", error.message);
+			return ensureValidProfile(null);
+		}
+
+		const { user_id, ...cvData } = data;
+		return parseJsonFields(cvData);
+	} catch (error) {
+		console.error("Error in getUserProfile:", error);
+		return ensureValidProfile(null);
 	}
-
-	const { user_id, ...cvData } = data;
-
-	return parseJsonFields(cvData);
 }
 
 export async function createUserProfile({

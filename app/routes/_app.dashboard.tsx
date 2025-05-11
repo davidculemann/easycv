@@ -1,4 +1,5 @@
 import type { FormType, ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import { checkSectionCompletion } from "@/components/forms/profile/logic/utils";
 import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
@@ -22,13 +23,29 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
-	const { data: profile } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
-	const parsedProfile = parseJsonFields(profile);
+
+	let parsedProfile: ParsedCVProfile;
+	try {
+		const { data: profile } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
+		parsedProfile = parseJsonFields(profile);
+	} catch (error) {
+		console.error("Error fetching profile:", error);
+		parsedProfile = ensureValidProfile(null);
+	}
+
 	const { cvs, coverLetters, totalCvs, totalCoverLetters } = await getLastXDocuments({
 		supabase,
 		limit: ACTIVITY_ITEMS_LIMIT,
 	});
-	return { user, coverLetters, cvs, profile: parsedProfile, totalCvs, totalCoverLetters };
+
+	return {
+		user,
+		coverLetters,
+		cvs,
+		profile: parsedProfile,
+		totalCvs,
+		totalCoverLetters,
+	};
 }
 
 type ActivityTab = "all" | "cvs" | "cover-letters";
@@ -134,8 +151,11 @@ type ProfileCardProps = {
 };
 
 export function ProfileCard({ profile, icon }: ProfileCardProps) {
+	// Ensure profile is valid
+	const validProfile = ensureValidProfile(profile);
+
 	const sections: FormType[] = ["personal", "experience", "education", "projects", "skills"];
-	const completed = sections.filter((section) => checkSectionCompletion(profile, section)).length;
+	const completed = sections.filter((section) => checkSectionCompletion(validProfile, section)).length;
 	const completionPercentage = Math.round((completed / sections.length) * 100);
 
 	return (

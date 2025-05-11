@@ -1,3 +1,4 @@
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import ProviderSelector from "@/components/shared/provider-selector";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -19,12 +20,18 @@ import { z } from "zod";
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 
-	const profile = await getUserProfile({ supabase });
-	return { profile };
+	try {
+		const profile = await getUserProfile({ supabase });
+		return { profile };
+	} catch (error) {
+		console.error("Error loading profile:", error);
+		return { profile: ensureValidProfile(null) };
+	}
 }
 
 export default function CV() {
 	const { profile } = useLoaderData<typeof loader>();
+	const validProfile = ensureValidProfile(profile);
 	const params = useParams();
 	const { id } = params;
 	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
@@ -115,7 +122,7 @@ export default function CV() {
 	function handleGenerateCV() {
 		submit({
 			context: {
-				profile,
+				profile: validProfile,
 			},
 			model,
 		});

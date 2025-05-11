@@ -5,13 +5,133 @@ import type { sections } from "./utils";
 
 export type CVProfileInput = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "id" | "user_id">;
 
-export type ParsedCVProfile = Omit<Database["public"]["Tables"]["cv_profiles"]["Row"], "user_id"> & {
-	education: any[];
-	experience: any[];
+export type ParsedCVProfile = {
+	id: number;
+	first_name: string | null;
+	last_name: string | null;
+	email: string | null;
+	phone: string | null;
+	address: string | null;
+	linkedin: string | null;
+	github: string | null;
+	website: string | null;
+	created_at: string;
+	updated_at: string;
+
+	education: Array<{
+		school: string;
+		degree: string;
+		startDate: string;
+		endDate: string;
+		location?: string;
+		description?: string[] | string;
+	}>;
+	experience: Array<{
+		company: string;
+		role: string;
+		startDate: string;
+		endDate: string;
+		location?: string;
+		description?: string[] | string;
+	}>;
 	skills: string[];
-	projects: any[];
+	projects: Array<{
+		name: string;
+		description?: string | string[];
+		skills?: string[];
+		link?: string;
+	}>;
 	completion: Record<string, any>;
 };
+
+export const profileSchema = z.object({
+	first_name: z.string().nullable(),
+	last_name: z.string().nullable(),
+	email: z.string().nullable(),
+	phone: z.string().nullable(),
+	address: z.string().nullable(),
+	linkedin: z.string().nullable(),
+	github: z.string().nullable(),
+	website: z.string().nullable(),
+	education: z
+		.array(
+			z.object({
+				school: z.string(),
+				degree: z.string(),
+				startDate: z.string(),
+				endDate: z.string(),
+				location: z.string().optional(),
+				description: z.union([z.array(z.string()), z.string()]).optional(),
+			}),
+		)
+		.default([]),
+	experience: z
+		.array(
+			z.object({
+				company: z.string(),
+				role: z.string(),
+				startDate: z.string(),
+				endDate: z.string(),
+				location: z.string().optional(),
+				description: z.union([z.array(z.string()), z.string()]).optional(),
+			}),
+		)
+		.default([]),
+	skills: z.array(z.string()).default([]),
+	projects: z
+		.array(
+			z.object({
+				name: z.string(),
+				description: z.union([z.string(), z.array(z.string())]).optional(),
+				skills: z.array(z.string()).optional(),
+				link: z.string().optional(),
+			}),
+		)
+		.default([]),
+	completion: z.record(z.any()).default({}),
+});
+
+export function ensureValidProfile(profile: any): ParsedCVProfile {
+	if (!profile) {
+		return {
+			id: 0,
+			first_name: null,
+			last_name: null,
+			email: null,
+			phone: null,
+			address: null,
+			linkedin: null,
+			github: null,
+			website: null,
+			created_at: new Date().toISOString(),
+			updated_at: new Date().toISOString(),
+			education: [],
+			experience: [],
+			skills: [],
+			projects: [],
+			completion: {},
+		};
+	}
+
+	return {
+		id: profile.id ?? 0,
+		first_name: profile.first_name ?? null,
+		last_name: profile.last_name ?? null,
+		email: profile.email ?? null,
+		phone: profile.phone ?? null,
+		address: profile.address ?? null,
+		linkedin: profile.linkedin ?? null,
+		github: profile.github ?? null,
+		website: profile.website ?? null,
+		created_at: profile.created_at ?? new Date().toISOString(),
+		updated_at: profile.updated_at ?? new Date().toISOString(),
+		education: Array.isArray(profile.education) ? profile.education : [],
+		experience: Array.isArray(profile.experience) ? profile.experience : [],
+		skills: Array.isArray(profile.skills) ? profile.skills : [],
+		projects: Array.isArray(profile.projects) ? profile.projects : [],
+		completion: profile.completion && typeof profile.completion === "object" ? profile.completion : {},
+	};
+}
 
 // Personal Info Schema
 export const personalInfoSchema = z.object({
@@ -73,7 +193,7 @@ export type SkillsFormValues = z.infer<typeof skillsSchema>;
 // Projects Schema
 export const projectsItemSchema = z.object({
 	name: z.string().min(1, "Project name is required"),
-	description: z.string().optional(),
+	description: z.union([z.string(), z.array(z.string())]).optional(),
 	skills: z.array(z.string()).optional(),
 	link: z.string().url("Must be a valid URL").or(z.string().length(0)).optional(),
 });

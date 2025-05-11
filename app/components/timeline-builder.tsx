@@ -10,28 +10,20 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 export type Side = "left" | "right";
-export type Status = "done" | "default";
-export type Variant = "secondary" | "primary";
-export type DotStatus = "done" | "default" | "error" | "current" | "custom";
+export type Status = "done" | "current" | "default" | "error";
 
 export interface TimelineEntryProps {
-	status?: Status;
-	dotStatus: DotStatus;
-	lineDone: boolean;
-	leftHeading?: string;
-	rightHeading?: string;
-	date?: string;
+	status: Status;
+	title: string;
+	startedDate: string;
 	children: React.ReactNode;
 	contentSide?: Side;
 }
 
 export const TimelineEntry: React.FC<TimelineEntryProps> = ({
-	status = "default",
-	dotStatus,
-	lineDone,
-	leftHeading,
-	rightHeading,
-	date,
+	status,
+	title,
+	startedDate,
 	children,
 	contentSide = "right",
 }) => {
@@ -50,24 +42,16 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
 		};
 	}, []);
 
-	const headings = [];
+	// Map status to line completion
+	const lineDone = status === "done";
 
-	if (leftHeading) {
-		headings.push({ side: "left" as Side, text: leftHeading });
-	}
+	// Format the display date
+	const displayDate = `${startedDate ? `Started (${startedDate})` : ""}`;
 
-	if (date) {
-		headings.push({
-			side: "right" as Side,
-			text: date,
-			variant: "secondary" as Variant,
-		});
-	} else if (rightHeading) {
-		headings.push({
-			side: "right" as Side,
-			text: rightHeading,
-		});
-	}
+	const headings = [
+		{ side: "left" as Side, text: title },
+		{ side: "right" as Side, text: displayDate, variant: "secondary" as const },
+	];
 
 	return (
 		<TimelineItem status={status}>
@@ -81,14 +65,19 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
 					{heading.text}
 				</TimelineHeading>
 			))}
-			<TimelineDot status={dotStatus} />
+			<TimelineDot status={status} />
 			<TimelineLine done={lineDone} />
 			<TimelineContent side={isMobile ? "right" : contentSide}>{children}</TimelineContent>
 		</TimelineItem>
 	);
 };
 
-export const TimelineBuilder: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export interface TimelineBuilderProps {
+	children: React.ReactNode;
+	alternating?: boolean;
+}
+
+export const TimelineBuilder: React.FC<TimelineBuilderProps> = ({ children, alternating = false }) => {
 	const [isMobile, setIsMobile] = React.useState(false);
 
 	React.useEffect(() => {
@@ -104,9 +93,25 @@ export const TimelineBuilder: React.FC<{ children: React.ReactNode }> = ({ child
 		};
 	}, []);
 
+	// Apply alternating sides to each TimelineEntry child
+	const childrenWithAlternatingSides = React.Children.map(children, (child, index) => {
+		if (!alternating || !React.isValidElement(child)) {
+			return child;
+		}
+
+		// Apply alternating sides (even indexes left, odd indexes right)
+		const side = index % 2 === 0 ? "left" : "right";
+
+		// Clone the child and add the content side prop
+		return React.cloneElement(child, {
+			...child.props,
+			contentSide: side,
+		});
+	});
+
 	return (
 		<Timeline positions={isMobile ? "left" : "center"} className="m-auto px-4 sm:px-6 lg:px-8 xl:max-w-[90rem]">
-			{children}
+			{alternating ? childrenWithAlternatingSides : children}
 		</Timeline>
 	);
 };

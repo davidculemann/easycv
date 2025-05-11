@@ -1,44 +1,8 @@
-import { Link } from "@remix-run/react";
 import { type VariantProps, cva } from "class-variance-authority";
 import { Check, Circle, X } from "lucide-react";
 import React from "react";
 
-import type { RichContent } from "@/lib/updates";
 import { cn } from "@/lib/utils";
-
-function RichContentRenderer({ content }: { content: RichContent[] }) {
-	return (
-		<>
-			{content.map((item, index) => {
-				switch (item.type) {
-					case "paragraph":
-						return (
-							<p key={index} className="mb-4 last:mb-0">
-								{item.text}
-								{item.children && <RichContentRenderer content={item.children} />}
-							</p>
-						);
-					case "bold":
-						return <strong key={index}>{item.text}</strong>;
-					case "italic":
-						return <em key={index}>{item.text}</em>;
-					case "link":
-						return (
-							<Link
-								key={index}
-								to={item.href || "#"}
-								className="text-primary underline-offset-4 hover:underline"
-							>
-								{item.text}
-							</Link>
-						);
-					default:
-						return item.text;
-				}
-			})}
-		</>
-	);
-}
 
 const timelineVariants = cva("grid", {
 	variants: {
@@ -139,15 +103,12 @@ const timelineContentVariants = cva("row-start-2 row-end-2 pb-8 text-muted-foreg
 
 interface TimelineContentProps
 	extends React.HTMLAttributes<HTMLDivElement>,
-		VariantProps<typeof timelineContentVariants> {
-	children?: React.ReactNode;
-	richContent?: RichContent[];
-}
+		VariantProps<typeof timelineContentVariants> {}
 
 const TimelineContent = React.forwardRef<HTMLDivElement, TimelineContentProps>(
-	({ className, side, children, richContent, ...props }, ref) => (
+	({ className, side, children, ...props }, ref) => (
 		<div className={cn(timelineContentVariants({ side }), className)} ref={ref} {...props}>
-			{richContent ? <RichContentRenderer content={richContent} /> : children}
+			{children}
 		</div>
 	),
 );

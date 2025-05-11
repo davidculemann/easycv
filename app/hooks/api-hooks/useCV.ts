@@ -1,4 +1,4 @@
-import type { CVContext } from "@/lib/documents/types";
+import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import {
 	createCVDocument,
@@ -45,7 +45,8 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 	});
 
 	const { mutate: updateCV, isPending: isUpdatingCV } = useMutation({
-		mutationFn: ({ id, cv }: { id: string; cv: Partial<CVContext> }) => updateCVDocument({ supabase, id, cv }),
+		mutationFn: ({ id, cv }: { id: string; cv: Partial<ParsedCVProfile> }) =>
+			updateCVDocument({ supabase, id, cv }),
 		mutationKey: [QUERY_KEYS.cvs.single, id],
 	});
 

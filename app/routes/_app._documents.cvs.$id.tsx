@@ -23,8 +23,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	return { profile };
 }
 
-//TODO: Use profile to prefill the form
-
 export default function CV() {
 	const { profile } = useLoaderData<typeof loader>();
 	const params = useParams();
@@ -53,13 +51,11 @@ export default function CV() {
 
 	const dataToDisplay = object?.cv ?? cv?.cv;
 
-	// Reset PDF view when changing CVs
 	useEffect(() => {
 		setPdfData(null);
 		setViewMode("json");
 	}, [id]);
 
-	// Function to generate and display PDF
 	const generatePDF = async (download = false) => {
 		if (!dataToDisplay) return;
 
@@ -68,16 +64,13 @@ export default function CV() {
 			const formData = new FormData();
 			formData.append("cvId", id || "");
 			formData.append("cvData", JSON.stringify(dataToDisplay));
-			formData.append("profile", JSON.stringify(profile));
 
-			// Submit to the resource route and get the response
 			const response = await fetch("/api/cv/pdf-latex", {
 				method: "POST",
 				body: formData,
 			});
 
 			if (!response.ok) {
-				// Handle error response
 				const errorBuffer = await response.arrayBuffer();
 				const errorText = new TextDecoder().decode(errorBuffer);
 				console.error("Error response:", errorText);
@@ -93,11 +86,9 @@ export default function CV() {
 				throw new Error(errorMessage);
 			}
 
-			// Create a blob from the PDF Stream
 			const blob = await response.blob();
 
 			if (download) {
-				// Download the PDF
 				const url = window.URL.createObjectURL(blob);
 				const a = document.createElement("a");
 				a.href = url;
@@ -108,7 +99,6 @@ export default function CV() {
 				a.remove();
 				toast.success("PDF downloaded successfully");
 			} else {
-				// Simply set the URL for the iframe
 				const url = window.URL.createObjectURL(blob);
 				setPdfData(url);
 				setViewMode("pdf");
@@ -170,7 +160,6 @@ export default function CV() {
 						</Button>
 					</div>
 
-					{/* View Toggle Buttons */}
 					{pdfData && (
 						<div className="flex gap-2 mt-2">
 							<Button

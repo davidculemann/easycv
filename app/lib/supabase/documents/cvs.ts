@@ -1,4 +1,4 @@
-import type { CVContext } from "@/lib/documents/types";
+import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
@@ -153,7 +153,7 @@ export async function updateCVDocument({
 	supabase,
 	id,
 	cv,
-}: { supabase: SupabaseClient<Database>; id: string; cv: Partial<CVContext> }) {
+}: { supabase: SupabaseClient<Database>; id: string; cv: Partial<ParsedCVProfile> }) {
 	const { education, experience, skills, projects } = cv;
 	const { data, error } = await supabase
 		.from("cvs")

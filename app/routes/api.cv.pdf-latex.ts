@@ -1,5 +1,5 @@
 import { generateLatexTemplate } from "@/lib/documents/latex-pdf";
-import type { CVContext, FullCVContext, ProfileContext } from "@/lib/documents/types";
+import { parseJsonFields } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -9,7 +9,6 @@ export async function action({ request }: ActionFunctionArgs) {
 	try {
 		const { supabase } = getSupabaseWithHeaders({ request });
 
-		// Verify authentication
 		const {
 			data: { user },
 		} = await supabase.auth.getUser();
@@ -17,25 +16,18 @@ export async function action({ request }: ActionFunctionArgs) {
 			return json({ error: "Unauthorized" }, { status: 401 });
 		}
 
-		// Get the CV data from request
 		const formData = await request.formData();
 		const cvId = formData.get("cvId")?.toString();
 		const cvData = formData.get("cvData")?.toString();
-		const profile = formData.get("profile")?.toString() ?? "{}";
 
 		if (!cvId || !cvData) {
 			return json({ error: "Missing required data" }, { status: 400 });
 		}
 
-		// Parse the CV data
-		const data = JSON.parse(cvData) as CVContext;
-		const profileData = JSON.parse(profile) as ProfileContext;
-		const joinedData = { ...data, ...profileData } as FullCVContext;
+		const data = parseJsonFields(cvData);
 
-		// Generate LaTeX content
-		const latexContent = generateLatexTemplate(joinedData);
+		const latexContent = generateLatexTemplate(data);
 
-		// FIXED: The service doesn't accept the filename parameter - removed it
 		try {
 			const response = await axios.post(
 				"https://latex.ytotech.com/builds/sync",
@@ -59,7 +51,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 			console.log("LaTeX API response status:", response.status);
 
-			// Return the PDF
 			return new Response(response.data, {
 				status: 200,
 				headers: {
@@ -69,18 +60,15 @@ export async function action({ request }: ActionFunctionArgs) {
 			});
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
-				// Convert the buffer to readable format
 				if (error.response?.data) {
 					const errorData = error.response.data;
 					if (Buffer.isBuffer(errorData)) {
 						const errorText = errorData.toString("utf-8");
 						console.error("LaTeX API error:", errorText);
 						try {
-							// Try to parse as JSON
 							const errorJson = JSON.parse(errorText);
 							return json({ error: errorJson.error || "LaTeX API error" }, { status: 500 });
 						} catch {
-							// If not JSON, return as is
 							return json({ error: errorText }, { status: 500 });
 						}
 					}

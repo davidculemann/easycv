@@ -1,8 +1,11 @@
-import type { FullCVContext } from "@/lib/documents/types";
+import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 
-export function generateLatexTemplate(data: FullCVContext) {
-	const { firstName, lastName, email, phone, website, linkedin, github, education, experience, skills, projects } =
-		data;
+export function generateLatexTemplate(data: ParsedCVProfile) {
+	const { email, phone, website, linkedin, github, education, experience, skills, projects } = data;
+
+	//temporary hardcode
+	const firstName = "John";
+	const lastName = "Doe";
 
 	const userName = `${firstName || ""} ${lastName || ""}`.trim() || "Your Name";
 	const userEmail = email || "email@example.com";

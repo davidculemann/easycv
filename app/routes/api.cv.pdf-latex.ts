@@ -1,5 +1,4 @@
 import { generateLatexTemplate } from "@/lib/documents/latex-pdf";
-import { parseJsonFields } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
@@ -24,7 +23,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			return json({ error: "Missing required data" }, { status: 400 });
 		}
 
-		const data = parseJsonFields(cvData);
+		const data = JSON.parse(cvData);
 
 		const latexContent = generateLatexTemplate(data);
 

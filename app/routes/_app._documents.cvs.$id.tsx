@@ -22,7 +22,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	try {
 		const profile = await getUserProfile({ supabase });
-		return { profile };
+		return { profile: ensureValidProfile(profile) };
 	} catch (error) {
 		console.error("Error loading profile:", error);
 		return { profile: ensureValidProfile(null) };
@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function CV() {
 	const { profile } = useLoaderData<typeof loader>();
-	const validProfile = ensureValidProfile(profile);
+
 	const params = useParams();
 	const { id } = params;
 	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
@@ -42,7 +42,7 @@ export default function CV() {
 	const [pdfData, setPdfData] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<"json" | "pdf">("json");
 
-	const { isLoading, object, submit, ...attributes } = useObject({
+	const { isLoading, object, submit } = useObject({
 		api: "/api/cv/generate",
 		schema: z.object({
 			cv: CVContextSchema,
@@ -56,7 +56,7 @@ export default function CV() {
 		updateCV({ id: id ?? "", cv: object.cv as CVContext });
 	}
 
-	const dataToDisplay = object?.cv ?? cv?.cv;
+	const dataToDisplay = object?.cv ?? profile;
 
 	useEffect(() => {
 		setPdfData(null);
@@ -122,7 +122,7 @@ export default function CV() {
 	function handleGenerateCV() {
 		submit({
 			context: {
-				profile: validProfile,
+				profile: profile,
 			},
 			model,
 		});

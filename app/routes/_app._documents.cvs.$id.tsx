@@ -191,7 +191,7 @@ export default function CV() {
 					)}
 				</div>
 			</ResizablePanel>
-			<ResizableHandle />
+			<ResizableHandle withHandle />
 			<ResizablePanel style={{ viewTransitionName: `cv-card-${id}`, contain: "layout" }}>
 				<div className="flex h-full overflow-auto">
 					{viewMode === "json" ? (

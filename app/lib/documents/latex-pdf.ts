@@ -1,6 +1,13 @@
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 
+interface Project {
+	name: string;
+	description?: string | string[];
+	link?: string;
+	skills?: string;
+}
+
 export function generateLatexTemplate(data: ParsedCVProfile | null | undefined) {
 	const validData = data ? ensureValidProfile(data) : ensureValidProfile(null);
 
@@ -184,7 +191,7 @@ export function generateLatexTemplate(data: ParsedCVProfile | null | undefined) 
 						(edu) => `
   \\resumeSubheading
   {${escapeLatex(edu.school)}}{${escapeLatex(edu.location || "")}}
-  {${escapeLatex(edu.degree)}}{${escapeLatex(edu.startDate)} -- ${escapeLatex(edu.endDate || "Present")}}
+  {${escapeLatex(edu.degree)}}{${formatDate(edu.startDate)} -- ${formatDate(edu.endDate)}}
   ${
 		edu.description && (Array.isArray(edu.description) ? edu.description.length > 0 : edu.description)
 			? `
@@ -217,7 +224,7 @@ export function generateLatexTemplate(data: ParsedCVProfile | null | undefined) 
 					.map(
 						(exp) => `
     \\resumeSubheadingFormatted{${escapeLatex(exp.company)}}{${escapeLatex(exp.location || "")}}
-     \\resumeSubSubheadingFormatted{${escapeLatex(exp.role)}}{${escapeLatex(exp.startDate)} -- ${escapeLatex(exp.endDate || "Present")}}
+     \\resumeSubSubheadingFormatted{${escapeLatex(exp.role)}}{${formatDate(exp.startDate)} -- ${formatDate(exp.endDate)}}
      ${
 			exp.description && (Array.isArray(exp.description) ? exp.description.length > 0 : exp.description)
 				? `
@@ -240,9 +247,15 @@ export function generateLatexTemplate(data: ParsedCVProfile | null | undefined) 
 		projects?.length > 0
 			? projects
 					.map((project) => {
+						const projectLink = project.link
+							? ` $|$ \\href{${escapeLatex(project.link)}}{${escapeLatex(project.link)}}`
+							: "";
+						const projectSkills = project.skills ? `\\emph{${escapeLatex(project.skills)}}` : "";
+
 						return `
       \\resumeProjectHeading
-      {\\textbf{${escapeLatex(project.name)}}}
+      {\\textbf{${escapeLatex(project.name)}}${projectLink}}
+      {${projectSkills}}
       ${
 			project.description
 				? `
@@ -251,15 +264,7 @@ export function generateLatexTemplate(data: ParsedCVProfile | null | undefined) 
       \\resumeItemListEnd`
 				: ""
 		}
-      ${
-			project.link
-				? `
-      \\resumeItemListStart
-        \\resumeItem{\\href{${escapeLatex(project.link)}}{${escapeLatex(project.link)}}}
-      \\resumeItemListEnd`
-				: ""
-		}
-    `;
+      `;
 					})
 					.join("\n\n")
 			: "\\resumeProjectHeading{No projects listed}{}"
@@ -332,4 +337,21 @@ function escapeLatex(text: string | string[] | null | undefined): string {
 		.replace(/\}/g, "\\}")
 		.replace(/~/g, "\\textasciitilde{}")
 		.replace(/\^/g, "\\textasciicircum{}");
+}
+
+// Format date from YYYY-MM-DD to MMM. YYYY
+function formatDate(dateString: string | undefined): string {
+	if (!dateString) return "Present";
+	if (dateString === "Present") return "Present";
+
+	try {
+		const date = new Date(dateString);
+		if (Number.isNaN(date.getTime())) return dateString;
+
+		const month = date.toLocaleString("en-US", { month: "short" });
+		const year = date.getFullYear();
+		return `${month}. ${year}`;
+	} catch (e) {
+		return dateString;
+	}
 }

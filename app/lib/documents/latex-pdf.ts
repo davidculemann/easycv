@@ -3,7 +3,7 @@ import type { FullCVContext } from "@/lib/documents/types";
 export function generateLatexTemplate(data: FullCVContext) {
 	const { firstName, lastName, email, phone, website, linkedin, github, education, experience, skills, projects } =
 		data;
-	console.log(data);
+
 	const userName = `${firstName || ""} ${lastName || ""}`.trim() || "Your Name";
 	const userEmail = email || "email@example.com";
 	const userPhone = phone || "";
@@ -180,7 +180,7 @@ export function generateLatexTemplate(data: FullCVContext) {
   {${escapeLatex(edu.school)}}{${escapeLatex(edu.location || "")}}
   {${escapeLatex(edu.degree)}}{${escapeLatex(edu.startDate)} -- ${escapeLatex(edu.endDate || "Present")}}
   ${
-		edu.description
+		edu.description && (Array.isArray(edu.description) ? edu.description.length > 0 : edu.description)
 			? `
       \\resumeItemListStart
          \\resumeItem{${escapeLatex(edu.description)}}
@@ -195,7 +195,7 @@ export function generateLatexTemplate(data: FullCVContext) {
   \\resumeSubHeadingListEnd
 
 %-----------SKILLS-----------
-\\section{Technical Knowledge}
+\\section{Skills}
  \\begin{itemize}[leftmargin=0.15in, label={}]
     \\small{\\item{
       ${formatSkillsForLatex(skills)}
@@ -203,7 +203,7 @@ export function generateLatexTemplate(data: FullCVContext) {
  \\end{itemize}
 
 %-----------EXPERIENCE-----------
-\\section{Industrial Experience}
+\\section{Experience}
     \\resumeSubHeadingListStart
     ${
 		experience?.length > 0
@@ -213,7 +213,7 @@ export function generateLatexTemplate(data: FullCVContext) {
     \\resumeSubheadingFormatted{${escapeLatex(exp.company)}}{${escapeLatex(exp.location || "")}}
      \\resumeSubSubheadingFormatted{${escapeLatex(exp.role)}}{${escapeLatex(exp.startDate)} -- ${escapeLatex(exp.endDate || "Present")}}
      ${
-			exp.description
+			exp.description && (Array.isArray(exp.description) ? exp.description.length > 0 : exp.description)
 				? `
      \\resumeItemListStart
        \\resumeItem{${escapeLatex(exp.description)}}
@@ -233,20 +233,34 @@ export function generateLatexTemplate(data: FullCVContext) {
     ${
 		projects?.length > 0
 			? projects
-					.map(
-						(project) => `
+					.map((project) => {
+						// Handle date formatting - some projects may not have dates
+						const dateRange = project.startDate
+							? `${escapeLatex(project.startDate)}${project.endDate ? ` -- ${escapeLatex(project.endDate)}` : " -- Present"}`
+							: "";
+
+						return `
       \\resumeProjectHeading
-      {\\textbf{${escapeLatex(project.name)}}} {${escapeLatex(project.startDate)} -- ${escapeLatex(project.endDate || "Present")}}
+      {\\textbf{${escapeLatex(project.name)}}}${dateRange ? ` {${dateRange}}` : " {}"}
       ${
-			project.description
+			project.description &&
+			(Array.isArray(project.description) ? project.description.length > 0 : project.description)
 				? `
       \\resumeItemListStart
         \\resumeItem{${escapeLatex(project.description)}}
       \\resumeItemListEnd`
 				: ""
 		}
-    `,
-					)
+      ${
+			project.link
+				? `
+      \\resumeItemListStart
+        \\resumeItem{\\href{${escapeLatex(project.link)}}{${escapeLatex(project.link)}}}
+      \\resumeItemListEnd`
+				: ""
+		}
+    `;
+					})
 					.join("\n")
 			: "\\resumeProjectHeading{No projects listed}{}"
 	}

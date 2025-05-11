@@ -7,7 +7,7 @@ const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY
 const ExperienceSchema = z.object({
 	company: z.string().min(1, "Company name is required"),
 	role: z.string().min(1, "Role is required"),
-	description: z.string(),
+	description: z.union([z.string(), z.array(z.string())]),
 	startDate: dateString,
 	endDate: dateString,
 	location: z.string().optional(),
@@ -20,15 +20,17 @@ const EducationSchema = z.object({
 	startDate: dateString,
 	endDate: dateString,
 	location: z.string().optional(),
-	description: z.string().optional(),
+	description: z.union([z.string(), z.array(z.string())]).optional(),
 });
 
 // Project Schema
 const ProjectSchema = z.object({
 	name: z.string().min(1, "Project name is required"),
-	description: z.string(),
-	startDate: dateString,
-	endDate: dateString,
+	description: z.union([z.string(), z.array(z.string())]),
+	startDate: dateString.optional(),
+	endDate: dateString.optional(),
+	link: z.string().optional(),
+	skills: z.array(z.string()).optional(),
 });
 
 // CV Context Schema

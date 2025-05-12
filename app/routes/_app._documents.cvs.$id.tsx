@@ -149,7 +149,7 @@ export default function CV() {
 
 	return (
 		<div className="h-full flex flex-col">
-			<div className="border-b px-4 py-3 flex items-center justify-between bg-white">
+			<div className="border-b px-4 py-3 flex items-center justify-between bg-background">
 				{isEditingName ? (
 					<div className="flex items-center gap-2">
 						<input
@@ -189,7 +189,7 @@ export default function CV() {
 					</h1>
 				)}
 				<div className="flex items-center gap-2">
-					<div className="flex items-center text-xs text-slate-500 mr-2">
+					<div className="flex items-center text-muted-foreground mr-2">
 						<div className={`w-2 h-2 rounded-full mr-1 ${isSaved ? "bg-green-500" : "bg-amber-500"}`} />
 						{isSaved ? "Saved" : "Saving..."}
 					</div>
@@ -197,34 +197,32 @@ export default function CV() {
 						<Settings className="h-4 w-4" />
 						AI Settings
 					</Button>
-					<Button variant="outline" size="sm" className="gap-2 text-red-600 border-red-200 hover:bg-red-50">
+					<Button variant="outline" size="sm" className="gap-2">
 						<Trash2 className="h-4 w-4" />
 						Delete CV
 					</Button>
 				</div>
 			</div>
 			{showProfileBanner && (
-				<div className="bg-amber-50 border-b border-amber-200 px-4 py-2">
+				<div className="bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 border-b border-accent px-4 py-2">
 					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2 text-amber-800">
-							<AlertTriangle className="h-4 w-4" />
-							<span className="text-sm">
-								Complete your profile first to make your data reusable for all future documents!
+						<div className="flex items-center gap-2">
+							<AlertTriangle className="h-4 w-4 text-warning-foreground" />
+							<span className="text-sm text-warning-foreground">
+								Complete your profile first to have your data at hand for all future documents
 							</span>
 						</div>
 						<div className="flex items-center gap-2">
-							<Button variant="link" size="sm" asChild className="h-auto p-0 text-amber-800">
-								<Link to="/profile">
-									Go to Profile <ExternalLink className="h-3 w-3 ml-1" />
-								</Link>
-							</Button>
+							<Link to="/profile" className="text-sm hover:underline flex items-center gap-1">
+								Go to Profile <ExternalLink className="h-3 w-3 ml-1" />
+							</Link>
 							<Button
 								variant="ghost"
 								size="sm"
 								className="h-7 w-7 p-0"
 								onClick={() => setShowProfileBanner(false)}
 							>
-								<X className="h-4 w-4 text-amber-800" />
+								<X className="h-4 w-4" />
 							</Button>
 						</div>
 					</div>
@@ -233,13 +231,13 @@ export default function CV() {
 
 			<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="flex-1">
 				<ResizablePanel defaultSize={40} minSize={30}>
-					<div className="h-full flex flex-col bg-slate-50 w-full max-w-full">
+					<div className="h-full flex flex-col bg-background w-full max-w-full">
 						<Tabs
 							value={activeTab}
 							onValueChange={(v) => setActiveTab(v as typeof activeTab)}
 							className="flex-1 flex flex-col w-full max-w-full"
 						>
-							<div className="border-b bg-white p-2 w-full mx-auto @container">
+							<div className="border-b bg-background p-2 w-full mx-auto @container">
 								<div className="hidden @[530px]:block">
 									<TabsList className="flex w-full max-w-full">
 										{sectionOrder.map((section) => (
@@ -317,7 +315,7 @@ export default function CV() {
 							onValueChange={(v) => setViewMode(v as "json" | "pdf")}
 							className="flex-1 flex flex-col w-full max-w-full"
 						>
-							<div className="border-b p-2 flex items-center justify-between bg-white overflow-x-auto">
+							<div className="border-b p-2 flex items-center justify-between bg-background overflow-x-auto">
 								<TabsList className="gap-2">
 									<TabsTrigger value="pdf" className="flex gap-2">
 										PDF View
@@ -349,21 +347,25 @@ export default function CV() {
 									</Button>
 								</div>
 							</div>
-							<TabsContent value="pdf" className="flex-1 bg-slate-100 overflow-auto w-full max-w-full">
+							<TabsContent
+								value="pdf"
+								className="flex-1 overflow-auto w-full max-w-full"
+								style={{ background: "var(--color-warning)" }}
+							>
 								{pdfData ? (
 									<iframe
 										src={pdfData}
 										title="CV PDF"
-										className="w-full h-full max-w-[600px] mx-auto bg-white shadow-md"
-										style={{ border: "none" }}
+										className="w-full h-full max-w-[600px] mx-auto shadow-md"
+										style={{ border: "none", background: "var(--color-warning)" }}
 									/>
 								) : (
-									<div className="flex items-center justify-center h-full text-slate-400">
+									<div className="flex items-center justify-center h-full text-muted-foreground">
 										No PDF generated yet.
 									</div>
 								)}
 							</TabsContent>
-							<TabsContent value="json" className="flex-1 bg-slate-100 overflow-x-auto w-full max-w-full">
+							<TabsContent value="json" className="flex-1 bg-muted overflow-x-auto w-full max-w-full">
 								<pre className="p-4 text-sm min-w-[300px] max-w-full overflow-x-auto">
 									{JSON.stringify(dataToDisplay, null, 2)}
 								</pre>

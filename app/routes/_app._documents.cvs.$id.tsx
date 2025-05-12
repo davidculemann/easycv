@@ -197,7 +197,7 @@ export default function CV() {
 						<Settings className="h-4 w-4" />
 						<span className="hidden sm:inline">AI Settings</span>
 					</Button>
-					<Button variant="outline" size="sm" className="gap-2 text-red-600 border-red-200 hover:bg-red-50">
+					<Button variant="outline" size="sm" className="gap-2">
 						<Trash2 className="h-4 w-4" />
 						<span className="hidden sm:inline">Delete CV</span>
 					</Button>
@@ -232,11 +232,11 @@ export default function CV() {
 
 			<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="flex-1">
 				<ResizablePanel defaultSize={40} minSize={30}>
-					<div className="h-full flex flex-col bg-background w-full max-w-full">
+					<div className="h-full flex flex-col bg-background w-full max-w-full flex-1 min-h-0">
 						<Tabs
 							value={activeTab}
 							onValueChange={(v) => setActiveTab(v as typeof activeTab)}
-							className="flex-1 flex flex-col w-full max-w-full"
+							className="flex-1 min-h-0 flex flex-col w-full max-w-full"
 						>
 							<div className="border-b bg-background p-2 w-full mx-auto @container">
 								<div className="hidden @[530px]:block">
@@ -266,7 +266,7 @@ export default function CV() {
 									</Select>
 								</div>
 							</div>
-							<div className="flex-1 overflow-auto p-4 w-full max-w-full">
+							<div className="flex-1 min-h-0 overflow-y-auto p-4 w-full max-w-full">
 								<TabsContent value="personal" className="mt-0">
 									<PersonalInfoForm
 										defaultValues={{

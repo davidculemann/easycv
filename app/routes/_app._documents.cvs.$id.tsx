@@ -195,11 +195,11 @@ export default function CV() {
 					</div>
 					<Button variant="outline" size="sm" className="gap-2">
 						<Settings className="h-4 w-4" />
-						AI Settings
+						<span className="hidden sm:inline">AI Settings</span>
 					</Button>
-					<Button variant="outline" size="sm" className="gap-2">
+					<Button variant="outline" size="sm" className="gap-2 text-red-600 border-red-200 hover:bg-red-50">
 						<Trash2 className="h-4 w-4" />
-						Delete CV
+						<span className="hidden sm:inline">Delete CV</span>
 					</Button>
 				</div>
 			</div>
@@ -213,9 +213,12 @@ export default function CV() {
 							</span>
 						</div>
 						<div className="flex items-center gap-2">
-							<Link to="/profile" className="text-sm hover:underline flex items-center gap-1">
-								Go to Profile <ExternalLink className="h-3 w-3 ml-1" />
-							</Link>
+							<Button variant="link" size="sm" asChild className="h-auto p-0">
+								<Link to="/profile">
+									<ExternalLink className="h-3 w-3 ml-1" />
+									<span className="hidden sm:inline">Go to Profile</span>
+								</Link>
+							</Button>
 							<Button
 								variant="ghost"
 								size="sm"
@@ -333,7 +336,9 @@ export default function CV() {
 										className="flex gap-2"
 									>
 										<RefreshCw className="h-4 w-4" />
-										{isGeneratingPdf ? "Generating..." : "Refresh PDF"}
+										<span className="hidden sm:inline">
+											{isGeneratingPdf ? "Generating..." : "Refresh PDF"}
+										</span>
 									</Button>
 									<Button
 										variant="outline"
@@ -343,7 +348,7 @@ export default function CV() {
 										className="flex gap-2"
 									>
 										<Download className="h-4 w-4" />
-										Download PDF
+										<span className="hidden sm:inline">Download PDF</span>
 									</Button>
 								</div>
 							</div>

@@ -136,5 +136,5 @@ export default {
 			},
 		},
 	},
-	plugins: [animate],
+	plugins: [animate, require("@tailwindcss/container-queries")],
 };

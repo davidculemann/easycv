@@ -1,7 +1,21 @@
+import { EducationForm } from "@/components/forms/profile/education-form";
+import { ExperienceForm } from "@/components/forms/profile/experience-form";
 import { ensureValidProfile } from "@/components/forms/profile/logic/types";
-import ProviderSelector from "@/components/shared/provider-selector";
+import {
+	getEducationFormData,
+	getExperienceFormData,
+	getProjectsFormData,
+	getSkillsFormData,
+	sectionNames,
+	sectionOrder,
+} from "@/components/forms/profile/logic/utils";
+import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
+import { ProjectsForm } from "@/components/forms/profile/projects-form";
+import { SkillsForm } from "@/components/forms/profile/skills-form";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
 import { getUserProfile } from "@/lib/supabase/documents/profile";
@@ -10,9 +24,9 @@ import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useOutletContext, useParams } from "@remix-run/react";
-import { Download, FileJson, FileText } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Link, useLoaderData, useOutletContext, useParams } from "@remix-run/react";
+import { AlertTriangle, Check, Download, ExternalLink, Pencil, RefreshCw, Settings, Trash2, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { z } from "zod";
@@ -31,7 +45,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function CV() {
 	const { profile } = useLoaderData<typeof loader>();
-
 	const params = useParams();
 	const { id } = params;
 	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
@@ -41,6 +54,12 @@ export default function CV() {
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [pdfData, setPdfData] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<"json" | "pdf">("json");
+	const [cvName, setCvName] = useState("CV");
+	const [isEditingName, setIsEditingName] = useState(false);
+	const [isSaved, setIsSaved] = useState(true);
+	const [showProfileBanner, setShowProfileBanner] = useState(true);
+	const nameInputRef = useRef<HTMLInputElement>(null);
+	const [activeTab, setActiveTab] = useState("personal");
 
 	const { isLoading, object, submit } = useObject({
 		api: "/api/cv/generate",
@@ -56,7 +75,7 @@ export default function CV() {
 		updateCV({ id: id ?? "", cv: object.cv as CVContext });
 	}
 
-	const dataToDisplay = object?.cv ?? profile;
+	const dataToDisplay = ensureValidProfile(object?.cv ?? profile);
 
 	useEffect(() => {
 		setPdfData(null);
@@ -129,86 +148,230 @@ export default function CV() {
 	}
 
 	return (
-		<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="border h-full">
-			<ResizablePanel defaultSize={isMobile ? undefined : 30}>
-				<div className="flex flex-col gap-4 p-6">
-					<ProviderSelector model={model} setModel={setModel} isPro={isPro} />
-					<Button onClick={handleGenerateCV} disabled={isLoading}>
-						{isLoading ? "Generating..." : "Generate CV"}
-					</Button>
-					<Button
-						variant="outline"
-						disabled={isLoading || !object || isUpdatingCV}
-						onClick={handleSaveChanges}
-					>
-						Save Changes
-					</Button>
-
-					{/* PDF Generation Buttons */}
-					<div className="flex flex-col gap-2">
+		<div className="h-full flex flex-col">
+			<div className="border-b px-4 py-3 flex items-center justify-between bg-white">
+				{isEditingName ? (
+					<div className="flex items-center gap-2">
+						<input
+							ref={nameInputRef}
+							value={cvName}
+							onChange={(e) => setCvName(e.target.value)}
+							className="h-9 text-lg font-medium w-[300px] border rounded px-2"
+						/>
 						<Button
-							variant="outline"
-							disabled={!dataToDisplay || isGeneratingPdf}
-							onClick={() => generatePDF(false)}
-							className="flex gap-2"
+							variant="ghost"
+							size="sm"
+							onClick={() => setIsEditingName(false)}
+							className="h-8 w-8 p-0 text-green-600"
 						>
-							<FileText className="h-4 w-4" />
-							{isGeneratingPdf ? "Generating PDF..." : "Generate & View PDF"}
+							<Check className="h-4 w-4" />
 						</Button>
-
 						<Button
-							variant="outline"
-							disabled={!dataToDisplay || isGeneratingPdf}
-							onClick={() => generatePDF(true)}
-							className="flex gap-2"
+							variant="ghost"
+							size="sm"
+							onClick={() => setIsEditingName(false)}
+							className="h-8 w-8 p-0 text-red-600"
 						>
-							<Download className="h-4 w-4" />
-							{isGeneratingPdf ? "Generating PDF..." : "Download PDF"}
+							<X className="h-4 w-4" />
 						</Button>
 					</div>
-
-					{pdfData && (
-						<div className="flex gap-2 mt-2">
-							<Button
-								size="sm"
-								variant={viewMode === "json" ? "default" : "outline"}
-								onClick={() => setViewMode("json")}
-								className="flex gap-2"
-							>
-								<FileJson className="h-4 w-4" />
-								JSON View
+				) : (
+					<h1 className="text-xl font-semibold flex items-center gap-2">
+						{cvName}
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={() => setIsEditingName(true)}
+							className="h-7 w-7 p-0 opacity-50 hover:opacity-100"
+						>
+							<Pencil className="h-3.5 w-3.5" />
+						</Button>
+					</h1>
+				)}
+				<div className="flex items-center gap-2">
+					<div className="flex items-center text-xs text-slate-500 mr-2">
+						<div className={`w-2 h-2 rounded-full mr-1 ${isSaved ? "bg-green-500" : "bg-amber-500"}`} />
+						{isSaved ? "Saved" : "Saving..."}
+					</div>
+					<Button variant="outline" size="sm" className="gap-2">
+						<Settings className="h-4 w-4" />
+						AI Settings
+					</Button>
+					<Button variant="outline" size="sm" className="gap-2 text-red-600 border-red-200 hover:bg-red-50">
+						<Trash2 className="h-4 w-4" />
+						Delete CV
+					</Button>
+				</div>
+			</div>
+			{showProfileBanner && (
+				<div className="bg-amber-50 border-b border-amber-200 px-4 py-2">
+					<div className="flex items-center justify-between">
+						<div className="flex items-center gap-2 text-amber-800">
+							<AlertTriangle className="h-4 w-4" />
+							<span className="text-sm">
+								Complete your profile first to make your data reusable for all future documents!
+							</span>
+						</div>
+						<div className="flex items-center gap-2">
+							<Button variant="link" size="sm" asChild className="h-auto p-0 text-amber-800">
+								<Link to="/profile">
+									Go to Profile <ExternalLink className="h-3 w-3 ml-1" />
+								</Link>
 							</Button>
 							<Button
+								variant="ghost"
 								size="sm"
-								variant={viewMode === "pdf" ? "default" : "outline"}
-								onClick={() => setViewMode("pdf")}
-								className="flex gap-2"
+								className="h-7 w-7 p-0"
+								onClick={() => setShowProfileBanner(false)}
 							>
-								<FileText className="h-4 w-4" />
-								PDF View
+								<X className="h-4 w-4 text-amber-800" />
 							</Button>
 						</div>
-					)}
+					</div>
 				</div>
-			</ResizablePanel>
-			<ResizableHandle withHandle />
-			<ResizablePanel style={{ viewTransitionName: `cv-card-${id}`, contain: "layout" }}>
-				<div className="flex h-full overflow-auto">
-					{viewMode === "json" ? (
-						<pre className="whitespace-pre-wrap p-6">{JSON.stringify(dataToDisplay, null, 2)}</pre>
-					) : (
-						pdfData && (
-							<iframe
-								src={pdfData}
-								title="CV PDF"
-								width="100%"
-								height="100%"
-								style={{ border: "none" }}
-							/>
-						)
-					)}
-				</div>
-			</ResizablePanel>
-		</ResizablePanelGroup>
+			)}
+
+			<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="flex-1">
+				<ResizablePanel defaultSize={40} minSize={30}>
+					<div className="h-full flex flex-col bg-slate-50 w-full max-w-full">
+						<Tabs
+							value={activeTab}
+							onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+							className="flex-1 flex flex-col w-full max-w-full"
+						>
+							<div className="border-b bg-white p-2 w-full mx-auto @container">
+								<div className="hidden @[530px]:block">
+									<TabsList className="flex w-full max-w-full">
+										{sectionOrder.map((section) => (
+											<TabsTrigger key={section} value={section} className="min-w-[90px] flex-1">
+												{sectionNames[section]}
+											</TabsTrigger>
+										))}
+									</TabsList>
+								</div>
+								<div className="block @[530px]:hidden">
+									<Select
+										value={activeTab}
+										onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+									>
+										<SelectTrigger className="w-full">
+											<SelectValue placeholder="Section" />
+										</SelectTrigger>
+										<SelectContent>
+											{sectionOrder.map((section) => (
+												<SelectItem key={section} value={section}>
+													{sectionNames[section]}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+							<div className="flex-1 overflow-auto p-4 w-full max-w-full">
+								<TabsContent value="personal" className="mt-0">
+									<PersonalInfoForm
+										defaultValues={{
+											firstName: dataToDisplay?.first_name || "",
+											lastName: dataToDisplay?.last_name || "",
+											email: dataToDisplay?.email || "",
+											phone: dataToDisplay?.phone || "",
+											address: dataToDisplay?.address || "",
+											linkedin: dataToDisplay?.linkedin || "",
+											github: dataToDisplay?.github || "",
+											website: dataToDisplay?.website || "",
+										}}
+										formType="personal"
+									/>
+								</TabsContent>
+								<TabsContent value="experience" className="mt-0">
+									<ExperienceForm
+										defaultValues={getExperienceFormData(dataToDisplay)}
+										formType="experience"
+									/>
+								</TabsContent>
+								<TabsContent value="education" className="mt-0">
+									<EducationForm
+										defaultValues={getEducationFormData(dataToDisplay)}
+										formType="education"
+									/>
+								</TabsContent>
+								<TabsContent value="projects" className="mt-0">
+									<ProjectsForm
+										defaultValues={getProjectsFormData(dataToDisplay)}
+										formType="projects"
+									/>
+								</TabsContent>
+								<TabsContent value="skills" className="mt-0">
+									<SkillsForm defaultValues={getSkillsFormData(dataToDisplay)} formType="skills" />
+								</TabsContent>
+							</div>
+						</Tabs>
+					</div>
+				</ResizablePanel>
+				<ResizableHandle withHandle />
+
+				<ResizablePanel>
+					<div className="h-full flex flex-col w-full max-w-full">
+						<Tabs
+							value={viewMode}
+							onValueChange={(v) => setViewMode(v as "json" | "pdf")}
+							className="flex-1 flex flex-col w-full max-w-full"
+						>
+							<div className="border-b p-2 flex items-center justify-between bg-white overflow-x-auto">
+								<TabsList className="gap-2">
+									<TabsTrigger value="pdf" className="flex gap-2">
+										PDF View
+									</TabsTrigger>
+									<TabsTrigger value="json" className="flex gap-2">
+										JSON View
+									</TabsTrigger>
+								</TabsList>
+								<div className="flex items-center gap-2">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => generatePDF(false)}
+										disabled={isGeneratingPdf}
+										className="flex gap-2"
+									>
+										<RefreshCw className="h-4 w-4" />
+										{isGeneratingPdf ? "Generating..." : "Refresh PDF"}
+									</Button>
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => generatePDF(true)}
+										disabled={isGeneratingPdf}
+										className="flex gap-2"
+									>
+										<Download className="h-4 w-4" />
+										Download PDF
+									</Button>
+								</div>
+							</div>
+							<TabsContent value="pdf" className="flex-1 bg-slate-100 overflow-auto w-full max-w-full">
+								{pdfData ? (
+									<iframe
+										src={pdfData}
+										title="CV PDF"
+										className="w-full h-full max-w-[600px] mx-auto bg-white shadow-md"
+										style={{ border: "none" }}
+									/>
+								) : (
+									<div className="flex items-center justify-center h-full text-slate-400">
+										No PDF generated yet.
+									</div>
+								)}
+							</TabsContent>
+							<TabsContent value="json" className="flex-1 bg-slate-100 overflow-x-auto w-full max-w-full">
+								<pre className="p-4 text-sm min-w-[300px] max-w-full overflow-x-auto">
+									{JSON.stringify(dataToDisplay, null, 2)}
+								</pre>
+							</TabsContent>
+						</Tabs>
+					</div>
+				</ResizablePanel>
+			</ResizablePanelGroup>
+		</div>
 	);
 }

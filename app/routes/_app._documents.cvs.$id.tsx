@@ -365,7 +365,10 @@ export default function CV() {
 									</div>
 								)}
 							</TabsContent>
-							<TabsContent value="json" className="flex-1 bg-muted overflow-x-auto w-full max-w-full">
+							<TabsContent
+								value="json"
+								className="flex-1 bg-popover overflow-x-auto w-full max-w-full mt-0"
+							>
 								<pre className="p-4 text-sm min-w-[300px] max-w-full overflow-x-auto">
 									{JSON.stringify(dataToDisplay, null, 2)}
 								</pre>

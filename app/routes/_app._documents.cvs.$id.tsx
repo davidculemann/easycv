@@ -191,7 +191,7 @@ export default function CV() {
 				<div className="flex items-center gap-2">
 					<div className="flex items-center text-muted-foreground mr-2">
 						<div className={`w-2 h-2 rounded-full mr-1 ${isSaved ? "bg-green-500" : "bg-amber-500"}`} />
-						{isSaved ? "Saved" : "Saving..."}
+						<span className="hidden sm:inline">{isSaved ? "Saved" : "Saving..."}</span>
 					</div>
 					<Button variant="outline" size="sm" className="gap-2">
 						<Settings className="h-4 w-4" />
@@ -209,16 +209,14 @@ export default function CV() {
 						<div className="flex items-center gap-2">
 							<AlertTriangle className="h-4 w-4 text-warning-foreground" />
 							<span className="text-sm text-warning-foreground">
-								Complete your profile first to have your data at hand for all future documents
+								Complete your profile first to save your profile for future documents!
 							</span>
 						</div>
 						<div className="flex items-center gap-2">
-							<Button variant="link" size="sm" asChild className="h-auto p-0">
-								<Link to="/profile">
-									<ExternalLink className="h-3 w-3 ml-1" />
-									<span className="hidden sm:inline">Go to Profile</span>
-								</Link>
-							</Button>
+							<Link to="/profile" className="text-sm hover:underline flex items-center gap-1">
+								<ExternalLink className="h-3 w-3 ml-1" />
+								<span className="hidden sm:inline">Go to Profile</span>
+							</Link>
 							<Button
 								variant="ghost"
 								size="sm"

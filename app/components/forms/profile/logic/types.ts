@@ -157,6 +157,7 @@ export const educationItemSchema = z.object({
 	endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
 	location: z.string().optional(),
 	description: z.array(z.string()).optional(),
+	current: z.boolean().optional(),
 });
 
 export const educationSchema = z.object({
@@ -174,6 +175,7 @@ export const experienceItemSchema = z.object({
 	endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
 	location: z.string().optional(),
 	description: z.array(z.string()).optional(),
+	current: z.boolean().optional(),
 });
 
 export const experienceSchema = z.object({

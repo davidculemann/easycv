@@ -70,6 +70,8 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 		prevFieldsLength.current = fields.length;
 	}, [fields]);
 
+	const currentIndex = experiences.findIndex((exp) => exp.current);
+
 	return (
 		<BaseForm
 			form={form}
@@ -200,6 +202,7 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 												<Checkbox
 													id={`current-checkbox-${index}`}
 													checked={isCurrent}
+													disabled={currentIndex !== -1 && currentIndex !== index}
 													onCheckedChange={(checked) => {
 														form.setValue(
 															`experiences.${index}.current`,

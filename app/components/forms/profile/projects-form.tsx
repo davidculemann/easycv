@@ -1,11 +1,11 @@
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Briefcase, Plus, Trash2 } from "lucide-react";
-import { useEffect } from "react";
+import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { BaseForm } from "../shared/base-form";
 import FormTagList from "../shared/form-tag-list";
@@ -41,6 +41,17 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 
 	const projects = form.watch("projects");
 
+	const [openItemId, setOpenItemId] = useState<string | undefined>();
+	const prevFieldsLength = useRef(fields.length);
+
+	useEffect(() => {
+		if (fields.length > prevFieldsLength.current) {
+			const lastId = fields[fields.length - 1]?.id;
+			if (lastId) setOpenItemId(lastId);
+		}
+		prevFieldsLength.current = fields.length;
+	}, [fields]);
+
 	// Keep hidden input value updated with current form data
 	useEffect(() => {
 		const hiddenInput = document.querySelector('input[name="projects"]') as HTMLInputElement;
@@ -71,67 +82,127 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 				</div>
 				<Separator />
 
-				{fields.map((field, index) => (
-					<div key={field.id} className="rounded-lg border p-4 space-y-4">
-						<div className="flex justify-between items-center">
-							<div className="flex items-center gap-2">
-								<Briefcase className="h-5 w-5 text-primary" />
-								<h4 className="font-medium">Project</h4>
-							</div>
-							{fields.length > 1 && (
-								<Button variant="outline" size="icon" type="button" onClick={() => remove(index)}>
-									<Trash2 className="h-4 w-4" />
-								</Button>
-							)}
-						</div>
+				<Accordion
+					type="single"
+					collapsible
+					className="w-full"
+					value={openItemId}
+					onValueChange={setOpenItemId}
+				>
+					{fields.map((field, index) => {
+						const proj = projects[index] || {};
+						return (
+							<AccordionItem
+								key={field.id}
+								value={field.id}
+								className="bg-card rounded-lg border shadow-sm mb-6"
+							>
+								<AccordionTrigger className="px-4 cursor-pointer select-none rounded-t-lg hover:bg-muted/50 gap-2">
+									<div className="flex flex-col text-left w-full">
+										<div className="font-medium text-base">
+											{proj.name || <span className="text-muted-foreground">New Project</span>}
+										</div>
+										<div className="text-xs text-muted-foreground">
+											{proj.link && (
+												<a
+													href={proj.link}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="underline text-xs"
+												>
+													{proj.link}
+												</a>
+											)}
+										</div>
+									</div>
+									{fields.length > 1 && (
+										<div
+											role="button"
+											tabIndex={0}
+											aria-label="Delete project"
+											className="ml-auto flex items-center justify-center rounded-md p-2 hover:bg-muted/50 focus:bg-muted/50 cursor-pointer"
+											onClick={(e) => {
+												e.stopPropagation();
+												remove(index);
+											}}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													e.preventDefault();
+													remove(index);
+												}
+											}}
+										>
+											<Trash2 className="h-4 w-4 text-muted-foreground" />
+										</div>
+									)}
+								</AccordionTrigger>
+								<AccordionContent className="px-4 pt-0">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+										<FormField
+											control={form.control}
+											name={`projects.${index}.name`}
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="text-xs font-medium text-muted-foreground">
+														Name
+													</FormLabel>
+													<FormControl>
+														<Input placeholder="Project name" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name={`projects.${index}.link`}
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="text-xs font-medium text-muted-foreground">
+														Link
+													</FormLabel>
+													<FormControl>
+														<Input placeholder="Project link" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+									<div className="mb-2">
+										<FormField
+											control={form.control}
+											name={`projects.${index}.description`}
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="text-xs font-medium text-muted-foreground">
+														Description
+													</FormLabel>
+													<FormControl>
+														<textarea
+															className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+															placeholder="Project description or achievement"
+															{...field}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
+									<FormTagList fieldName={`projects.${index}.skills`} label="Skills" maxTags={5} />
+								</AccordionContent>
+							</AccordionItem>
+						);
+					})}
+				</Accordion>
 
-						<FormField
-							control={form.control}
-							name={`projects.${index}.name`}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Name</FormLabel>
-									<FormControl>
-										<Input placeholder="Project name" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name={`projects.${index}.description`}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Description</FormLabel>
-									<FormControl>
-										<Textarea placeholder="Project description" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormTagList fieldName={`projects.${index}.skills`} label="Skills" maxTags={5} />
-
-						<FormField
-							control={form.control}
-							name={`projects.${index}.link`}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Link</FormLabel>
-									<FormControl>
-										<Input placeholder="Project link" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
-				))}
-
-				<Button type="button" variant="outline" onClick={onAddProject}>
+				<Button
+					type="button"
+					variant="outline"
+					onClick={onAddProject}
+					className="w-full max-w-md mx-auto flex items-center justify-center"
+				>
 					<Plus className="mr-2 h-4 w-4" />
 					Add Project
 				</Button>

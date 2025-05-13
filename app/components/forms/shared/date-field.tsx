@@ -9,7 +9,7 @@ import { Calendar } from "lucide-react";
 export function DateField({
 	name,
 	label,
-	placeholder = "Pick a month",
+	placeholder = "Select date",
 	inputClassName = "",
 }: {
 	name: string;

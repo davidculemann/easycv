@@ -1,10 +1,13 @@
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Briefcase, Plus, Trash2 } from "lucide-react";
-import { useEffect } from "react";
+import { format } from "date-fns";
+import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { BaseForm } from "../shared/base-form";
 import { BulletPoints } from "../shared/bullet-points";
@@ -44,7 +47,6 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 
 	const experiences = form.watch("experiences");
 
-	// Keep hidden input value updated with current form data
 	useEffect(() => {
 		const hiddenInput = document.querySelector('input[name="experiences"]') as HTMLInputElement;
 		if (hiddenInput) {
@@ -55,6 +57,18 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 	function onAddExperience() {
 		append(EMPTY_EXPERIENCE);
 	}
+
+	//expansion logic
+	const [openItemId, setOpenItemId] = useState<string | undefined>();
+	const prevFieldsLength = useRef(fields.length);
+
+	useEffect(() => {
+		if (fields.length > prevFieldsLength.current) {
+			const lastId = fields[fields.length - 1]?.id;
+			if (lastId) setOpenItemId(lastId);
+		}
+		prevFieldsLength.current = fields.length;
+	}, [fields]);
 
 	return (
 		<BaseForm
@@ -67,85 +81,166 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="experiences" value={JSON.stringify(experiences)} />
-			<div className="space-y-6">
-				<div>
+			<div className="space-y-4">
+				<div className="flex items-center gap-1.5 mb-4">
 					<h3 className="text-lg font-medium">Work Experience</h3>
-					<p className="text-sm text-muted-foreground">Add your professional experience</p>
 				</div>
-				<Separator />
+				<Accordion
+					type="single"
+					collapsible
+					className="w-full"
+					value={openItemId}
+					onValueChange={setOpenItemId}
+				>
+					{fields.map((field, index) => {
+						const exp = experiences[index] || {};
+						const startDate = exp.startDate ? format(new Date(exp.startDate), "MMM. yyyy") : "";
+						const endDate = exp.endDate ? format(new Date(exp.endDate), "MMM. yyyy") : "";
+						const isCurrent = !!exp.current;
 
-				{fields.map((field, index) => (
-					<div key={field.id} className="bg-card rounded-lg border shadow-sm p-4 mb-6">
-						<div className="flex justify-between items-center mb-4">
-							<div className="flex items-center gap-2">
-								<Briefcase className="h-5 w-5 text-primary" />
-								<h4 className="font-medium">{`Experience ${index + 1}`}</h4>
-							</div>
-							{fields.length > 1 && (
-								<Button variant="ghost" size="icon" type="button" onClick={() => remove(index)}>
-									<Trash2 className="h-4 w-4" />
-								</Button>
-							)}
-						</div>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-							<FormField
-								control={form.control}
-								name={`experiences.${index}.company`}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="text-xs font-medium text-muted-foreground">
-											Employer
-										</FormLabel>
-										<FormControl>
-											<Input placeholder="Company name" className="h-9" {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name={`experiences.${index}.role`}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel className="text-xs font-medium text-muted-foreground">
-											Job Title
-										</FormLabel>
-										<FormControl>
-											<Input placeholder="Position / Role" className="h-9" {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-							<DateField
-								name={`experiences.${index}.startDate`}
-								label="Start Date"
-								inputClassName="h-9"
-							/>
-							<DateField
-								name={`experiences.${index}.endDate`}
-								label="End Date"
-								placeholder="Pick a date or 'Present'"
-								inputClassName="h-9"
-							/>
-						</div>
-						<div className="mb-4">
-							<LocationField name={`experiences.${index}.location`} inputClassName="h-9" />
-						</div>
-						<div className="mb-2">
-							<BulletPoints
-								fieldName={`experiences.${index}.description`}
-								label="Responsibilities & Achievements"
-								placeholder="Describe responsibilities, achievements, or technologies used"
-								bulletLabel="Add Bullet Point"
-							/>
-						</div>
-					</div>
-				))}
+						return (
+							<AccordionItem
+								key={field.id}
+								value={field.id}
+								className="bg-card rounded-lg border shadow-sm mb-6"
+							>
+								<AccordionTrigger className="px-4 cursor-pointer select-none rounded-t-lg hover:bg-muted/50 gap-2">
+									<div className="flex flex-col text-left w-full">
+										<div className="font-medium text-base">
+											{exp.company || (
+												<span className="text-muted-foreground">New Experience</span>
+											)}
+										</div>
+										<div className="text-xs text-muted-foreground">
+											{exp.role ? `${exp.role}` : ""}
+											{startDate && (isCurrent || endDate)
+												? ` • ${startDate} - ${isCurrent ? "Current" : endDate}`
+												: ""}
+										</div>
+									</div>
+									{fields.length > 1 && (
+										<div
+											role="button"
+											tabIndex={0}
+											aria-label="Delete experience"
+											className="ml-auto flex items-center justify-center rounded-md p-2 hover:bg-muted/50 focus:bg-muted/50 cursor-pointer"
+											onClick={(e) => {
+												e.stopPropagation();
+												remove(index);
+											}}
+											onKeyDown={(e) => {
+												if (e.key === "Enter" || e.key === " ") {
+													e.preventDefault();
+													remove(index);
+												}
+											}}
+										>
+											<Trash2 className="h-4 w-4 text-muted-foreground" />
+										</div>
+									)}
+								</AccordionTrigger>
+								<AccordionContent className="px-4 pt-0">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+										<FormField
+											control={form.control}
+											name={`experiences.${index}.role`}
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="text-xs font-medium text-muted-foreground">
+														Job Title
+													</FormLabel>
+													<FormControl>
+														<Input placeholder="Job title" className="h-9" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name={`experiences.${index}.company`}
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel className="text-xs font-medium text-muted-foreground">
+														Employer
+													</FormLabel>
+													<FormControl>
+														<Input placeholder="Employer" className="h-9" {...field} />
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+									</div>
 
+									<div className="flex flex-col md:flex-row gap-2 mb-4">
+										<div className="flex flex-col gap-2.5 flex-1 min-w-0">
+											<FormLabel className="text-xs font-medium text-muted-foreground">
+												Start & End Date
+											</FormLabel>
+											<div className="flex items-center gap-2">
+												<DateField
+													name={`experiences.${index}.startDate`}
+													inputClassName="h-9 px-1 text-xs w-full w-[100px] bg-background border-border text-foreground"
+												/>
+												<div
+													className={cn(
+														isCurrent
+															? "pointer-events-none opacity-60 w-full max-w-[90px]"
+															: "w-full max-w-[90px]",
+													)}
+												>
+													<DateField
+														name={`experiences.${index}.endDate`}
+														inputClassName="h-9 px-1 text-xs w-full w-[100px] bg-background border-border text-foreground"
+													/>
+												</div>
+											</div>
+											<div className="flex items-center gap-2">
+												<Checkbox
+													id={`current-checkbox-${index}`}
+													checked={isCurrent}
+													onCheckedChange={(checked) => {
+														form.setValue(
+															`experiences.${index}.current`,
+															checked === true,
+															{
+																shouldValidate: true,
+															},
+														);
+													}}
+													className="border-border bg-background text-foreground"
+												/>
+												<label
+													htmlFor={`current-checkbox-${index}`}
+													className="text-xs text-foreground select-none cursor-pointer"
+												>
+													I currently work here
+												</label>
+											</div>
+										</div>
+										<div className="flex-1 min-w-0">
+											<LocationField
+												name={`experiences.${index}.location`}
+												inputClassName="h-9 w-full bg-background border-border text-foreground"
+											/>
+										</div>
+									</div>
+
+									<div className="mb-2">
+										<BulletPoints
+											fieldName={`experiences.${index}.description`}
+											label="Responsibilities & Achievements"
+											placeholder="Describe responsibilities, achievements, or technologies used"
+											bulletLabel="Add Bullet Point"
+											asTextArea
+										/>
+									</div>
+								</AccordionContent>
+							</AccordionItem>
+						);
+					})}
+				</Accordion>
 				<Button
 					type="button"
 					variant="outline"
@@ -153,7 +248,7 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 					className="w-full max-w-md mx-auto flex items-center justify-center"
 				>
 					<Plus className="mr-2 h-4 w-4" />
-					Add Experience
+					Add Work Experience
 				</Button>
 			</div>
 		</BaseForm>

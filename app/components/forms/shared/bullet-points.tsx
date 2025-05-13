@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 
@@ -9,11 +10,13 @@ export function BulletPoints({
 	label,
 	placeholder,
 	bulletLabel = "Add Bullet Point",
+	asTextArea = false,
 }: {
 	fieldName: string;
 	label: string;
 	placeholder: string;
 	bulletLabel?: string;
+	asTextArea?: boolean;
 }) {
 	const form = useFormContext();
 
@@ -27,7 +30,11 @@ export function BulletPoints({
 						render={({ field }) => (
 							<FormItem className="flex-1">
 								<FormControl>
-									<Input placeholder={placeholder} {...field} />
+									{asTextArea ? (
+										<Textarea placeholder={placeholder} {...field} />
+									) : (
+										<Input placeholder={placeholder} {...field} />
+									)}
 								</FormControl>
 								<FormMessage />
 							</FormItem>

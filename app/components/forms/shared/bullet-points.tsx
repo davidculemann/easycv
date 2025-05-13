@@ -22,7 +22,7 @@ export function BulletPoints({
 
 	return (
 		<div className="space-y-2">
-			<FormLabel>{label}</FormLabel>
+			<FormLabel className="text-xs font-medium text-muted-foreground">{label}</FormLabel>
 			{(form.watch(fieldName) || []).map((item: string, descIndex: number) => (
 				<div key={`${fieldName}-${descIndex}`} className="flex gap-2 items-center">
 					<FormField

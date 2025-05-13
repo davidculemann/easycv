@@ -8,7 +8,7 @@ export function LocationField({ name, inputClassName = "" }: { name: string; inp
 			name={name}
 			render={({ field }) => (
 				<FormItem>
-					<FormLabel>Location</FormLabel>
+					<FormLabel className="text-xs font-medium text-muted-foreground">Location</FormLabel>
 					<FormControl>
 						<div className="relative">
 							<MapPin className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />

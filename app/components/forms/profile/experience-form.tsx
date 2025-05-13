@@ -84,9 +84,11 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="experiences" value={JSON.stringify(experiences)} />
 			<div className="space-y-4">
-				<div className="flex items-center gap-1.5 mb-4">
-					<h3 className="text-lg font-medium">Work Experience</h3>
+				<div>
+					<h3 className="text-lg font-medium">Experience</h3>
+					<p className="text-sm text-muted-foreground">Add your work experience</p>
 				</div>
+
 				<Accordion
 					type="single"
 					collapsible

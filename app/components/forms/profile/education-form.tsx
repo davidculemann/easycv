@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
@@ -83,12 +82,11 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="educations" value={JSON.stringify(educations)} />
-			<div className="space-y-6">
+			<div className="space-y-4">
 				<div>
 					<h3 className="text-lg font-medium">Education</h3>
 					<p className="text-sm text-muted-foreground">Add your educational background</p>
 				</div>
-				<Separator />
 
 				<Accordion
 					type="single"

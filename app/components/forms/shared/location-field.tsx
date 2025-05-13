@@ -2,7 +2,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { MapPin } from "lucide-react";
 
-export function LocationField({ name }: { name: string }) {
+export function LocationField({ name, inputClassName = "" }: { name: string; inputClassName?: string }) {
 	return (
 		<FormField
 			name={name}
@@ -12,7 +12,7 @@ export function LocationField({ name }: { name: string }) {
 					<FormControl>
 						<div className="relative">
 							<MapPin className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-							<Input className="pl-8" placeholder="City, Country" {...field} />
+							<Input className={`pl-8 ${inputClassName}`} placeholder="City, Country" {...field} />
 						</div>
 					</FormControl>
 					<FormMessage />

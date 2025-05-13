@@ -10,10 +10,12 @@ export function DateField({
 	name,
 	label,
 	placeholder = "Pick a date",
+	inputClassName = "",
 }: {
 	name: string;
 	label: string;
 	placeholder?: string;
+	inputClassName?: string;
 }) {
 	return (
 		<FormField
@@ -26,7 +28,11 @@ export function DateField({
 							<FormControl>
 								<Button
 									variant="outline"
-									className={cn("text-left font-normal", !field.value && "text-muted-foreground")}
+									className={cn(
+										"text-left font-normal",
+										!field.value && "text-muted-foreground",
+										inputClassName,
+									)}
 								>
 									{field.value ? format(new Date(field.value), "PPP") : <span>{placeholder}</span>}
 									<Calendar className="ml-auto h-4 w-4 opacity-50" />

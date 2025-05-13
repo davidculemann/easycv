@@ -75,28 +75,29 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 				<Separator />
 
 				{fields.map((field, index) => (
-					<div key={field.id} className="rounded-lg border p-4 space-y-4">
-						<div className="flex justify-between items-center">
+					<div key={field.id} className="bg-card rounded-lg border shadow-sm p-4 mb-6">
+						<div className="flex justify-between items-center mb-4">
 							<div className="flex items-center gap-2">
 								<Briefcase className="h-5 w-5 text-primary" />
 								<h4 className="font-medium">{`Experience ${index + 1}`}</h4>
 							</div>
 							{fields.length > 1 && (
-								<Button variant="outline" size="icon" type="button" onClick={() => remove(index)}>
+								<Button variant="ghost" size="icon" type="button" onClick={() => remove(index)}>
 									<Trash2 className="h-4 w-4" />
 								</Button>
 							)}
 						</div>
-
-						<div className="grid gap-4 md:grid-cols-2">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 							<FormField
 								control={form.control}
 								name={`experiences.${index}.company`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Company</FormLabel>
+										<FormLabel className="text-xs font-medium text-muted-foreground">
+											Employer
+										</FormLabel>
 										<FormControl>
-											<Input placeholder="Company name" {...field} />
+											<Input placeholder="Company name" className="h-9" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -107,37 +108,50 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 								name={`experiences.${index}.role`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Job Title</FormLabel>
+										<FormLabel className="text-xs font-medium text-muted-foreground">
+											Job Title
+										</FormLabel>
 										<FormControl>
-											<Input placeholder="Position / Role" {...field} />
+											<Input placeholder="Position / Role" className="h-9" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
 								)}
 							/>
 						</div>
-
-						<div className="grid gap-4 md:grid-cols-2">
-							<DateField name={`experiences.${index}.startDate`} label="Start Date" />
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+							<DateField
+								name={`experiences.${index}.startDate`}
+								label="Start Date"
+								inputClassName="h-9"
+							/>
 							<DateField
 								name={`experiences.${index}.endDate`}
 								label="End Date"
 								placeholder="Pick a date or 'Present'"
+								inputClassName="h-9"
 							/>
 						</div>
-
-						<LocationField name={`experiences.${index}.location`} />
-
-						<BulletPoints
-							fieldName={`experiences.${index}.description`}
-							label="Responsibilities & Achievements"
-							placeholder="Describe responsibilities, achievements, or technologies used"
-							bulletLabel="Add Bullet Point"
-						/>
+						<div className="mb-4">
+							<LocationField name={`experiences.${index}.location`} inputClassName="h-9" />
+						</div>
+						<div className="mb-2">
+							<BulletPoints
+								fieldName={`experiences.${index}.description`}
+								label="Responsibilities & Achievements"
+								placeholder="Describe responsibilities, achievements, or technologies used"
+								bulletLabel="Add Bullet Point"
+							/>
+						</div>
 					</div>
 				))}
 
-				<Button type="button" variant="outline" onClick={onAddExperience}>
+				<Button
+					type="button"
+					variant="outline"
+					onClick={onAddExperience}
+					className="w-full max-w-md mx-auto flex items-center justify-center"
+				>
 					<Plus className="mr-2 h-4 w-4" />
 					Add Experience
 				</Button>

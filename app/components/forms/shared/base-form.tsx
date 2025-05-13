@@ -17,6 +17,7 @@ export interface BaseFormProps {
 	formType: FormType;
 	wasCompleted?: boolean;
 	defaultValues: any;
+	onBack?: () => void;
 }
 
 export function BaseForm({
@@ -28,6 +29,7 @@ export function BaseForm({
 	formType,
 	wasCompleted = false,
 	defaultValues,
+	onBack,
 }: BaseFormProps) {
 	const [, setSearchParams] = useSearchParams();
 
@@ -41,9 +43,15 @@ export function BaseForm({
 	const currentIndex = sectionOrder.indexOf(formType);
 	const nextSection = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
 	const isFinalSection = nextSection === null;
+	const prevSection = currentIndex > 0 ? sectionOrder[currentIndex - 1] : null;
 
 	function handleNext() {
 		if (nextSection) setSearchParams({ section: nextSection });
+	}
+
+	function handleBack() {
+		if (onBack) return onBack();
+		if (prevSection) setSearchParams({ section: prevSection });
 	}
 
 	return (
@@ -51,32 +59,41 @@ export function BaseForm({
 			<RemixForm {...{ onSubmit, method }} className="space-y-8 flex-1">
 				<CardContent>{children}</CardContent>
 				<CardFooter>
-					<div className="w-full flex justify-end gap-2">
-						{wasCompleted && (
-							<Button
-								type="submit"
-								disabled={!form.formState.isDirty}
-								variant="secondary"
-								value="saveChanges"
-								name="saveChanges"
-							>
-								Save Changes
-								<SaveIcon />
-							</Button>
-						)}
-						{!(isFinalSection && shouldSkip) && (
-							<Button
-								type={shouldSkip ? "button" : "submit"}
-								disabled={!canSubmit || isSubmitting}
-								className="group relative"
-								{...(shouldSkip && {
-									onClick: handleNext,
-								})}
-							>
-								{isFinalSection ? "Finish" : `Next: ${getNextSectionName(nextSection)}`}
-								<ChevronRight className="ml-2 h-4 w-4 hover-slide-x" />
-							</Button>
-						)}
+					<div className="w-full flex justify-between gap-2">
+						<div>
+							{prevSection && (
+								<Button type="button" variant="outline" onClick={handleBack}>
+									Back
+								</Button>
+							)}
+						</div>
+						<div className="flex gap-2">
+							{wasCompleted && (
+								<Button
+									type="submit"
+									disabled={!form.formState.isDirty}
+									variant="secondary"
+									value="saveChanges"
+									name="saveChanges"
+								>
+									Save Changes
+									<SaveIcon />
+								</Button>
+							)}
+							{!(isFinalSection && shouldSkip) && (
+								<Button
+									type={shouldSkip ? "button" : "submit"}
+									disabled={!canSubmit || isSubmitting}
+									className="group relative"
+									{...(shouldSkip && {
+										onClick: handleNext,
+									})}
+								>
+									{isFinalSection ? "Finish" : `Next: ${getNextSectionName(nextSection)}`}
+									<ChevronRight className="ml-2 h-4 w-4 hover-slide-x" />
+								</Button>
+							)}
+						</div>
 					</div>
 				</CardFooter>
 			</RemixForm>

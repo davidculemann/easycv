@@ -185,7 +185,7 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 											<div className="flex items-center gap-2">
 												<DateField
 													name={`experiences.${index}.startDate`}
-													inputClassName="h-9 px-1 text-xs w-full w-[100px] bg-background border-border text-foreground"
+													inputClassName="h-9 px-1 w-full w-[120px] bg-background border-border text-foreground"
 												/>
 												<div
 													className={cn(
@@ -196,7 +196,7 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 												>
 													<DateField
 														name={`experiences.${index}.endDate`}
-														inputClassName="h-9 px-1 text-xs w-full w-[100px] bg-background border-border text-foreground"
+														inputClassName="h-9 px-1 w-full w-[120px] bg-background border-border text-foreground"
 													/>
 												</div>
 											</div>

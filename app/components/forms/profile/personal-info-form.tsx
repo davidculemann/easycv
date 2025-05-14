@@ -73,7 +73,7 @@ export function PersonalInfoForm({ defaultValues, isSubmitting, formType, wasCom
 				</div>
 				<Separator />
 				<div>
-					<FormLabel className="text-xs font-medium text-muted-foreground">Contact Information</FormLabel>
+					<h4 className="text-base font-medium text-foreground mb-1">Contact Information</h4>
 					<div className="grid gap-4 md:grid-cols-2">
 						<FormField
 							control={form.control}
@@ -126,7 +126,7 @@ export function PersonalInfoForm({ defaultValues, isSubmitting, formType, wasCom
 				</div>
 				<Separator />
 				<div>
-					<FormLabel className="text-xs font-medium text-muted-foreground">Online Presence</FormLabel>
+					<h4 className="text-base font-medium text-foreground mb-1">Online Presence</h4>
 					<div className="grid gap-4 md:grid-cols-2">
 						<FormField
 							control={form.control}

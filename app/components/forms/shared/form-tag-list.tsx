@@ -63,7 +63,7 @@ export function FormTagList({
 	return (
 		<div className={cn("space-y-2", className)}>
 			<div className="flex justify-between items-center">
-				<FormLabel>{label}</FormLabel>
+				<FormLabel className="text-xs font-medium text-muted-foreground">{label}</FormLabel>
 				{maxTags && (
 					<span className="text-xs text-muted-foreground">
 						{tags.length}/{maxTags}

@@ -41,7 +41,8 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 	});
 
 	const { mutate: deleteCV, isPending: isDeletingCV } = useMutation({
-		mutationFn: (id: string) => deleteCVDocument({ supabase, id }),
+		mutationFn: ({ id, onSuccess, onError }: { id: string; onSuccess?: () => void; onError?: () => void }) =>
+			deleteCVDocument({ supabase, id, onSuccess, onError }),
 		mutationKey: [QUERY_KEYS.cvs.all],
 	});
 

@@ -13,6 +13,7 @@ import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form"
 import { ProjectsForm } from "@/components/forms/profile/projects-form";
 import { SkillsForm } from "@/components/forms/profile/skills-form";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,7 +24,7 @@ import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData, useOutletContext, useParams } from "@remix-run/react";
+import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
 import { AlertTriangle, Check, Download, ExternalLink, Pencil, RefreshCw, Settings, Trash2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -47,7 +48,10 @@ export default function CV() {
 	const { profile } = useLoaderData<typeof loader>();
 	const params = useParams();
 	const { id } = params;
-	const { updateCV, isUpdatingCV, cv, deleteCV, renameCV, optimisticCvTitle } = useCV({ supabase, id: id ?? "" });
+	const { updateCV, isUpdatingCV, cv, deleteCV, isDeletingCV, renameCV, optimisticCvTitle } = useCV({
+		supabase,
+		id: id ?? "",
+	});
 
 	const isMobile = useMediaQuery("(max-width: 768px)");
 	const [model, setModel] = useState("deepseek");
@@ -169,6 +173,21 @@ export default function CV() {
 	const [profileDismissed, setProfileDismissed] = useState(false);
 	const showBanner = !profile.completed && !profileDismissed;
 
+	// === delete cv ===
+	const [deleteCVPopoverOpen, setDeleteCVPopoverOpen] = useState(false);
+	const navigate = useNavigate();
+
+	function handleDeleteCV() {
+		deleteCV({
+			id: id ?? "",
+			onSuccess: () => {
+				toast.success("CV deleted successfully");
+				navigate("/cvs");
+			},
+			onError: () => toast.error("Failed to delete CV"),
+		});
+	}
+
 	return (
 		<div className="h-full flex flex-col">
 			<div className="border-b px-4 py-3 flex items-center justify-between bg-background [height:62px]">
@@ -219,10 +238,32 @@ export default function CV() {
 						<Settings className="h-4 w-4" />
 						<span className="hidden sm:inline">AI Settings</span>
 					</Button>
-					<Button variant="outline" size="sm" className="gap-2">
-						<Trash2 className="h-4 w-4" />
-						<span className="hidden sm:inline">Delete CV</span>
-					</Button>
+
+					<Popover open={deleteCVPopoverOpen} onOpenChange={setDeleteCVPopoverOpen}>
+						<PopoverTrigger asChild>
+							<Button variant="outline" size="sm" className="gap-2">
+								<Trash2 className="h-4 w-4" />
+								<span className="hidden sm:inline">Delete CV</span>
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="flex flex-col gap-3">
+							<span className="text-sm">Delete this CV?</span>
+							<span className="text-sm text-muted-foreground">This action cannot be undone.</span>
+							<div className="flex items-center gap-2 justify-end">
+								<Button
+									variant="outline"
+									size="sm"
+									className="gap-2"
+									onClick={() => setDeleteCVPopoverOpen(false)}
+								>
+									Cancel
+								</Button>
+								<Button variant="destructive" size="sm" className="gap-2" onClick={handleDeleteCV}>
+									Delete CV
+								</Button>
+							</div>
+						</PopoverContent>
+					</Popover>
 				</div>
 			</div>
 			{showBanner && (

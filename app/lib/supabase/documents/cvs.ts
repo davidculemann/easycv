@@ -132,7 +132,12 @@ export async function createCVDocument({ supabase }: { supabase: SupabaseClient<
 	return data;
 }
 
-export async function deleteCVDocument({ supabase, id }: { supabase: SupabaseClient<Database>; id: string }) {
+export async function deleteCVDocument({
+	supabase,
+	id,
+	onSuccess,
+	onError,
+}: { supabase: SupabaseClient<Database>; id: string; onSuccess?: () => void; onError?: () => void }) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
@@ -143,9 +148,11 @@ export async function deleteCVDocument({ supabase, id }: { supabase: SupabaseCli
 
 	const { data, error } = await supabase.from("cvs").delete().eq("id", id);
 	if (error) {
+		onError?.();
 		throw new Error(error.message);
 	}
 
+	onSuccess?.();
 	return data;
 }
 

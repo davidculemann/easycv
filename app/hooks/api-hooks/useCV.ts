@@ -5,6 +5,7 @@ import {
 	deleteCVDocument,
 	getCVDocument,
 	getCVDocuments,
+	renameCVDocument,
 	updateCVDocument,
 } from "@/lib/supabase/documents/cvs";
 import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
@@ -44,11 +45,37 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		mutationKey: [QUERY_KEYS.cvs.all],
 	});
 
+	const {
+		mutate: renameCV,
+		isPending: isRenamingCV,
+		variables,
+	} = useMutation({
+		mutationFn: ({
+			id,
+			name,
+			onSuccess,
+			onError,
+		}: { id: string; name: string; onSuccess?: () => void; onError?: () => void }) =>
+			renameCVDocument({ supabase, id, name, onSuccess, onError }),
+	});
+
 	const { mutate: updateCV, isPending: isUpdatingCV } = useMutation({
 		mutationFn: ({ id, cv }: { id: string; cv: Partial<ParsedCVProfile> }) =>
 			updateCVDocument({ supabase, id, cv }),
 		mutationKey: [QUERY_KEYS.cvs.single, id],
 	});
 
-	return { createCV, isCreatingCV, deleteCV, isDeletingCV, cvs, cv, updateCV, isUpdatingCV };
+	return {
+		createCV,
+		isCreatingCV,
+		deleteCV,
+		isDeletingCV,
+		cvs,
+		cv,
+		updateCV,
+		isUpdatingCV,
+		renameCV,
+		isRenamingCV,
+		optimisticCvTitle: variables?.name ?? cv?.title,
+	};
 };

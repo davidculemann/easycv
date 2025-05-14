@@ -44,17 +44,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function CV() {
+	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
 	const { profile } = useLoaderData<typeof loader>();
 	const params = useParams();
 	const { id } = params;
-	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
+	const { updateCV, isUpdatingCV, cv, deleteCV, renameCV, optimisticCvTitle } = useCV({ supabase, id: id ?? "" });
+
 	const isPro = isProPlan(subscription?.plan_id);
 	const isMobile = useMediaQuery("(max-width: 768px)");
 	const [model, setModel] = useState("deepseek");
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [pdfData, setPdfData] = useState<string | null>(null);
 	const [viewMode, setViewMode] = useState<"json" | "pdf">("json");
-	const [cvName, setCvName] = useState("CV");
 	const [isEditingName, setIsEditingName] = useState(false);
 	const [isSaved, setIsSaved] = useState(true);
 	const [showProfileBanner, setShowProfileBanner] = useState(true);
@@ -67,8 +68,6 @@ export default function CV() {
 			cv: CVContextSchema,
 		}),
 	});
-
-	const { updateCV, isUpdatingCV, cv } = useCV({ supabase, id: id ?? "" });
 
 	function handleSaveChanges() {
 		if (!object) return;
@@ -147,21 +146,44 @@ export default function CV() {
 		});
 	}
 
+	// === cv naming ===
+	const [cvName, setCvName] = useState(optimisticCvTitle);
+
+	function handleRenameCV() {
+		if (!cvName) return;
+		renameCV({
+			id: id ?? "",
+			name: cvName,
+			onSuccess: () => {
+				setIsEditingName(false);
+				toast.success("CV renamed successfully");
+			},
+			onError: () => toast.error("Failed to rename CV"),
+		});
+	}
+
+	useEffect(() => {
+		if (optimisticCvTitle) {
+			setCvName(optimisticCvTitle);
+		}
+	}, [optimisticCvTitle]);
+	// ======
+
 	return (
 		<div className="h-full flex flex-col">
-			<div className="border-b px-4 py-3 flex items-center justify-between bg-background">
+			<div className="border-b px-4 py-3 flex items-center justify-between bg-background [height:62px]">
 				{isEditingName ? (
-					<div className="flex items-center gap-2">
+					<div className="flex items-center gap-1">
 						<input
 							ref={nameInputRef}
 							value={cvName}
 							onChange={(e) => setCvName(e.target.value)}
-							className="h-9 text-lg font-medium w-[300px] border rounded px-2"
+							className="h-9 text-lg font-medium w-[150px] md:w-[200px] border rounded px-2"
 						/>
 						<Button
 							variant="ghost"
 							size="sm"
-							onClick={() => setIsEditingName(false)}
+							onClick={handleRenameCV}
 							className="h-8 w-8 p-0 text-green-600"
 						>
 							<Check className="h-4 w-4" />

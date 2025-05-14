@@ -170,3 +170,26 @@ export async function updateCVDocument({
 	}
 	return data[0];
 }
+
+export async function renameCVDocument({
+	supabase,
+	id,
+	name,
+	onSuccess,
+	onError,
+}: {
+	supabase: SupabaseClient<Database>;
+	id: string;
+	name: string;
+	onSuccess?: () => void;
+	onError?: () => void;
+}) {
+	const { data, error } = await supabase.from("cvs").update({ title: name }).eq("id", id);
+	if (error) {
+		onError?.();
+		throw new Error(error.message);
+	}
+
+	onSuccess?.();
+	return data?.[0];
+}

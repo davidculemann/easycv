@@ -21,7 +21,6 @@ import { type CVContext, CVContextSchema } from "@/lib/documents/types";
 import { getUserProfile } from "@/lib/supabase/documents/profile";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { isProPlan } from "@/services/stripe/plans";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useOutletContext, useParams } from "@remix-run/react";
@@ -50,7 +49,6 @@ export default function CV() {
 	const { id } = params;
 	const { updateCV, isUpdatingCV, cv, deleteCV, renameCV, optimisticCvTitle } = useCV({ supabase, id: id ?? "" });
 
-	const isPro = isProPlan(subscription?.plan_id);
 	const isMobile = useMediaQuery("(max-width: 768px)");
 	const [model, setModel] = useState("deepseek");
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
@@ -58,7 +56,6 @@ export default function CV() {
 	const [viewMode, setViewMode] = useState<"json" | "pdf">("json");
 	const [isEditingName, setIsEditingName] = useState(false);
 	const [isSaved, setIsSaved] = useState(true);
-	const [showProfileBanner, setShowProfileBanner] = useState(true);
 	const nameInputRef = useRef<HTMLInputElement>(null);
 	const [activeTab, setActiveTab] = useState("personal");
 
@@ -167,7 +164,10 @@ export default function CV() {
 			setCvName(optimisticCvTitle);
 		}
 	}, [optimisticCvTitle]);
-	// ======
+
+	// === profile banner ===
+	const [profileDismissed, setProfileDismissed] = useState(false);
+	const showBanner = !profile.completed && !profileDismissed;
 
 	return (
 		<div className="h-full flex flex-col">
@@ -225,7 +225,7 @@ export default function CV() {
 					</Button>
 				</div>
 			</div>
-			{showProfileBanner && (
+			{showBanner && (
 				<div className="bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 border-b px-4 py-2">
 					<div className="flex items-center justify-between">
 						<div className="flex items-center gap-2">
@@ -243,7 +243,7 @@ export default function CV() {
 								variant="ghost"
 								size="sm"
 								className="h-7 w-7 p-0"
-								onClick={() => setShowProfileBanner(false)}
+								onClick={() => setProfileDismissed(false)}
 							>
 								<X className="h-4 w-4" />
 							</Button>

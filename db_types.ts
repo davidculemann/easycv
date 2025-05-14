@@ -48,7 +48,7 @@ export type Database = {
 			cv_profiles: {
 				Row: {
 					address: string | null;
-					completion: Json | null;
+					completed: boolean | null;
 					created_at: string;
 					education: Json | null;
 					email: string | null;
@@ -67,7 +67,7 @@ export type Database = {
 				};
 				Insert: {
 					address?: string | null;
-					completion?: Json | null;
+					completed?: boolean | null;
 					created_at?: string;
 					education?: Json | null;
 					email?: string | null;
@@ -86,7 +86,7 @@ export type Database = {
 				};
 				Update: {
 					address?: string | null;
-					completion?: Json | null;
+					completed?: boolean | null;
 					created_at?: string;
 					education?: Json | null;
 					email?: string | null;

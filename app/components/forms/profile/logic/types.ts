@@ -41,7 +41,7 @@ export type ParsedCVProfile = {
 		skills?: string[];
 		link?: string;
 	}>;
-	completion: Record<string, any>;
+	completed: boolean;
 };
 
 export const profileSchema = z.object({
@@ -88,7 +88,7 @@ export const profileSchema = z.object({
 			}),
 		)
 		.default([]),
-	completion: z.record(z.any()).default({}),
+	completed: z.boolean().default(false),
 });
 
 export function ensureValidProfile(profile: any): ParsedCVProfile {
@@ -109,7 +109,7 @@ export function ensureValidProfile(profile: any): ParsedCVProfile {
 			experience: [],
 			skills: [],
 			projects: [],
-			completion: {},
+			completed: false,
 		};
 	}
 
@@ -129,7 +129,7 @@ export function ensureValidProfile(profile: any): ParsedCVProfile {
 		experience: Array.isArray(profile.experience) ? profile.experience : [],
 		skills: Array.isArray(profile.skills) ? profile.skills : [],
 		projects: Array.isArray(profile.projects) ? profile.projects : [],
-		completion: profile.completion && typeof profile.completion === "object" ? profile.completion : {},
+		completed: profile.completed ?? false,
 	};
 }
 

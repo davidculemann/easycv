@@ -6,7 +6,7 @@ import type { Database } from "db_types";
 export function parseJsonFields(profile: any): ParsedCVProfile {
 	if (!profile) return ensureValidProfile(null);
 
-	const jsonFields = ["education", "experience", "skills", "projects", "completion"];
+	const jsonFields = ["education", "experience", "skills", "projects"];
 	const parsedProfile = { ...profile };
 
 	for (const field of jsonFields) {
@@ -20,8 +20,6 @@ export function parseJsonFields(profile: any): ParsedCVProfile {
 				parsedProfile[field] = [];
 			} else if (field === "experience" || field === "projects" || field === "education") {
 				parsedProfile[field] = [];
-			} else if (field === "completion") {
-				parsedProfile[field] = {};
 			} else {
 				parsedProfile[field] = null;
 			}

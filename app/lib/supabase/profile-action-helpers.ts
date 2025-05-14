@@ -1,4 +1,6 @@
 import type { CVProfileInput } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
+import { checkSectionCompletion } from "@/components/forms/profile/logic/utils";
 import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 
 type HandleProfileSectionUpdateArgs = {
@@ -48,6 +50,22 @@ export async function handleProfileSectionUpdate({
 				[sectionKey]: parsedValue,
 			},
 		});
+
+		const updatedProfile = { ...dbProfile, [sectionKey]: parsedValue };
+		const validProfile = ensureValidProfile(updatedProfile);
+		const hasPersonal = checkSectionCompletion(validProfile, "personal");
+		const hasEducation = checkSectionCompletion(validProfile, "education");
+		const hasExperience = checkSectionCompletion(validProfile, "experience");
+		const hasBeenCompleted = hasPersonal && hasEducation && hasExperience;
+		if (hasBeenCompleted && !dbProfile.completed) {
+			await updateUserProfile({
+				supabase,
+				profile: {
+					...updatedProfile,
+					completed: true,
+				},
+			});
+		}
 	} catch (error) {
 		console.error(`Failed to update ${sectionKey}:`, error);
 		return new Response(JSON.stringify({ message: `Failed to update ${sectionKey}`, success: false }), {

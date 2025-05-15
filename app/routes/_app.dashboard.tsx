@@ -11,7 +11,7 @@ import { getLastXDocuments } from "@/lib/supabase/documents/cvs";
 import { parseJsonFields } from "@/lib/supabase/documents/profile";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
 import { ArrowRight, FileEdit, FilePlus, Info, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
@@ -76,7 +76,7 @@ export default function Dashboard() {
 					title="CVs"
 					description="Create and manage your resumes"
 					icon={<Icons.cv className="h-5 w-5" />}
-					createLink="/api/new-cv"
+					formLink="/api/new-cv"
 					createLabel="New CV"
 					viewLink="/cvs"
 					viewLabel="View CVs"
@@ -87,7 +87,7 @@ export default function Dashboard() {
 					title="Cover Letters"
 					description="Craft personalized cover letters"
 					icon={<Icons.coverLetter className="h-5 w-5" />}
-					createLink="/cover-letter/new"
+					formLink="/api/new-cover-letter"
 					createLabel="New Cover Letter"
 					viewLink="/cover-letters"
 					viewLabel="View Cover Letters"
@@ -197,7 +197,7 @@ interface ActionCardProps {
 	title: string;
 	description: string;
 	icon: React.ReactNode;
-	createLink: string;
+	formLink: string;
 	createLabel: string;
 	viewLink: string;
 	viewLabel: string;
@@ -213,7 +213,7 @@ function ActionCard({
 	title,
 	description,
 	icon,
-	createLink,
+	formLink,
 	createLabel,
 	viewLink,
 	viewLabel,
@@ -249,12 +249,12 @@ function ActionCard({
 				<Button variant="outline" className="w-full" asChild>
 					<Link to={viewLink}>{viewLabel}</Link>
 				</Button>
-				<Button className="w-full" asChild>
-					<Link to={createLink}>
+				<Form method="post" action={formLink} className="w-full">
+					<Button type="submit" className="w-full">
 						<Plus className="mr-2 h-4 w-4" />
 						{createLabel}
-					</Link>
-				</Button>
+					</Button>
+				</Form>
 			</CardFooter>
 		</Card>
 	);

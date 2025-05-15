@@ -157,9 +157,9 @@ export default function CV() {
 			name: cvName,
 			onSuccess: () => {
 				setIsEditingName(false);
-				toast.success("CV renamed successfully");
+				toast.success("CV renamed");
 			},
-			onError: () => toast.error("Failed to rename CV"),
+			onError: () => toast.error("Error renaming CV"),
 		});
 	}
 

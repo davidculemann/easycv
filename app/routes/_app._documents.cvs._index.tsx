@@ -7,11 +7,10 @@ import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import { Form, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
 import { CirclePlus } from "lucide-react";
 import { AnimatePresence } from "motion/react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -27,26 +26,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 function CVList() {
 	const { supabase } = useOutletContext<SupabaseOutletContext>();
-	const { cvs, createCV } = useCV({ supabase });
-
-	function handleCreateCV() {
-		createCV({
-			success: (id: string) => handleOpenCV(id),
-			error: (error: string) => toast.error(error ?? "Something went wrong"),
-		});
-	}
+	const { cvs } = useCV({ supabase });
 
 	const navigate = useNavigate();
 	const handleOpenCV = (id: string) => navigate(`/cvs/${id}`, { viewTransition: true });
 
 	return (
 		<AnimatePresence>
-			<PageButton onClick={handleCreateCV} newDocument>
-				<span className="flex flex-col justify-center items-center gap-2">
-					Create New CV
-					<CirclePlus size={48} />
-				</span>
-			</PageButton>
+			<Form method="post" action="/api/new-cv">
+				<PageButton type="submit" newDocument>
+					<span className="flex flex-col justify-center items-center gap-2">
+						Create New CV
+						<CirclePlus size={48} />
+					</span>
+				</PageButton>
+			</Form>
+
 			{cvs?.data?.map((cv: any) => (
 				<PageButton
 					animate

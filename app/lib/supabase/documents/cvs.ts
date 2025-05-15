@@ -115,23 +115,6 @@ export async function getCVDocument({ supabase, id }: { supabase: SupabaseClient
 	return formatCV(data);
 }
 
-export async function createCVDocument({ supabase }: { supabase: SupabaseClient<Database> }) {
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-
-	if (!user) {
-		throw new Error("User not found");
-	}
-
-	const { data, error } = await supabase.from("cvs").insert({ user_id: user.id, title: "New CV" }).select().single();
-	if (error) {
-		throw new Error(error.message);
-	}
-
-	return data;
-}
-
 export async function deleteCVDocument({
 	supabase,
 	id,

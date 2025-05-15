@@ -124,26 +124,24 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 												: ""}
 										</div>
 									</div>
-									{fields.length > 1 && (
-										<div
-											role="button"
-											tabIndex={0}
-											aria-label="Delete education"
-											className="ml-auto flex items-center justify-center rounded-md p-2 hover:bg-muted/50 focus:bg-muted/50 cursor-pointer"
-											onClick={(e) => {
-												e.stopPropagation();
+									<div
+										role="button"
+										tabIndex={0}
+										aria-label="Delete education"
+										className="ml-auto flex items-center justify-center rounded-md p-2 hover:bg-muted/50 focus:bg-muted/50 cursor-pointer"
+										onClick={(e) => {
+											e.stopPropagation();
+											remove(index);
+										}}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ") {
+												e.preventDefault();
 												remove(index);
-											}}
-											onKeyDown={(e) => {
-												if (e.key === "Enter" || e.key === " ") {
-													e.preventDefault();
-													remove(index);
-												}
-											}}
-										>
-											<Trash2 className="h-4 w-4 text-muted-foreground" />
-										</div>
-									)}
+											}
+										}}
+									>
+										<Trash2 className="h-4 w-4 text-muted-foreground" />
+									</div>
 								</AccordionTrigger>
 								<AccordionContent className="px-4 pt-0">
 									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">

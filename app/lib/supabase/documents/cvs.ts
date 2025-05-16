@@ -1,5 +1,4 @@
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
-import { json } from "@remix-run/node";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
@@ -197,13 +196,13 @@ export async function createCVDocument({
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
-	if (!user) return json({ error: "User not found" }, { status: 401 });
+	if (!user) throw new Error("User not found");
 
 	let profile: Database["public"]["Tables"]["cv_profiles"]["Row"] | null = null;
 	if (fromProfile) {
 		const { data } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
 		profile = data;
-		if (!profile) return json({ error: "Profile not found" }, { status: 404 });
+		if (!profile) new Error("User not found");
 	}
 
 	const { id, created_at, updated_at, user_id, ...profileFields } = profile ?? {};

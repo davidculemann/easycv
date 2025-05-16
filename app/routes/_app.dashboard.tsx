@@ -7,14 +7,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DATE_FORMATS, formatDate } from "@/lib/dates";
-import { getLastXDocuments } from "@/lib/supabase/documents/cvs";
+import { createCVDocument, getLastXDocuments } from "@/lib/supabase/documents/cvs";
 import { parseJsonFields } from "@/lib/supabase/documents/profile";
+import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { ArrowRight, FileEdit, FilePlus, Info, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 const ACTIVITY_ITEMS_LIMIT = 3;
 
@@ -76,7 +78,7 @@ export default function Dashboard() {
 					title="CVs"
 					description="Create and manage your resumes"
 					icon={<Icons.cv className="h-5 w-5" />}
-					formLink="/api/new-cv"
+					navigateLink="/cvs"
 					createLabel="New CV"
 					viewLink="/cvs"
 					viewLabel="View CVs"
@@ -87,7 +89,7 @@ export default function Dashboard() {
 					title="Cover Letters"
 					description="Craft personalized cover letters"
 					icon={<Icons.coverLetter className="h-5 w-5" />}
-					formLink="/api/new-cover-letter"
+					navigateLink="/cover-letters"
 					createLabel="New Cover Letter"
 					viewLink="/cover-letters"
 					viewLabel="View Cover Letters"
@@ -197,7 +199,7 @@ interface ActionCardProps {
 	title: string;
 	description: string;
 	icon: React.ReactNode;
-	formLink: string;
+	navigateLink: string;
 	createLabel: string;
 	viewLink: string;
 	viewLabel: string;
@@ -213,13 +215,27 @@ function ActionCard({
 	title,
 	description,
 	icon,
-	formLink,
+	navigateLink,
 	createLabel,
 	viewLink,
 	viewLabel,
 	count,
 	banner,
 }: ActionCardProps) {
+	const navigate = useNavigate();
+	const { supabase } = useOutletContext<SupabaseOutletContext>();
+
+	async function handleCreateNewDocument() {
+		try {
+			const newDocument = await createCVDocument({ supabase, cvName: "New CV", fromProfile: true });
+			if ("id" in newDocument && newDocument.id) {
+				navigate(`${navigateLink}/${newDocument.id}`);
+			} else throw new Error("No document ID returned");
+		} catch (error) {
+			toast.error("Error creating new document");
+		}
+	}
+
 	return (
 		<Card className="flex flex-col h-full">
 			<CardHeader className="pb-3">
@@ -249,12 +265,10 @@ function ActionCard({
 				<Button variant="outline" className="w-full" asChild>
 					<Link to={viewLink}>{viewLabel}</Link>
 				</Button>
-				<Form method="post" action={formLink} className="w-full">
-					<Button type="submit" className="w-full">
-						<Plus className="mr-2 h-4 w-4" />
-						{createLabel}
-					</Button>
-				</Form>
+				<Button className="w-full" onClick={handleCreateNewDocument}>
+					<Plus className="mr-2 h-4 w-4" />
+					{createLabel}
+				</Button>
 			</CardFooter>
 		</Card>
 	);

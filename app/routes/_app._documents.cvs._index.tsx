@@ -2,15 +2,16 @@ import PageButton from "@/components/shared/page-button";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { formatDate } from "@/lib/dates";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
-import { getCVDocuments } from "@/lib/supabase/documents/cvs";
+import { createCVDocument, getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
 import { CirclePlus } from "lucide-react";
 import { AnimatePresence } from "motion/react";
+import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -29,18 +30,30 @@ function CVList() {
 	const { cvs } = useCV({ supabase });
 
 	const navigate = useNavigate();
-	const handleOpenCV = (id: string) => navigate(`/cvs/${id}`, { viewTransition: true });
+
+	async function handleCreateNewDocument() {
+		try {
+			const newDocument = await createCVDocument({ supabase, cvName: "New CV", fromProfile: true });
+			if ("id" in newDocument && newDocument.id) {
+				navigate(`/cvs/${newDocument.id}`);
+			} else throw new Error("No document ID returned");
+		} catch (error) {
+			toast.error("Error creating new document");
+		}
+	}
+
+	function handleOpenCV(id: string) {
+		navigate(`/cvs/${id}`, { viewTransition: true });
+	}
 
 	return (
 		<AnimatePresence>
-			<Form method="post" action="/api/new-cv">
-				<PageButton type="submit" newDocument>
-					<span className="flex flex-col justify-center items-center gap-2">
-						Create New CV
-						<CirclePlus size={48} />
-					</span>
-				</PageButton>
-			</Form>
+			<PageButton type="submit" onClick={handleCreateNewDocument}>
+				<span className="flex flex-col justify-center items-center gap-2">
+					Create New CV
+					<CirclePlus size={48} />
+				</span>
+			</PageButton>
 
 			{cvs?.data?.map((cv: any) => (
 				<PageButton

@@ -1,4 +1,5 @@
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { json } from "@remix-run/node";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
 
@@ -182,4 +183,64 @@ export async function renameCVDocument({
 
 	onSuccess?.();
 	return data?.[0];
+}
+
+export async function createCVDocument({
+	supabase,
+	cvName = "New CV",
+	fromProfile = false,
+}: {
+	supabase: SupabaseClient<Database>;
+	cvName?: string;
+	fromProfile?: boolean;
+}) {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	if (!user) return json({ error: "User not found" }, { status: 401 });
+
+	let profile: Database["public"]["Tables"]["cv_profiles"]["Row"] | null = null;
+	if (fromProfile) {
+		const { data } = await supabase.from("cv_profiles").select("*").eq("user_id", user?.id).single();
+		profile = data;
+		if (!profile) return json({ error: "Profile not found" }, { status: 404 });
+	}
+
+	const { id, created_at, updated_at, user_id, ...profileFields } = profile ?? {};
+
+	const insertFields: Database["public"]["Tables"]["cvs"]["Insert"] = {
+		user_id: user.id,
+		title: cvName,
+		education:
+			"education" in profileFields && profileFields.education
+				? Array.isArray(profileFields.education)
+					? profileFields.education
+					: typeof profileFields.education === "string"
+						? JSON.parse(profileFields.education)
+						: null
+				: null,
+		experience:
+			"experience" in profileFields && profileFields.experience
+				? Array.isArray(profileFields.experience)
+					? profileFields.experience
+					: typeof profileFields.experience === "string"
+						? JSON.parse(profileFields.experience)
+						: null
+				: null,
+		projects:
+			"projects" in profileFields && profileFields.projects
+				? Array.isArray(profileFields.projects)
+					? profileFields.projects
+					: typeof profileFields.projects === "string"
+						? JSON.parse(profileFields.projects)
+						: null
+				: null,
+		skills: "skills" in profileFields ? (profileFields.skills ?? null) : null,
+	};
+
+	const { data, error } = await supabase.from("cvs").insert(insertFields).select("id").single();
+
+	if (!data || error) throw new Error(error?.message || "Failed to create CV");
+
+	return data;
 }

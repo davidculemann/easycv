@@ -1,6 +1,7 @@
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import {
+	createCVDocument,
 	deleteCVDocument,
 	getCVDocument,
 	getCVDocuments,
@@ -49,6 +50,29 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		mutationKey: [QUERY_KEYS.cvs.single, id],
 	});
 
+	const { mutate: createCV, isPending: isCreatingCV } = useMutation({
+		mutationFn: async ({
+			cvName,
+			fromProfile,
+			onSuccess,
+			onError,
+		}: {
+			cvName?: string;
+			fromProfile?: boolean;
+			onSuccess?: (data: any) => void;
+			onError?: (error: any) => void;
+		}) => {
+			try {
+				const data = await createCVDocument({ supabase, cvName, fromProfile });
+				onSuccess?.(data);
+				return data;
+			} catch (error) {
+				onError?.(error);
+				throw error;
+			}
+		},
+	});
+
 	return {
 		deleteCV,
 		isDeletingCV,
@@ -59,5 +83,7 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		renameCV,
 		isRenamingCV,
 		optimisticCvTitle: variables?.name ?? cv?.title,
+		createCV,
+		isCreatingCV,
 	};
 };

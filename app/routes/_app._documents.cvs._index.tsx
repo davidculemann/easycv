@@ -48,7 +48,7 @@ function CVList() {
 
 	return (
 		<AnimatePresence>
-			<PageButton type="submit" onClick={handleCreateNewDocument}>
+			<PageButton type="submit" onClick={handleCreateNewDocument} newDocument>
 				<span className="flex flex-col justify-center items-center gap-2">
 					Create New CV
 					<CirclePlus size={48} />

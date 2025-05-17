@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { formatDate } from "@/lib/dates";
-import { tileEntryExit } from "@/lib/framer/animations";
+import { cvContainerVariants, cvItemVariants } from "@/lib/framer/animations";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { createCVDocument, getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
@@ -11,7 +11,7 @@ import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -48,7 +48,7 @@ function CVList() {
 	}
 
 	return (
-		<AnimatePresence>
+		<div className="flex flex-wrap gap-4 justify-center sm:justify-start">
 			<Card className="h-52 w-40 sm:h-64 sm:w-48 border-dashed border-muted-foreground border flex flex-col items-center justify-center gap-3">
 				<div className="font-semibold text-center">Create New CV</div>
 				<div className="flex flex-col gap-2 w-full px-2">
@@ -60,22 +60,28 @@ function CVList() {
 					</Button>
 				</div>
 			</Card>
-
-			{cvs?.data?.map((cv: any) => (
-				<motion.div key={cv.id} {...tileEntryExit} style={{ viewTransitionName: `cv-card-${cv.id}` }}>
-					<Button
-						onClick={() => handleOpenCV(cv.id)}
-						variant="outline"
-						className={"h-52 w-40 sm:h-64 sm:w-48"}
+			<motion.div variants={cvContainerVariants} initial="hidden" animate="show" className="contents">
+				{cvs?.data?.map((cv: any, idx: number) => (
+					<motion.div
+						key={idx}
+						variants={cvItemVariants}
+						custom={idx}
+						style={{ viewTransitionName: `cv-card-${cv.id}` }}
 					>
-						<span className="flex flex-col justify-center items-center gap-2">
-							<span className="text-lg font-bold">{cv.title}</span>
-							<span className="text-sm text-muted-foreground">{formatDate(cv.created_at)}</span>
-						</span>
-					</Button>
-				</motion.div>
-			))}
-		</AnimatePresence>
+						<Button
+							onClick={() => handleOpenCV(cv.id)}
+							variant="outline"
+							className={"h-52 w-40 sm:h-64 sm:w-48"}
+						>
+							<span className="flex flex-col justify-center items-center gap-2">
+								<span className="text-lg font-bold">{cv.title}</span>
+								<span className="text-sm text-muted-foreground">{formatDate(cv.created_at)}</span>
+							</span>
+						</Button>
+					</motion.div>
+				))}
+			</motion.div>
+		</div>
 	);
 }
 

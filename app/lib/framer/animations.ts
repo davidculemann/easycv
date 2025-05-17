@@ -39,6 +39,20 @@ export const itemVariants = {
 	show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+export const cvContainerVariants = {
+	show: {
+		opacity: 1,
+		transition: {
+			staggerChildren: 0.12,
+		},
+	},
+};
+
+export const cvItemVariants = {
+	hidden: { opacity: 0, y: 20 },
+	show: { opacity: 1, y: 0, transition: { duration: 0.22 } },
+};
+
 export const tileEntryExit = {
 	initial: { opacity: 0, scale: 0, transition: { duration: 0.15 } },
 	animate: { opacity: 1, scale: 1, transition: { duration: 0.15 } },

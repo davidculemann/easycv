@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { PDFDocument } from "https://esm.sh/pdf-lib";
 import sharp from "https://esm.sh/sharp";
 
-//NOTE: for any further changes, we need to update the edge function in the supabase project:
+//NOTE: for any further changes, we need to update the edge function in the supabase project
 // supabase functions deploy generate-thumbnail --project-ref <project_id>
 
 serve(async (req) => {

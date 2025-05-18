@@ -1,6 +1,6 @@
 import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
 import { useQuery } from "@tanstack/react-query";
-import type { DocType } from "./useDocument";
+import type { DocType } from "./useUploadDocument";
 
 interface DocumentEntry {
 	name: string;

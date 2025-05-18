@@ -26,6 +26,8 @@ import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "db_types";
 import {
 	AlertTriangle,
 	Check,
@@ -47,7 +49,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 
 	try {
-		const profile = await getUserProfile({ supabase });
+		const profile = await getUserProfile({ supabase: supabase as SupabaseClient<Database> });
 		return { profile: ensureValidProfile(profile) };
 	} catch (error) {
 		console.error("Error loading profile:", error);
@@ -202,15 +204,21 @@ export default function CV() {
 
 	const { mutate: uploadCV } = useUploadDocument({ supabase });
 
-	function handleUploadCV() {
-		if (!pdfData) {
-			toast.error("No PDF data to upload.");
-			return;
-		}
+	async function handleUploadCV() {
+		if (!pdfData || !user?.id) return;
+
+		const response = await fetch(pdfData);
+		if (!response.ok) throw new Error("Failed to fetch generated PDF");
+
+		const pdfBlob = await response.blob();
+		const file = new File([pdfBlob], `cv-${id}.pdf`, {
+			type: "application/pdf",
+		});
+
 		uploadCV({
-			file: new File([pdfData], `cv-${id}.pdf`),
+			file,
 			docType: "cvs",
-			userId: user?.id ?? "",
+			userId: user.id,
 		});
 	}
 
@@ -415,7 +423,13 @@ export default function CV() {
 									</TabsTrigger>
 								</TabsList>
 								<div className="flex items-center gap-2">
-									<Button variant="outline" size="sm" onClick={handleUploadCV} className="flex gap-2">
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={handleUploadCV}
+										className="flex gap-2"
+										disabled={!pdfData || !user?.id}
+									>
 										<Upload className="h-4 w-4" />
 										<span className="hidden sm:inline">Upload CV</span>
 									</Button>

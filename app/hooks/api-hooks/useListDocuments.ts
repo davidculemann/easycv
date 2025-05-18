@@ -23,7 +23,7 @@ export function useListDocuments({
 			if (error) throw error;
 
 			const entries: DocumentEntry[] = await Promise.all(
-				((data ?? []) as DocumentEntry[])
+				(data ?? [])
 					.filter((item) => item.name.endsWith(".pdf"))
 					.map(async (item) => {
 						const filePath = `${docType}/${userId}/${item.name}`;

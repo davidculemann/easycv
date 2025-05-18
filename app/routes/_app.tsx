@@ -88,7 +88,7 @@ export default function AuthLayout() {
 	}
 
 	const { profile, subscription, currency } = loaderData as LoaderSuccess;
-	const outletContext = { supabase, profile, subscription, currency } as SupabaseOutletContext;
+	const outletContext = { supabase, profile, subscription, currency, user } as SupabaseOutletContext;
 
 	return (
 		<AdminPanelLayout>

@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { PDFDocument } from "https://esm.sh/pdf-lib";
 import sharp from "https://esm.sh/sharp";
 
 //NOTE: for any further changes, we need to update the edge function in the supabase project
@@ -17,21 +16,24 @@ serve(async (req) => {
 	}
 
 	try {
-		// 1. Download PDF
-		const { data: blob, error: dlErr } = await supabase.storage.from(bucket).download(filePath);
-		if (dlErr || !blob) throw dlErr || new Error("No data");
-
-		// 2. Extract first page to PNG (pseudo‑code; swap in your renderer)
+		const { data: blob } = await supabase.storage.from(bucket).download(filePath);
 		const pdfBytes = await blob.arrayBuffer();
-		const pdfDoc = await PDFDocument.load(pdfBytes);
-		const [page] = await pdfDoc.getPages();
-		const pngBuffer = await renderPageToPNG(page); // your PDF→PNG logic
 
-		// 3. Resize to thumbnail
+		const renderRes = await fetch(`${Deno.env.get("FLY_URL")}/generate-thumbnail`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/pdf",
+				"x-api-key": Deno.env.get("FLY_API_KEY")!,
+			},
+			body: pdfBytes,
+		});
+		if (!renderRes.ok) throw new Error("Render failed");
+		const pngBuffer = Buffer.from(await renderRes.arrayBuffer());
+
 		const thumbBuffer = await sharp(pngBuffer).resize({ width: 200 }).jpeg().toBuffer();
 
-		// 4. Upload thumbnail
 		const thumbPath = filePath.replace(".pdf", "/thumbs/preview.jpg");
+
 		const { error: upErr } = await supabase.storage.from(bucket).upload(thumbPath, thumbBuffer, { upsert: true });
 		if (upErr) throw upErr;
 

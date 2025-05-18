@@ -18,6 +18,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCV } from "@/hooks/api-hooks/useCV";
+import { useUploadDocument } from "@/hooks/api-hooks/useUploadDocument";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
 import { getUserProfile } from "@/lib/supabase/documents/profile";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
@@ -25,7 +26,18 @@ import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
-import { AlertTriangle, Check, Download, ExternalLink, Pencil, RefreshCw, Settings, Trash2, X } from "lucide-react";
+import {
+	AlertTriangle,
+	Check,
+	Download,
+	ExternalLink,
+	Pencil,
+	RefreshCw,
+	Settings,
+	Trash2,
+	Upload,
+	X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
@@ -44,7 +56,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function CV() {
-	const { supabase, subscription } = useOutletContext<SupabaseOutletContext>();
+	const { supabase, subscription, user } = useOutletContext<SupabaseOutletContext>();
 	const { profile } = useLoaderData<typeof loader>();
 	const params = useParams();
 	const { id } = params;
@@ -185,6 +197,20 @@ export default function CV() {
 				navigate("/cvs");
 			},
 			onError: () => toast.error("Failed to delete CV"),
+		});
+	}
+
+	const { mutate: uploadCV } = useUploadDocument({ supabase });
+
+	function handleUploadCV() {
+		if (!pdfData) {
+			toast.error("No PDF data to upload.");
+			return;
+		}
+		uploadCV({
+			file: new File([pdfData], `cv-${id}.pdf`),
+			docType: "cvs",
+			userId: user?.id ?? "",
 		});
 	}
 
@@ -389,6 +415,10 @@ export default function CV() {
 									</TabsTrigger>
 								</TabsList>
 								<div className="flex items-center gap-2">
+									<Button variant="outline" size="sm" onClick={handleUploadCV} className="flex gap-2">
+										<Upload className="h-4 w-4" />
+										<span className="hidden sm:inline">Upload CV</span>
+									</Button>
 									<Button
 										variant="outline"
 										size="sm"

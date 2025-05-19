@@ -172,17 +172,22 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 			name: cvName,
 			onSuccess: () => {
 				setIsRenaming(false);
-				toast("CV renamed");
+				toast.success("CV renamed");
 			},
 			onError: () => toast.error("Error renaming CV"),
 		});
+	}
+
+	function handleCancelRenameCV() {
+		setIsRenaming(false);
+		setCvName(cv.title);
 	}
 
 	function onDuplicate() {
 		duplicateCV({
 			id: cv.id,
 			onSuccess: () => {
-				toast("CV duplicated successfully");
+				toast.success("CV duplicated successfully");
 			},
 		});
 	}
@@ -213,7 +218,7 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 						<Button
 							variant="ghost"
 							size="sm"
-							onClick={() => setIsRenaming(false)}
+							onClick={handleCancelRenameCV}
 							className="h-8 w-8 p-0 text-red-600"
 						>
 							<X className="h-4 w-4" />

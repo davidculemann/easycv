@@ -164,6 +164,10 @@ export default function CV() {
 	// === cv naming ===
 	const [cvName, setCvName] = useState(cv?.title);
 
+	useEffect(() => {
+		setCvName(cv?.title);
+	}, [cv]);
+
 	function handleRenameCV() {
 		if (!cvName) return;
 		renameCV({
@@ -175,6 +179,11 @@ export default function CV() {
 			},
 			onError: () => toast.error("Error renaming CV"),
 		});
+	}
+
+	function handleCancelRenameCV() {
+		setIsEditingName(false);
+		setCvName(cv?.title);
 	}
 
 	// === profile banner ===
@@ -243,7 +252,7 @@ export default function CV() {
 						<Button
 							variant="ghost"
 							size="sm"
-							onClick={() => setIsEditingName(false)}
+							onClick={handleCancelRenameCV}
 							className="h-8 w-8 p-0 text-red-600"
 						>
 							<X className="h-4 w-4" />

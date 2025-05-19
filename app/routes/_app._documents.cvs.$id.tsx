@@ -13,6 +13,7 @@ import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form"
 import { ProjectsForm } from "@/components/forms/profile/projects-form";
 import { SkillsForm } from "@/components/forms/profile/skills-form";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -40,7 +41,7 @@ import {
 	Upload,
 	X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { z } from "zod";
@@ -74,7 +75,6 @@ export default function CV() {
 	const [viewMode, setViewMode] = useState<"json" | "pdf">("json");
 	const [isEditingName, setIsEditingName] = useState(false);
 	const [isSaved, setIsSaved] = useState(true);
-	const nameInputRef = useRef<HTMLInputElement>(null);
 	const [activeTab, setActiveTab] = useState("personal");
 
 	const { isLoading, object, submit } = useObject({
@@ -228,11 +228,15 @@ export default function CV() {
 			<div className="border-b px-4 py-3 flex items-center justify-between bg-background [height:62px]">
 				{isEditingName ? (
 					<div className="flex items-center gap-1">
-						<input
-							ref={nameInputRef}
+						<Input
 							value={cvName}
 							onChange={(e) => setCvName(e.target.value)}
 							className="h-9 text-lg font-medium w-[150px] md:w-[200px] border rounded px-2"
+							onKeyDown={(e) => {
+								if (e.key === "Enter") {
+									handleRenameCV();
+								}
+							}}
 						/>
 						<Button
 							variant="ghost"

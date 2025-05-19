@@ -8,6 +8,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { getDocumentThumbnailUrl } from "@/lib/documents/utils";
 import { cvContainerVariants, cvItemVariants } from "@/lib/framer/animations";
@@ -20,7 +21,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
-import { Copy, Download, MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { Check, Copy, Download, MoreVertical, Pencil, Trash2, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -86,18 +87,12 @@ function CVCard({
 	user,
 	handleOpenCV,
 }: { cv: any; supabase: SupabaseClient; user: User; handleOpenCV: (id: string) => void }) {
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const thumbnail = getDocumentThumbnailUrl({
 		supabase,
 		userId: user?.id,
 		docType: "cvs",
 		docId: cv.id,
 	});
-
-	const onRename = () => {};
-	const onDuplicate = () => {};
-	const onExport = () => {};
-	const onDelete = () => {};
 
 	return (
 		<motion.div
@@ -116,80 +111,171 @@ function CVCard({
 					aria-label={`View ${cv.title}`}
 				/>
 				<div className="h-0 flex-1 flex items-center justify-center p-1 w-full">
-					{thumbnail ? (
-						<img
-							src={thumbnail}
-							alt={`${cv.title} preview`}
-							className="w-full h-full rounded-md"
-							loading="lazy"
-							onError={(e) => {
-								e.currentTarget.src = "/assets/fallback.svg";
-							}}
-						/>
-					) : (
-						<div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground rounded-md">
-							No Preview
-						</div>
-					)}
+					<img
+						src={thumbnail}
+						alt={`${cv.title} preview`}
+						className="w-full h-full rounded-t-md"
+						loading="lazy"
+						onError={(e) => {
+							e.currentTarget.src = "/assets/fallback.svg";
+						}}
+					/>
 				</div>
-				<div className="relative z-20 min-h-[56px] flex items-center justify-between px-3 py-2 bg-white/80 dark:bg-card/80 backdrop-blur border-t border-border">
-					<span className="text-base font-medium truncate max-w-[70%]" title={cv.title}>
-						{cv.title}
-					</span>
-					<DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
-						<DropdownMenuTrigger asChild>
-							<Button
-								variant="ghost"
-								size="icon"
-								className="h-8 w-8 p-0 rounded-full"
-								tabIndex={0}
-								aria-label="CV Actions"
-							>
-								<MoreVertical className="h-5 w-5" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="w-48">
-							<DropdownMenuGroup>
-								<DropdownMenuItem
-									onClick={(e) => {
-										e.preventDefault();
-										onRename();
-									}}
-								>
-									<Pencil className="h-4 w-4 mr-2" /> Rename
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={(e) => {
-										e.preventDefault();
-										onDuplicate();
-									}}
-								>
-									<Copy className="h-4 w-4 mr-2" /> Duplicate
-								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={(e) => {
-										e.preventDefault();
-										onExport();
-									}}
-								>
-									<Download className="h-4 w-4 mr-2" /> Export
-								</DropdownMenuItem>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem
-									className="text-red-600 focus:text-red-600 focus:bg-red-50"
-									onClick={(e) => {
-										e.preventDefault();
-										onDelete();
-									}}
-								>
-									<Trash2 className="h-4 w-4 mr-2" /> Delete
-								</DropdownMenuItem>
-							</DropdownMenuGroup>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
+
+				<CVFooter cv={cv} supabase={supabase} user={user} />
 			</Card>
 		</motion.div>
+	);
+}
+
+function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; user: User }) {
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const [isRenaming, setIsRenaming] = useState(false);
+
+	const { deleteCV, renameCV, duplicateCV, optimisticCvTitle } = useCV({ supabase, id: cv.id });
+
+	function handleDeleteCV() {
+		deleteCV({
+			id: cv.id,
+			onSuccess: () => {
+				toast("CV deleted successfully");
+			},
+			onError: () => toast.error("Error deleting CV"),
+		});
+	}
+
+	async function handleDownloadCV() {
+		const filePath = `cvs/${user.id}/${cv.id}.pdf`;
+		const { data, error } = await supabase.storage.from("documents").download(filePath);
+		if (error) {
+			toast.error("Error downloading CV");
+			return;
+		}
+		if (!data) {
+			toast.error("No CV found");
+			return;
+		}
+		const url = URL.createObjectURL(data);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = `${cv.title}.pdf`;
+		a.click();
+	}
+
+	// renaming logic
+	const [cvName, setCvName] = useState(cv.title);
+
+	function handleRenameCV() {
+		if (!cvName) return;
+		renameCV({
+			id: cv.id,
+			name: cvName,
+			onSuccess: () => {
+				setIsRenaming(false);
+				toast("CV renamed");
+			},
+			onError: () => toast.error("Error renaming CV"),
+		});
+	}
+
+	function onDuplicate() {
+		duplicateCV({
+			id: cv.id,
+			onSuccess: () => {
+				toast("CV duplicated successfully");
+			},
+		});
+	}
+
+	return (
+		<div className="relative z-20 min-h-[56px] flex items-center justify-between px-3 py-2 bg-white/80 dark:bg-card/80 backdrop-blur border-t border-border">
+			<span className="text-base font-medium truncate" title={cv.title}>
+				{isRenaming ? (
+					<div className="flex items-center gap-1">
+						<Input
+							value={cvName}
+							onChange={(e) => setCvName(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === "Enter") {
+									handleRenameCV();
+								}
+							}}
+						/>
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={handleRenameCV}
+							className="h-8 w-8 p-0 text-green-600"
+						>
+							<Check className="h-4 w-4" />
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={() => setIsRenaming(false)}
+							className="h-8 w-8 p-0 text-red-600"
+						>
+							<X className="h-4 w-4" />
+						</Button>
+					</div>
+				) : (
+					optimisticCvTitle || cvName
+				)}
+			</span>
+			{!isRenaming && (
+				<DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+					<DropdownMenuTrigger asChild>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="h-8 w-8 p-0 rounded-full"
+							tabIndex={0}
+							aria-label="CV Actions"
+						>
+							<MoreVertical className="h-5 w-5" />
+						</Button>
+					</DropdownMenuTrigger>
+					<DropdownMenuContent align="end" className="w-48">
+						<DropdownMenuGroup>
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.preventDefault();
+									setIsRenaming(true);
+								}}
+							>
+								<Pencil className="h-4 w-4 mr-2" /> Rename
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.preventDefault();
+									onDuplicate();
+								}}
+							>
+								<Copy className="h-4 w-4 mr-2" /> Duplicate
+							</DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={(e) => {
+									e.preventDefault();
+									handleDownloadCV();
+								}}
+							>
+								<Download className="h-4 w-4 mr-2" /> Export
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem
+								className="text-red-600 focus:text-red-600 focus:bg-red-50"
+								onClick={(e) => {
+									e.preventDefault();
+									handleDeleteCV();
+								}}
+							>
+								<Trash2 className="h-4 w-4 mr-2" /> Delete
+							</DropdownMenuItem>
+						</DropdownMenuGroup>
+					</DropdownMenuContent>
+				</DropdownMenu>
+			)}
+		</div>
 	);
 }
 

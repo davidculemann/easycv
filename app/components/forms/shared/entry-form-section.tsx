@@ -19,6 +19,8 @@ export interface EntryFormSectionConfig {
 	descriptionPlaceholder: string;
 	bulletLabel: string;
 	asTextArea?: boolean;
+	institutionFieldName: string;
+	roleFieldName: string;
 }
 
 interface EntryFormSectionProps {
@@ -36,7 +38,7 @@ export function EntryFormSection({ form, fieldPrefix, config, index, isCurrent, 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 				<FormField
 					control={form.control}
-					name={`${fieldPrefix}.institution`}
+					name={`${fieldPrefix}.${config.institutionFieldName}`}
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel className="text-xs font-medium text-muted-foreground">
@@ -51,7 +53,7 @@ export function EntryFormSection({ form, fieldPrefix, config, index, isCurrent, 
 				/>
 				<FormField
 					control={form.control}
-					name={`${fieldPrefix}.role`}
+					name={`${fieldPrefix}.${config.roleFieldName}`}
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel className="text-xs font-medium text-muted-foreground">

@@ -13,7 +13,7 @@ interface ExperienceFormProps {
 	wasCompleted?: boolean;
 }
 
-const experienceConfig: EntryFormSectionConfig = {
+const EXPERIENCE_FORM_CONFIG: EntryFormSectionConfig = {
 	institutionLabel: "Employer",
 	institutionPlaceholder: "Employer",
 	roleLabel: "Job Title",
@@ -26,6 +26,8 @@ const experienceConfig: EntryFormSectionConfig = {
 	descriptionPlaceholder: "Describe responsibilities, achievements, or technologies used",
 	bulletLabel: "Add Bullet Point",
 	asTextArea: true,
+	institutionFieldName: "company",
+	roleFieldName: "role",
 };
 
 const EMPTY_EXPERIENCE = {
@@ -75,8 +77,8 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 					form={form}
 					arrayName="experiences"
 					emptyEntry={EMPTY_EXPERIENCE}
-					config={experienceConfig}
-					getDisplayTitle={(exp) => exp.institution}
+					config={EXPERIENCE_FORM_CONFIG}
+					getDisplayTitle={(exp) => exp.company}
 					getDisplaySubtitle={(exp, start, end, isCurrent) =>
 						exp.role
 							? `${exp.role}${start && (isCurrent || end) ? ` • ${start} - ${isCurrent ? "Current" : end}` : ""}`

@@ -13,7 +13,7 @@ interface EducationFormProps {
 	wasCompleted?: boolean;
 }
 
-const educationConfig: EntryFormSectionConfig = {
+const EDUCATION_FORM_CONFIG: EntryFormSectionConfig = {
 	institutionLabel: "Institution",
 	institutionPlaceholder: "University/College name",
 	roleLabel: "Degree",
@@ -26,11 +26,13 @@ const educationConfig: EntryFormSectionConfig = {
 	descriptionPlaceholder: "Achievement or responsibility",
 	bulletLabel: "Add Description",
 	asTextArea: true,
+	institutionFieldName: "school",
+	roleFieldName: "degree",
 };
 
 const EMPTY_EDUCATION = {
-	institution: "",
-	role: "",
+	school: "",
+	degree: "",
 	startDate: "",
 	endDate: "",
 	location: "",
@@ -76,11 +78,11 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 					form={form}
 					arrayName="educations"
 					emptyEntry={EMPTY_EDUCATION}
-					config={educationConfig}
-					getDisplayTitle={(edu) => edu.institution}
+					config={EDUCATION_FORM_CONFIG}
+					getDisplayTitle={(edu) => edu.school}
 					getDisplaySubtitle={(edu, start, end, isCurrent) =>
-						edu.role
-							? `${edu.role}${start && (isCurrent || end) ? ` • ${start} - ${isCurrent ? "Current" : end}` : ""}`
+						edu.degree
+							? `${edu.degree}${start && (isCurrent || end) ? ` • ${start} - ${isCurrent ? "Current" : end}` : ""}`
 							: start && (isCurrent || end)
 								? `${start} - ${isCurrent ? "Current" : end}`
 								: ""

@@ -243,3 +243,47 @@ export async function createCVDocument({
 
 	return data;
 }
+
+export async function duplicateCVDocument({
+	supabase,
+	id,
+	onSuccess,
+	onError,
+}: { supabase: SupabaseClient<Database>; id: string; onSuccess?: () => void; onError?: () => void }) {
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+	if (!user) throw new Error("User not found");
+
+	const { data, error } = await supabase.from("cvs").select("*").eq("id", id).single();
+	if (error) {
+		onError?.();
+		throw new Error(error.message);
+	}
+
+	const { id: oldId, ...dataToInsert } = data;
+
+	const { data: newData, error: newError } = await supabase.from("cvs").insert(dataToInsert).select("id").single();
+	if (newError) {
+		onError?.();
+		throw new Error(newError.message);
+	}
+
+	const { data: document } = await supabase.storage.from("documents").download(`cvs/${user.id}/${id}.pdf`);
+
+	if (!document) {
+		onSuccess?.();
+		return newData;
+	}
+
+	const { error: newDocumentError } = await supabase.storage
+		.from("documents")
+		.upload(`cvs/${user.id}/${newData.id}.pdf`, document);
+	if (newDocumentError) {
+		onError?.();
+		throw new Error(newDocumentError.message);
+	}
+
+	onSuccess?.();
+	return newData;
+}

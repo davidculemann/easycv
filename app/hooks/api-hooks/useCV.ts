@@ -3,6 +3,7 @@ import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import {
 	createCVDocument,
 	deleteCVDocument,
+	duplicateCVDocument,
 	getCVDocument,
 	getCVDocuments,
 	renameCVDocument,
@@ -73,6 +74,12 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		},
 	});
 
+	const { mutate: duplicateCV, isPending: isDuplicatingCV } = useMutation({
+		mutationFn: ({ id, onSuccess, onError }: { id: string; onSuccess?: () => void; onError?: () => void }) =>
+			duplicateCVDocument({ supabase, id, onSuccess, onError }),
+		mutationKey: [QUERY_KEYS.cvs.all],
+	});
+
 	return {
 		deleteCV,
 		isDeletingCV,
@@ -85,5 +92,7 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		optimisticCvTitle: variables?.name ?? cv?.title,
 		createCV,
 		isCreatingCV,
+		duplicateCV,
+		isDuplicatingCV,
 	};
 };

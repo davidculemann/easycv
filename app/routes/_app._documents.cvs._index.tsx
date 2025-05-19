@@ -5,7 +5,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuItem,
-	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -61,7 +60,7 @@ function CVList() {
 
 	return (
 		<div className="flex flex-wrap gap-4 justify-center sm:justify-start">
-			<Card className="h-52 w-40 sm:h-64 sm:w-48 border-dashed border-muted-foreground border flex flex-col items-center justify-center gap-3 relative overflow-hidden">
+			<Card className="document-card border-dashed border-muted-foreground border flex flex-col items-center justify-center gap-3 relative overflow-hidden">
 				<div className="font-semibold text-center">Create New CV</div>
 				<div className="flex flex-col gap-2 w-full px-2">
 					<Button variant="outline" className="w-full" onClick={() => handleCreateNewDocument(true)}>
@@ -109,7 +108,7 @@ function CVCard({
 			custom={cv.id}
 			style={{ viewTransitionName: `cv-card-${cv.id}` }}
 		>
-			<Card className="group relative overflow-hidden h-52 w-40 sm:h-64 sm:w-52 shadow-sm hover:shadow-md transition-all duration-300 p-0 flex flex-col">
+			<Card className="group relative overflow-hidden document-card shadow-sm hover:shadow-md transition-all duration-300 p-0 flex flex-col">
 				<button
 					onClick={() => handleOpenCV(cv.id)}
 					className="absolute inset-0 z-10 focus:outline-none"
@@ -150,8 +149,6 @@ function CVCard({
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end" className="w-48">
-							<DropdownMenuLabel>CV Actions</DropdownMenuLabel>
-							<DropdownMenuSeparator />
 							<DropdownMenuGroup>
 								<DropdownMenuItem
 									onClick={(e) => {

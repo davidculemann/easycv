@@ -89,3 +89,13 @@ html body[data-scroll-locked] {
 		@apply group-hover:translate-x-1 transition-transform duration-300 ease-out;
 	}
 }
+
+.document-card {
+	height: 13rem;
+	width: 9rem;
+
+	@media (min-width: 640px) {
+		height: 16rem;
+		width: 11rem;
+	}
+}

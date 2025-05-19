@@ -30,7 +30,7 @@ serve(async (req) => {
 
 		const pngBytes = new Uint8Array(await renderRes.arrayBuffer());
 
-		const thumbPath = filePath.replace(".pdf", ".jpg");
+		const thumbPath = filePath.replace(".pdf", "-thumb.jpg");
 
 		const { error: upErr } = await supabase.storage.from(bucket).upload(thumbPath, pngBytes, { upsert: true });
 		if (upErr) throw upErr;

@@ -412,7 +412,7 @@ export default function CV() {
 							onValueChange={(v) => setViewMode(v as "json" | "pdf")}
 							className="flex-1 flex flex-col w-full max-w-full"
 						>
-							<div className="border-b p-2 flex items-center justify-between bg-background overflow-x-auto">
+							<div className="border-b p-2 pr-4 flex items-center justify-between bg-background overflow-x-auto">
 								<TabsList className="gap-2">
 									<TabsTrigger value="pdf" className="flex gap-2">
 										PDF View

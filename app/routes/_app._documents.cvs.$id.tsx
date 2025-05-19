@@ -1,3 +1,4 @@
+import DeleteDocumentConfirmation from "@/components/documents/delete-document-confirmation";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
 import { ensureValidProfile } from "@/components/forms/profile/logic/types";
@@ -14,7 +15,6 @@ import { ProjectsForm } from "@/components/forms/profile/projects-form";
 import { SkillsForm } from "@/components/forms/profile/skills-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -272,36 +272,22 @@ export default function CV() {
 						<span className="hidden sm:inline">AI Settings</span>
 					</Button>
 
-					<Popover open={deleteCVPopoverOpen} onOpenChange={setDeleteCVPopoverOpen}>
-						<PopoverTrigger asChild>
-							<Button
-								variant="outline"
-								size="sm"
-								className="gap-2"
-								onClick={() => setDeleteCVPopoverOpen(true)}
-							>
-								<Trash2 className="h-4 w-4" />
-								<span className="hidden sm:inline">Delete CV</span>
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent className="flex flex-col gap-3">
-							<span className="text-sm">Delete this CV?</span>
-							<span className="text-sm text-muted-foreground">This action cannot be undone.</span>
-							<div className="flex items-center gap-2 justify-end">
-								<Button
-									variant="outline"
-									size="sm"
-									className="gap-2"
-									onClick={() => setDeleteCVPopoverOpen(false)}
-								>
-									Cancel
-								</Button>
-								<Button variant="destructive" size="sm" className="gap-2" onClick={handleDeleteCV}>
-									Delete CV
-								</Button>
-							</div>
-						</PopoverContent>
-					</Popover>
+					<DeleteDocumentConfirmation
+						open={deleteCVPopoverOpen}
+						onOpenChange={setDeleteCVPopoverOpen}
+						onDelete={handleDeleteCV}
+						documentType="CV"
+					>
+						<Button
+							variant="outline"
+							size="sm"
+							className="gap-2"
+							onClick={() => setDeleteCVPopoverOpen(true)}
+						>
+							<Trash2 className="h-4 w-4" />
+							<span className="hidden sm:inline">Delete CV</span>
+						</Button>
+					</DeleteDocumentConfirmation>
 				</div>
 			</div>
 			{showBanner && (

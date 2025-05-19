@@ -63,7 +63,7 @@ export default function CV() {
 	const { profile } = useLoaderData<typeof loader>();
 	const params = useParams();
 	const { id } = params;
-	const { updateCV, isUpdatingCV, cv, deleteCV, isDeletingCV, renameCV, optimisticCvTitle } = useCV({
+	const { updateCV, isUpdatingCV, cv, deleteCV, isDeletingCV, renameCV } = useCV({
 		supabase,
 		id: id ?? "",
 	});
@@ -162,7 +162,7 @@ export default function CV() {
 	}
 
 	// === cv naming ===
-	const [cvName, setCvName] = useState(optimisticCvTitle);
+	const [cvName, setCvName] = useState(cv?.title);
 
 	function handleRenameCV() {
 		if (!cvName) return;
@@ -176,12 +176,6 @@ export default function CV() {
 			onError: () => toast.error("Error renaming CV"),
 		});
 	}
-
-	useEffect(() => {
-		if (optimisticCvTitle) {
-			setCvName(optimisticCvTitle);
-		}
-	}, [optimisticCvTitle]);
 
 	// === profile banner ===
 	const [profileDismissed, setProfileDismissed] = useState(false);

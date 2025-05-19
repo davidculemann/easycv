@@ -32,11 +32,7 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		mutationKey: [QUERY_KEYS.cvs.all],
 	});
 
-	const {
-		mutate: renameCV,
-		isPending: isRenamingCV,
-		variables,
-	} = useMutation({
+	const { mutate: renameCV, isPending: isRenamingCV } = useMutation({
 		mutationFn: ({
 			id,
 			name,
@@ -117,7 +113,6 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 		isUpdatingCV,
 		renameCV,
 		isRenamingCV,
-		optimisticCvTitle: variables?.name ?? cv?.title,
 		createCV,
 		isCreatingCV,
 		duplicateCV,

@@ -132,7 +132,7 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isRenaming, setIsRenaming] = useState(false);
 
-	const { deleteCV, renameCV, duplicateCV, optimisticCvTitle } = useCV({ supabase, id: cv.id });
+	const { deleteCV, renameCV, duplicateCV } = useCV({ supabase, id: cv.id });
 
 	function handleDeleteCV() {
 		deleteCV({
@@ -193,6 +193,7 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 				{isRenaming ? (
 					<div className="flex items-center gap-1">
 						<Input
+							className="ring-inset"
 							value={cvName}
 							onChange={(e) => setCvName(e.target.value)}
 							onKeyDown={(e) => {
@@ -219,7 +220,7 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 						</Button>
 					</div>
 				) : (
-					optimisticCvTitle || cvName
+					cvName
 				)}
 			</span>
 			{!isRenaming && (

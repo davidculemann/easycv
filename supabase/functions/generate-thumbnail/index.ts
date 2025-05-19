@@ -27,11 +27,12 @@ serve(async (req) => {
 			body: pdfBytes,
 		});
 		if (!renderRes.ok) throw new Error("Render failed");
-		const pngBuffer = Buffer.from(await renderRes.arrayBuffer());
+
+		const pngBytes = new Uint8Array(await renderRes.arrayBuffer());
 
 		const thumbPath = filePath.replace(".pdf", "/thumbs/preview.jpg");
 
-		const { error: upErr } = await supabase.storage.from(bucket).upload(thumbPath, thumbBuffer, { upsert: true });
+		const { error: upErr } = await supabase.storage.from(bucket).upload(thumbPath, pngBytes, { upsert: true });
 		if (upErr) throw upErr;
 
 		return new Response("Thumbnail created", { status: 200 });

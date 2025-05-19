@@ -1,7 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useCV } from "@/hooks/api-hooks/useCV";
-import { formatDate } from "@/lib/dates";
 import { getDocumentThumbnailUrl } from "@/lib/documents/utils";
 import { cvContainerVariants, cvItemVariants } from "@/lib/framer/animations";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
@@ -11,8 +19,11 @@ import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
+import { Copy, Download, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { motion } from "motion/react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -50,7 +61,7 @@ function CVList() {
 
 	return (
 		<div className="flex flex-wrap gap-4 justify-center sm:justify-start">
-			<Card className="h-52 w-40 sm:h-64 sm:w-48 border-dashed border-muted-foreground border flex flex-col items-center justify-center gap-3">
+			<Card className="h-52 w-40 sm:h-64 sm:w-48 border-dashed border-muted-foreground border flex flex-col items-center justify-center gap-3 relative overflow-hidden">
 				<div className="font-semibold text-center">Create New CV</div>
 				<div className="flex flex-col gap-2 w-full px-2">
 					<Button variant="outline" className="w-full" onClick={() => handleCreateNewDocument(true)}>
@@ -62,41 +73,126 @@ function CVList() {
 				</div>
 			</Card>
 			<motion.div variants={cvContainerVariants} initial="hidden" animate="show" className="contents">
-				{cvs?.data?.map((cv: any, idx: number) => {
-					const thumbnail = getDocumentThumbnailUrl({
-						supabase,
-						userId: user?.id,
-						docType: "cvs",
-						docId: cv.id,
-					});
-					return (
-						<motion.div
-							key={idx}
-							variants={cvItemVariants}
-							custom={idx}
-							style={{ viewTransitionName: `cv-card-${cv.id}` }}
-						>
-							<Button
-								onClick={() => handleOpenCV(cv.id)}
-								variant="outline"
-								className={"h-52 w-40 sm:h-64 sm:w-48"}
-							>
-								<span className="flex flex-col justify-center items-center gap-2">
-									<img
-										src={thumbnail}
-										alt="CV thumbnail"
-										className="w-24 h-32 object-cover rounded shadow"
-										loading="lazy"
-									/>
-									<span className="text-lg font-bold">{cv.title}</span>
-									<span className="text-sm text-muted-foreground">{formatDate(cv.created_at)}</span>
-								</span>
-							</Button>
-						</motion.div>
-					);
-				})}
+				{cvs?.data?.map((cv: any, idx: number) => (
+					<CVCard key={cv.id} cv={cv} supabase={supabase} user={user as User} handleOpenCV={handleOpenCV} />
+				))}
 			</motion.div>
 		</div>
+	);
+}
+
+function CVCard({
+	cv,
+	supabase,
+	user,
+	handleOpenCV,
+}: { cv: any; supabase: SupabaseClient; user: User; handleOpenCV: (id: string) => void }) {
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const thumbnail = getDocumentThumbnailUrl({
+		supabase,
+		userId: user?.id,
+		docType: "cvs",
+		docId: cv.id,
+	});
+
+	const onRename = () => {};
+	const onDuplicate = () => {};
+	const onExport = () => {};
+	const onDelete = () => {};
+
+	return (
+		<motion.div
+			layout
+			layoutId={`cv-card-${cv.id}`}
+			exit="exit"
+			variants={cvItemVariants}
+			custom={cv.id}
+			style={{ viewTransitionName: `cv-card-${cv.id}` }}
+		>
+			<Card className="group relative overflow-hidden h-52 w-40 sm:h-64 sm:w-52 shadow-sm hover:shadow-md transition-all duration-300 p-0 flex flex-col">
+				<button
+					onClick={() => handleOpenCV(cv.id)}
+					className="absolute inset-0 z-10 focus:outline-none"
+					tabIndex={0}
+					aria-label={`View ${cv.title}`}
+				/>
+				<div className="h-0 flex-1 flex items-center justify-center p-1 w-full">
+					{thumbnail ? (
+						<img
+							src={thumbnail}
+							alt={`${cv.title} preview`}
+							className="w-full h-full rounded-md"
+							loading="lazy"
+							onError={(e) => {
+								e.currentTarget.src = "/assets/fallback.svg";
+							}}
+						/>
+					) : (
+						<div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground rounded-md">
+							No Preview
+						</div>
+					)}
+				</div>
+				<div className="relative z-20 min-h-[56px] flex items-center justify-between px-3 py-2 bg-white/80 dark:bg-card/80 backdrop-blur border-t border-border">
+					<span className="text-base font-medium truncate max-w-[70%]" title={cv.title}>
+						{cv.title}
+					</span>
+					<DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+						<DropdownMenuTrigger asChild>
+							<Button
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8 p-0 rounded-full"
+								tabIndex={0}
+								aria-label="CV Actions"
+							>
+								<MoreVertical className="h-5 w-5" />
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="w-48">
+							<DropdownMenuLabel>CV Actions</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuGroup>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.preventDefault();
+										onRename();
+									}}
+								>
+									<Pencil className="h-4 w-4 mr-2" /> Rename
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.preventDefault();
+										onDuplicate();
+									}}
+								>
+									<Copy className="h-4 w-4 mr-2" /> Duplicate
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={(e) => {
+										e.preventDefault();
+										onExport();
+									}}
+								>
+									<Download className="h-4 w-4 mr-2" /> Export
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									className="text-red-600 focus:text-red-600 focus:bg-red-50"
+									onClick={(e) => {
+										e.preventDefault();
+										onDelete();
+									}}
+								>
+									<Trash2 className="h-4 w-4 mr-2" /> Delete
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			</Card>
+		</motion.div>
 	);
 }
 

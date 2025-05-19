@@ -280,7 +280,12 @@ export default function CV() {
 
 					<Popover open={deleteCVPopoverOpen} onOpenChange={setDeleteCVPopoverOpen}>
 						<PopoverTrigger asChild>
-							<Button variant="outline" size="sm" className="gap-2">
+							<Button
+								variant="outline"
+								size="sm"
+								className="gap-2"
+								onClick={() => setDeleteCVPopoverOpen(true)}
+							>
 								<Trash2 className="h-4 w-4" />
 								<span className="hidden sm:inline">Delete CV</span>
 							</Button>

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { formatDate } from "@/lib/dates";
+import { getDocumentThumbnailUrl } from "@/lib/documents/utils";
 import { cvContainerVariants, cvItemVariants } from "@/lib/framer/animations";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { createCVDocument, getCVDocuments } from "@/lib/supabase/documents/cvs";
@@ -27,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 function CVList() {
-	const { supabase } = useOutletContext<SupabaseOutletContext>();
+	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
 	const { cvs } = useCV({ supabase });
 
 	const navigate = useNavigate();
@@ -61,25 +62,39 @@ function CVList() {
 				</div>
 			</Card>
 			<motion.div variants={cvContainerVariants} initial="hidden" animate="show" className="contents">
-				{cvs?.data?.map((cv: any, idx: number) => (
-					<motion.div
-						key={idx}
-						variants={cvItemVariants}
-						custom={idx}
-						style={{ viewTransitionName: `cv-card-${cv.id}` }}
-					>
-						<Button
-							onClick={() => handleOpenCV(cv.id)}
-							variant="outline"
-							className={"h-52 w-40 sm:h-64 sm:w-48"}
+				{cvs?.data?.map((cv: any, idx: number) => {
+					const thumbnail = getDocumentThumbnailUrl({
+						supabase,
+						userId: user?.id,
+						docType: "cvs",
+						docId: cv.id,
+					});
+					return (
+						<motion.div
+							key={idx}
+							variants={cvItemVariants}
+							custom={idx}
+							style={{ viewTransitionName: `cv-card-${cv.id}` }}
 						>
-							<span className="flex flex-col justify-center items-center gap-2">
-								<span className="text-lg font-bold">{cv.title}</span>
-								<span className="text-sm text-muted-foreground">{formatDate(cv.created_at)}</span>
-							</span>
-						</Button>
-					</motion.div>
-				))}
+							<Button
+								onClick={() => handleOpenCV(cv.id)}
+								variant="outline"
+								className={"h-52 w-40 sm:h-64 sm:w-48"}
+							>
+								<span className="flex flex-col justify-center items-center gap-2">
+									<img
+										src={thumbnail}
+										alt="CV thumbnail"
+										className="w-24 h-32 object-cover rounded shadow"
+										loading="lazy"
+									/>
+									<span className="text-lg font-bold">{cv.title}</span>
+									<span className="text-sm text-muted-foreground">{formatDate(cv.created_at)}</span>
+								</span>
+							</Button>
+						</motion.div>
+					);
+				})}
 			</motion.div>
 		</div>
 	);

@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import sharp from "https://esm.sh/sharp";
 
 //NOTE: for any further changes, we need to update the edge function in the supabase project
 // supabase functions deploy generate-thumbnail --project-ref <project_id>
@@ -29,8 +28,6 @@ serve(async (req) => {
 		});
 		if (!renderRes.ok) throw new Error("Render failed");
 		const pngBuffer = Buffer.from(await renderRes.arrayBuffer());
-
-		const thumbBuffer = await sharp(pngBuffer).resize({ width: 200 }).jpeg().toBuffer();
 
 		const thumbPath = filePath.replace(".pdf", "/thumbs/preview.jpg");
 

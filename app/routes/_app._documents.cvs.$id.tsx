@@ -219,6 +219,7 @@ export default function CV() {
 			file,
 			docType: "cvs",
 			userId: user.id,
+			cvId: id ?? "",
 		});
 	}
 

@@ -1,6 +1,5 @@
 import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { v4 as uuidv4 } from "uuid";
 
 export type DocType = "cvs" | "cover_letters";
 
@@ -8,15 +7,15 @@ interface UploadParams {
 	file: File;
 	docType: DocType;
 	userId: string;
+	cvId: string;
 }
 
 export function useUploadDocument({ supabase }: { supabase: TypedSupabaseClient }) {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async ({ file, docType, userId }: UploadParams) => {
-			const fileId = uuidv4();
-			const filePath = `${docType}/${userId}/${fileId}.pdf`;
+		mutationFn: async ({ file, docType, userId, cvId }: UploadParams) => {
+			const filePath = `${docType}/${userId}/${cvId}.pdf`;
 
 			const { error } = await supabase.storage.from("documents").upload(filePath, file, {
 				cacheControl: "3600",
@@ -25,7 +24,7 @@ export function useUploadDocument({ supabase }: { supabase: TypedSupabaseClient 
 
 			if (error) throw error;
 
-			return { filePath, fileId };
+			return { filePath, cvId };
 		},
 		onSuccess: (_, { docType, userId }) => queryClient.invalidateQueries({ queryKey: [docType, userId] }),
 	});

@@ -1,3 +1,4 @@
+import AIPreferencesModal from "@/components/documents/ai-preferences-modal";
 import CVFormPanel from "@/components/documents/cv-form-panel";
 import CVPreviewPanel from "@/components/documents/cv-preview-panel";
 import DeleteDocumentConfirmation from "@/components/documents/delete-document-confirmation";
@@ -263,10 +264,14 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 						<div className={`w-2 h-2 rounded-full mr-1 ${isSaved ? "bg-green-500" : "bg-amber-500"}`} />
 						<span className="hidden sm:inline">{isSaved ? "Saved" : "Saving..."}</span>
 					</div>
-					<Button variant="outline" size="sm" className="gap-2">
-						<Settings className="h-4 w-4" />
-						<span className="hidden sm:inline">AI Settings</span>
-					</Button>
+					<AIPreferencesModal
+						trigger={
+							<Button variant="outline" size="sm" className="gap-2">
+								<Settings className="h-4 w-4" />
+								<span className="hidden sm:inline">AI Settings</span>
+							</Button>
+						}
+					/>
 
 					<DeleteDocumentConfirmation
 						open={deleteCVPopoverOpen}

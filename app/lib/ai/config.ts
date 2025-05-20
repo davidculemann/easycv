@@ -15,6 +15,8 @@ export const AI_PROVIDERS = {
 	},
 };
 
+export const RECOMMENDED_MODEL = AI_PROVIDERS.deepseek.defaultModelId;
+
 export type AIProvider = keyof typeof AI_PROVIDERS;
 
 export const TONES = [

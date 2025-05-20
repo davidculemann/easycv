@@ -8,7 +8,7 @@ export function usePreferences({ supabase, id }: { supabase: SupabaseClient<Data
 	const queryClient = useQueryClient();
 
 	const { data: preferences, isLoading: isLoadingPreferences } = useQuery({
-		queryKey: [QUERY_KEYS.preferences.all, id],
+		queryKey: [QUERY_KEYS.preferences, id],
 		queryFn: () => getPreferences({ supabase, id }),
 		enabled: !!id,
 	});
@@ -17,9 +17,9 @@ export function usePreferences({ supabase, id }: { supabase: SupabaseClient<Data
 		mutationFn: (update: Partial<Database["public"]["Tables"]["preferences"]["Update"]>) =>
 			editPreferences({ supabase, preferences: update, id }),
 		onMutate: async (update) => {
-			await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.preferences.all, id] });
-			const previous = queryClient.getQueryData([QUERY_KEYS.preferences.all, id]);
-			queryClient.setQueryData([QUERY_KEYS.preferences.all, id], {
+			await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.preferences, id] });
+			const previous = queryClient.getQueryData([QUERY_KEYS.preferences, id]);
+			queryClient.setQueryData([QUERY_KEYS.preferences, id], {
 				...(previous ?? {}),
 				...update,
 			});
@@ -27,11 +27,11 @@ export function usePreferences({ supabase, id }: { supabase: SupabaseClient<Data
 		},
 		onError: (_err, _update, context) => {
 			if (context?.previous) {
-				queryClient.setQueryData([QUERY_KEYS.preferences.all, id], context.previous);
+				queryClient.setQueryData([QUERY_KEYS.preferences, id], context.previous);
 			}
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.preferences.all, id] });
+			queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.preferences, id] });
 		},
 	});
 

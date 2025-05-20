@@ -5,7 +5,5 @@ export const QUERY_KEYS = {
 		all: "cvs/all",
 		single: "cvs/single",
 	},
-	preferences: {
-		all: "preferences/all",
-	},
+	preferences: "preferences",
 };

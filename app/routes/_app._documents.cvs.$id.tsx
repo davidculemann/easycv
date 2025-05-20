@@ -173,7 +173,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 
 	// === profile banner ===
 	const [profileDismissed, setProfileDismissed] = useState(false);
-	const showBanner = profileCompleted && !profileDismissed;
+	const showBanner = !profileCompleted && !profileDismissed;
 
 	// === delete cv ===
 	const [deleteCVPopoverOpen, setDeleteCVPopoverOpen] = useState(false);
@@ -346,8 +346,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 }
 
 export default function CVPage() {
-	const { dehydratedState } = useLoaderData<typeof loader>();
-	const { profileCompleted } = useLoaderData<typeof loader>();
+	const { profileCompleted, dehydratedState } = useLoaderData<typeof loader>();
 
 	return (
 		<HydrationBoundary state={dehydratedState}>

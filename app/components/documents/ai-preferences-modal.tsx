@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -11,6 +12,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePreferences } from "@/hooks/api-hooks/usePreferences";
 import { AI_PROVIDERS, RECOMMENDED_MODEL, RECOMMENDED_TONE, TONES } from "@/lib/ai/config";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
@@ -33,7 +35,8 @@ type Preferences = {
 };
 
 export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
-	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
+	const { supabase, user, subscription } = useOutletContext<SupabaseOutletContext>();
+	const isPro = !!subscription;
 	const [open, setOpen] = useState(false);
 	const [activeTab, setActiveTab] = useState("model");
 
@@ -84,7 +87,9 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 										<div className="grid grid-cols-1 gap-2">
 											{provider.modelIds.map((modelId) => {
 												const isSelected = preferences?.default_model === modelId;
-												return (
+												const isProOnly = provider.proOnly;
+												const disabled = isProOnly && !isPro;
+												const modelCard = (
 													<div
 														key={modelId}
 														className={cn(
@@ -92,16 +97,20 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 															isSelected
 																? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
 																: "hover:border-gray-300 dark:hover:border-gray-600",
+															disabled && "opacity-50 cursor-not-allowed",
 														)}
-														onClick={() => handleChange("default_model", modelId)}
+														onClick={() =>
+															!disabled && handleChange("default_model", modelId)
+														}
 														onKeyDown={(e) => {
-															if (e.key === "Enter" || e.key === " ") {
+															if (!disabled && (e.key === "Enter" || e.key === " ")) {
 																handleChange("default_model", modelId);
 															}
 														}}
 														tabIndex={0}
 														role="button"
 														aria-pressed={isSelected}
+														aria-disabled={disabled}
 													>
 														<div className="flex items-center gap-3">
 															<div
@@ -115,7 +124,14 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 																{isSelected && <Check className="h-3 w-3" />}
 															</div>
 															<div>
-																<p className="text-sm font-medium">{modelId}</p>
+																<p className="text-sm font-medium flex items-center gap-2">
+																	{modelId}
+																	{isProOnly && (
+																		<Badge variant="secondary" className="ml-2">
+																			Pro
+																		</Badge>
+																	)}
+																</p>
 																<p className="text-xs text-gray-500">
 																	{modelId === RECOMMENDED_MODEL && (
 																		<span className="text-emerald-500">
@@ -125,8 +141,21 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 																</p>
 															</div>
 														</div>
+														{disabled && (
+															<TooltipProvider>
+																<Tooltip>
+																	<TooltipTrigger asChild>
+																		<span tabIndex={-1} aria-hidden="true" />
+																	</TooltipTrigger>
+																	<TooltipContent side="top">
+																		Upgrade to Pro to use this model
+																	</TooltipContent>
+																</Tooltip>
+															</TooltipProvider>
+														)}
 													</div>
 												);
+												return modelCard;
 											})}
 										</div>
 									</div>

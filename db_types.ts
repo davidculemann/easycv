@@ -246,6 +246,27 @@ export type Database = {
 				};
 				Relationships: [];
 			};
+			preferences: {
+				Row: {
+					default_model: string | null;
+					id: number;
+					preferred_tone: string | null;
+					user_id: string | null;
+				};
+				Insert: {
+					default_model?: string | null;
+					id?: number;
+					preferred_tone?: string | null;
+					user_id?: string | null;
+				};
+				Update: {
+					default_model?: string | null;
+					id?: number;
+					preferred_tone?: string | null;
+					user_id?: string | null;
+				};
+				Relationships: [];
+			};
 			prices: {
 				Row: {
 					amount: number;

@@ -1,46 +1,23 @@
+import CVFormPanel from "@/components/documents/cv-form-panel";
+import CVPreviewPanel from "@/components/documents/cv-preview-panel";
 import DeleteDocumentConfirmation from "@/components/documents/delete-document-confirmation";
-import { EducationForm } from "@/components/forms/profile/education-form";
-import { ExperienceForm } from "@/components/forms/profile/experience-form";
-import { ensureValidProfile } from "@/components/forms/profile/logic/types";
-import {
-	getEducationFormData,
-	getExperienceFormData,
-	getProjectsFormData,
-	getSkillsFormData,
-	sectionNames,
-	sectionOrder,
-} from "@/components/forms/profile/logic/utils";
-import { PersonalInfoForm } from "@/components/forms/profile/personal-info-form";
-import { ProjectsForm } from "@/components/forms/profile/projects-form";
-import { SkillsForm } from "@/components/forms/profile/skills-form";
+import { type ParsedCVProfile, ensureValidProfile } from "@/components/forms/profile/logic/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { useUploadDocument } from "@/hooks/api-hooks/useUploadDocument";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
+import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
+import { getCVDocuments } from "@/lib/supabase/documents/cvs";
 import { getUserProfile } from "@/lib/supabase/documents/profile";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "db_types";
-import {
-	AlertTriangle,
-	Check,
-	Download,
-	ExternalLink,
-	Pencil,
-	RefreshCw,
-	Settings,
-	Trash2,
-	Upload,
-	X,
-} from "lucide-react";
+import { Link, json, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
+import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
+import { AlertTriangle, Check, ExternalLink, Pencil, Settings, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
@@ -48,19 +25,23 @@ import { z } from "zod";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
+	const url = new URL(request.url);
+	const id = url.searchParams.get("id");
 
-	try {
-		const profile = await getUserProfile({ supabase: supabase as SupabaseClient<Database> });
-		return { profile: ensureValidProfile(profile) };
-	} catch (error) {
-		console.error("Error loading profile:", error);
-		return { profile: ensureValidProfile(null) };
-	}
+	const queryClient = new QueryClient();
+
+	await queryClient.prefetchQuery({
+		queryKey: [QUERY_KEYS.cvs.single, id],
+		queryFn: () => getCVDocuments({ supabase }),
+	});
+
+	const profile = await getUserProfile({ supabase });
+
+	return json({ dehydratedState: dehydrate(queryClient), profile });
 }
 
-export default function CV() {
+export function CV({ profile }: { profile: ParsedCVProfile }) {
 	const { supabase, subscription, user } = useOutletContext<SupabaseOutletContext>();
-	const { profile } = useLoaderData<typeof loader>();
 	const params = useParams();
 	const { id } = params;
 	const { updateCV, isUpdatingCV, cv, deleteCV, isDeletingCV, renameCV } = useCV({
@@ -72,7 +53,6 @@ export default function CV() {
 	const [model, setModel] = useState("deepseek");
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [pdfData, setPdfData] = useState<string | null>(null);
-	const [viewMode, setViewMode] = useState<"json" | "pdf">("json");
 	const [isEditingName, setIsEditingName] = useState(false);
 	const [isSaved, setIsSaved] = useState(true);
 	const [activeTab, setActiveTab] = useState("personal");
@@ -89,11 +69,10 @@ export default function CV() {
 		updateCV({ id: id ?? "", cv: object.cv as CVContext });
 	}
 
-	const dataToDisplay = ensureValidProfile(object?.cv ?? profile);
+	const dataToDisplay = object?.cv || cv;
 
 	useEffect(() => {
 		setPdfData(null);
-		setViewMode("json");
 	}, [id]);
 
 	const generatePDF = async (download = false) => {
@@ -141,7 +120,6 @@ export default function CV() {
 			} else {
 				const url = window.URL.createObjectURL(blob);
 				setPdfData(url);
-				setViewMode("pdf");
 				toast.success("PDF generated successfully");
 			}
 		} catch (error) {
@@ -155,7 +133,7 @@ export default function CV() {
 	function handleGenerateCV() {
 		submit({
 			context: {
-				profile: profile,
+				profile: dataToDisplay,
 			},
 			model,
 		});
@@ -188,7 +166,7 @@ export default function CV() {
 
 	// === profile banner ===
 	const [profileDismissed, setProfileDismissed] = useState(false);
-	const showBanner = !profile.completed && !profileDismissed;
+	const showBanner = !profile?.completed && !profileDismissed;
 
 	// === delete cv ===
 	const [deleteCVPopoverOpen, setDeleteCVPopoverOpen] = useState(false);
@@ -225,6 +203,8 @@ export default function CV() {
 			cvId: id ?? "",
 		});
 	}
+
+	const parsedCV = cv ? ensureValidProfile(cv.cv) : undefined;
 
 	return (
 		<div className="h-full flex flex-col">
@@ -329,166 +309,42 @@ export default function CV() {
 			<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="flex-1">
 				<ResizablePanel defaultSize={40} minSize={30}>
 					<div className="h-full flex flex-col bg-background w-full max-w-full flex-1 min-h-0">
-						<Tabs
-							value={activeTab}
-							onValueChange={(v) => setActiveTab(v as typeof activeTab)}
-							className="flex-1 min-h-0 flex flex-col w-full max-w-full"
-						>
-							<div className="border-b bg-background p-2 w-full mx-auto @container">
-								<div className="hidden @[530px]:block">
-									<TabsList className="flex w-full max-w-full">
-										{sectionOrder.map((section) => (
-											<TabsTrigger key={section} value={section} className="min-w-[90px] flex-1">
-												{sectionNames[section]}
-											</TabsTrigger>
-										))}
-									</TabsList>
-								</div>
-								<div className="block @[530px]:hidden">
-									<Select
-										value={activeTab}
-										onValueChange={(v) => setActiveTab(v as typeof activeTab)}
-									>
-										<SelectTrigger className="w-full">
-											<SelectValue placeholder="Section" />
-										</SelectTrigger>
-										<SelectContent>
-											{sectionOrder.map((section) => (
-												<SelectItem key={section} value={section}>
-													{sectionNames[section]}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
-							</div>
-							<div className="flex-1 min-h-0 overflow-y-auto p-4 w-full max-w-full">
-								<TabsContent value="personal" className="mt-0">
-									<PersonalInfoForm
-										defaultValues={{
-											firstName: dataToDisplay?.first_name || "",
-											lastName: dataToDisplay?.last_name || "",
-											email: dataToDisplay?.email || "",
-											phone: dataToDisplay?.phone || "",
-											address: dataToDisplay?.address || "",
-											linkedin: dataToDisplay?.linkedin || "",
-											github: dataToDisplay?.github || "",
-											website: dataToDisplay?.website || "",
-										}}
-										formType="personal"
-									/>
-								</TabsContent>
-								<TabsContent value="experience" className="mt-0">
-									<ExperienceForm
-										defaultValues={getExperienceFormData(dataToDisplay)}
-										formType="experience"
-									/>
-								</TabsContent>
-								<TabsContent value="education" className="mt-0">
-									<EducationForm
-										defaultValues={getEducationFormData(dataToDisplay)}
-										formType="education"
-									/>
-								</TabsContent>
-								<TabsContent value="projects" className="mt-0">
-									<ProjectsForm
-										defaultValues={getProjectsFormData(dataToDisplay)}
-										formType="projects"
-									/>
-								</TabsContent>
-								<TabsContent value="skills" className="mt-0">
-									<SkillsForm defaultValues={getSkillsFormData(dataToDisplay)} formType="skills" />
-								</TabsContent>
-							</div>
-						</Tabs>
+						<CVFormPanel
+							cv={parsedCV}
+							updateCV={updateCV}
+							isUpdatingCV={isUpdatingCV}
+							activeTab={activeTab}
+							setActiveTab={setActiveTab}
+						/>
 					</div>
 				</ResizablePanel>
 				<ResizableHandle withHandle />
-
 				<ResizablePanel>
 					<div className="h-full flex flex-col w-full max-w-full">
-						<Tabs
-							value={viewMode}
-							onValueChange={(v) => setViewMode(v as "json" | "pdf")}
-							className="flex-1 flex flex-col w-full max-w-full"
-						>
-							<div className="border-b p-2 pr-4 flex items-center justify-between bg-background overflow-x-auto">
-								<TabsList className="gap-2">
-									<TabsTrigger value="pdf" className="flex gap-2">
-										PDF View
-									</TabsTrigger>
-									<TabsTrigger value="json" className="flex gap-2">
-										JSON View
-									</TabsTrigger>
-								</TabsList>
-								<div className="flex items-center gap-2">
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={handleUploadCV}
-										className="flex gap-2"
-										disabled={!pdfData || !user?.id}
-									>
-										<Upload className="h-4 w-4" />
-										<span className="hidden sm:inline">Upload CV</span>
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => generatePDF(false)}
-										disabled={isGeneratingPdf}
-										className="flex gap-2"
-									>
-										<RefreshCw className="h-4 w-4" />
-										<span className="hidden sm:inline">
-											{isGeneratingPdf ? "Generating..." : "Refresh PDF"}
-										</span>
-									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => generatePDF(true)}
-										disabled={isGeneratingPdf}
-										className="flex gap-2"
-									>
-										<Download className="h-4 w-4" />
-										<span className="hidden sm:inline">Download PDF</span>
-									</Button>
-								</div>
-							</div>
-							<TabsContent
-								value="pdf"
-								className="flex-1 overflow-auto w-full max-w-full"
-								style={{ background: "var(--color-warning)" }}
-							>
-								{pdfData ? (
-									<iframe
-										src={pdfData}
-										title="CV PDF"
-										className="w-full h-full max-w-[600px] mx-auto shadow-md"
-										style={{ border: "none", background: "var(--color-warning)" }}
-									/>
-								) : (
-									<div className="flex items-center justify-center h-full text-muted-foreground">
-										No PDF generated yet.
-									</div>
-								)}
-							</TabsContent>
-							<TabsContent
-								value="json"
-								className="flex-1 bg-popover overflow-x-auto w-full max-w-full mt-0"
-							>
-								<pre
-									className="p-4 text-sm min-w-[300px] max-w-full overflow-x-auto whitespace-pre-wrap"
-									style={{ viewTransitionName: `cv-card-${id}` }}
-								>
-									{JSON.stringify(dataToDisplay, null, 2)}
-								</pre>
-							</TabsContent>
-						</Tabs>
+						<CVPreviewPanel
+							cv={parsedCV}
+							pdfData={pdfData}
+							setPdfData={setPdfData}
+							generatePDF={generatePDF}
+							handleUploadCV={handleUploadCV}
+							isGeneratingPdf={isGeneratingPdf}
+							user={user}
+							id={id}
+						/>
 					</div>
 				</ResizablePanel>
 			</ResizablePanelGroup>
 		</div>
+	);
+}
+
+export default function CVPage() {
+	const { dehydratedState } = useLoaderData<typeof loader>();
+	const { profile } = useLoaderData<typeof loader>();
+
+	return (
+		<HydrationBoundary state={dehydratedState}>
+			<CV profile={profile} />
+		</HydrationBoundary>
 	);
 }

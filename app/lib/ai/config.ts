@@ -16,3 +16,11 @@ export const AI_PROVIDERS = {
 };
 
 export type AIProvider = keyof typeof AI_PROVIDERS;
+
+export const TONES = [
+	{ value: "casual", label: "Casual" },
+	{ value: "semi-formal", label: "Semi-formal" },
+	{ value: "formal", label: "Formal" },
+] as const;
+
+export const RECOMMENDED_TONE = "formal";

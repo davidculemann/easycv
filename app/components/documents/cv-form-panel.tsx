@@ -1,6 +1,6 @@
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
-import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import type { ParsedCVProfile, PersonalInfoFormValues } from "@/components/forms/profile/logic/types";
 import {
 	getEducationFormData,
 	getExperienceFormData,
@@ -24,6 +24,31 @@ interface CVFormPanelProps {
 }
 
 export function CVFormPanel({ cv, updateCV, isUpdatingCV, activeTab, setActiveTab }: CVFormPanelProps) {
+	const handlePersonalInfoSubmit = (data: PersonalInfoFormValues) => {
+		updateCV({
+			...cv,
+			first_name: data.firstName,
+			last_name: data.lastName,
+			email: data.email,
+			phone: data.phone,
+			address: data.address,
+			linkedin: data.linkedin,
+			github: data.github,
+			website: data.website,
+		});
+	};
+
+	const personalInfoDefaultValues = {
+		firstName: cv?.first_name || "",
+		lastName: cv?.last_name || "",
+		email: cv?.email || "",
+		phone: cv?.phone || "",
+		address: cv?.address || "",
+		linkedin: cv?.linkedin || "",
+		github: cv?.github || "",
+		website: cv?.website || "",
+	};
+
 	return (
 		<Tabs
 			value={activeTab}
@@ -58,17 +83,10 @@ export function CVFormPanel({ cv, updateCV, isUpdatingCV, activeTab, setActiveTa
 			<div className="flex-1 min-h-0 overflow-y-auto p-4 w-full max-w-full">
 				<TabsContent value="personal" className="mt-0">
 					<PersonalInfoForm
-						defaultValues={{
-							firstName: cv?.first_name || "",
-							lastName: cv?.last_name || "",
-							email: cv?.email || "",
-							phone: cv?.phone || "",
-							address: cv?.address || "",
-							linkedin: cv?.linkedin || "",
-							github: cv?.github || "",
-							website: cv?.website || "",
-						}}
+						defaultValues={personalInfoDefaultValues}
 						formType="personal"
+						onSubmit={handlePersonalInfoSubmit}
+						isSubmitting={isUpdatingCV}
 					/>
 				</TabsContent>
 				<TabsContent value="experience" className="mt-0">

@@ -108,6 +108,13 @@ export async function getCVDocument({ supabase, id }: { supabase: SupabaseClient
 				summary: cv.summary,
 				languages: cv.languages,
 				interests: cv.interests,
+				first_name: cv.first_name,
+				last_name: cv.last_name,
+				email: cv.email,
+				phone: cv.phone,
+				address: cv.address,
+				linkedin: cv.linkedin,
+				github: cv.github,
 			},
 		};
 	}
@@ -210,6 +217,14 @@ export async function createCVDocument({
 	const insertFields: Database["public"]["Tables"]["cvs"]["Insert"] = {
 		user_id: user.id,
 		title: cvName,
+		first_name: "first_name" in profileFields && profileFields.first_name ? profileFields.first_name : null,
+		last_name: "last_name" in profileFields && profileFields.last_name ? profileFields.last_name : null,
+		email: "email" in profileFields && profileFields.email ? profileFields.email : null,
+		phone: "phone" in profileFields && profileFields.phone ? profileFields.phone : null,
+		address: "address" in profileFields && profileFields.address ? profileFields.address : null,
+		linkedin: "linkedin" in profileFields && profileFields.linkedin ? profileFields.linkedin : null,
+		github: "github" in profileFields && profileFields.github ? profileFields.github : null,
+		website: "website" in profileFields && profileFields.website ? profileFields.website : null,
 		education:
 			"education" in profileFields && profileFields.education
 				? Array.isArray(profileFields.education)

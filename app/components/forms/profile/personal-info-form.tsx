@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Github, Globe, Linkedin } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { BaseForm } from "../shared/base-form";
 import { type FormType, type PersonalInfoFormValues, personalInfoSchema } from "./logic/types";
@@ -12,14 +13,27 @@ interface PersonalInfoFormProps {
 	isSubmitting?: boolean;
 	formType: FormType;
 	wasCompleted?: boolean;
+	onSubmit?: (data: PersonalInfoFormValues) => void;
 }
 
-export function PersonalInfoForm({ defaultValues, isSubmitting, formType, wasCompleted }: PersonalInfoFormProps) {
+export function PersonalInfoForm({
+	defaultValues,
+	isSubmitting,
+	formType,
+	wasCompleted,
+	onSubmit,
+}: PersonalInfoFormProps) {
 	const form = useForm<PersonalInfoFormValues>({
 		resolver: zodResolver(personalInfoSchema),
 		defaultValues,
 		mode: "onChange",
 	});
+
+	useEffect(() => {
+		form.reset(defaultValues);
+	}, [defaultValues, form]);
+
+	const values = form.watch();
 
 	return (
 		<BaseForm
@@ -29,6 +43,7 @@ export function PersonalInfoForm({ defaultValues, isSubmitting, formType, wasCom
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}
+			onSubmit={onSubmit}
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<div className="w-full max-w-2xl mx-auto space-y-4">

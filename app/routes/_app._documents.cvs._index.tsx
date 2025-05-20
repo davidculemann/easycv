@@ -138,7 +138,7 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 		deleteCV({
 			id: cv.id,
 			onSuccess: () => {
-				toast("CV deleted successfully");
+				toast.info("CV deleted successfully");
 			},
 			onError: () => toast.error("Error deleting CV"),
 		});
@@ -172,7 +172,7 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 			name: cvName,
 			onSuccess: () => {
 				setIsRenaming(false);
-				toast.success("CV renamed");
+				toast.info("CV renamed");
 			},
 			onError: () => toast.error("Error renaming CV"),
 		});
@@ -187,7 +187,7 @@ function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; u
 		duplicateCV({
 			id: cv.id,
 			onSuccess: () => {
-				toast.success("CV duplicated successfully");
+				toast.info("CV duplicated successfully");
 			},
 		});
 	}

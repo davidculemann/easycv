@@ -54,9 +54,18 @@ export function BaseForm({
 		if (prevSection) setSearchParams({ section: prevSection });
 	}
 
+	const handleSubmit = async (data: any) => {
+		if (onSubmit) {
+			onSubmit(data);
+		}
+		if (nextSection && !shouldSkip) {
+			handleNext();
+		}
+	};
+
 	return (
 		<Form {...form}>
-			<RemixForm {...{ onSubmit, method }} className="space-y-8 flex-1">
+			<RemixForm onSubmit={form.handleSubmit(handleSubmit)} method={method} className="space-y-8 flex-1">
 				<CardContent>{children}</CardContent>
 				<CardFooter>
 					<div className="w-full flex justify-between gap-2">

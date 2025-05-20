@@ -1,7 +1,7 @@
 import CVFormPanel from "@/components/documents/cv-form-panel";
 import CVPreviewPanel from "@/components/documents/cv-preview-panel";
 import DeleteDocumentConfirmation from "@/components/documents/delete-document-confirmation";
-import { type ParsedCVProfile, ensureValidProfile } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
@@ -10,7 +10,6 @@ import { useUploadDocument } from "@/hooks/api-hooks/useUploadDocument";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { getCVDocuments } from "@/lib/supabase/documents/cvs";
-import { getUserProfile } from "@/lib/supabase/documents/profile";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
@@ -25,6 +24,14 @@ import { z } from "zod";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
+	const {
+		data: { user },
+	} = await supabase.auth.getUser();
+
+	if (!user) {
+		throw new Error("User not found");
+	}
+
 	const url = new URL(request.url);
 	const id = url.searchParams.get("id");
 
@@ -35,12 +42,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		queryFn: () => getCVDocuments({ supabase }),
 	});
 
-	const profile = await getUserProfile({ supabase });
+	const { data, error } = await supabase.from("cv_profiles").select("completed").eq("user_id", user.id).single();
 
-	return json({ dehydratedState: dehydrate(queryClient), profile });
+	return json({ dehydratedState: dehydrate(queryClient), profileCompleted: data?.completed });
 }
 
-export function CV({ profile }: { profile: ParsedCVProfile }) {
+export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 	const { supabase, subscription, user } = useOutletContext<SupabaseOutletContext>();
 	const params = useParams();
 	const { id } = params;
@@ -166,7 +173,7 @@ export function CV({ profile }: { profile: ParsedCVProfile }) {
 
 	// === profile banner ===
 	const [profileDismissed, setProfileDismissed] = useState(false);
-	const showBanner = !profile?.completed && !profileDismissed;
+	const showBanner = profileCompleted && !profileDismissed;
 
 	// === delete cv ===
 	const [deleteCVPopoverOpen, setDeleteCVPopoverOpen] = useState(false);
@@ -340,11 +347,11 @@ export function CV({ profile }: { profile: ParsedCVProfile }) {
 
 export default function CVPage() {
 	const { dehydratedState } = useLoaderData<typeof loader>();
-	const { profile } = useLoaderData<typeof loader>();
+	const { profileCompleted } = useLoaderData<typeof loader>();
 
 	return (
 		<HydrationBoundary state={dehydratedState}>
-			<CV profile={profile} />
+			<CV profileCompleted={profileCompleted} />
 		</HydrationBoundary>
 	);
 }

@@ -110,11 +110,11 @@ function CVCard({
 					tabIndex={0}
 					aria-label={`View ${cv.title}`}
 				/>
-				<div className="h-0 flex-1 flex items-center justify-center p-1 w-full">
+				<div className="h-0 flex-1 flex items-center justify-center w-full">
 					<img
 						src={thumbnail}
 						alt={`${cv.title} preview`}
-						className="w-full h-full rounded-t-md"
+						className="h-full object-cover rounded-t-md"
 						loading="lazy"
 						onError={(e) => {
 							e.currentTarget.src = "/assets/fallback.svg";

@@ -42,13 +42,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		queryFn: () => getCVDocuments({ supabase }),
 	});
 
-	const { data, error } = await supabase.from("cv_profiles").select("completed").eq("user_id", user.id).single();
+	const { data } = await supabase.from("cv_profiles").select("completed").eq("user_id", user.id).single();
 
 	return json({ dehydratedState: dehydrate(queryClient), profileCompleted: data?.completed });
 }
 
 export function CV({ profileCompleted }: { profileCompleted: boolean }) {
-	const { supabase, subscription, user } = useOutletContext<SupabaseOutletContext>();
+	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
 	const params = useParams();
 	const { id } = params;
 	const { updateCV, isUpdatingCV, cv, deleteCV, isDeletingCV, renameCV } = useCV({

@@ -107,13 +107,20 @@ export type Database = {
 			};
 			cvs: {
 				Row: {
+					address: string | null;
 					certifications: string[] | null;
 					created_at: string;
 					education: Json[] | null;
+					email: string | null;
 					experience: Json[] | null;
+					first_name: string | null;
+					github: string | null;
 					id: string;
 					interests: string[] | null;
 					languages: string[] | null;
+					last_name: string | null;
+					linkedin: string | null;
+					phone: string | null;
 					projects: Json[] | null;
 					skills: string[] | null;
 					status: string | null;
@@ -123,15 +130,23 @@ export type Database = {
 					updated_at: string;
 					user_id: string | null;
 					version: number | null;
+					website: string | null;
 				};
 				Insert: {
+					address?: string | null;
 					certifications?: string[] | null;
 					created_at?: string;
 					education?: Json[] | null;
+					email?: string | null;
 					experience?: Json[] | null;
+					first_name?: string | null;
+					github?: string | null;
 					id?: string;
 					interests?: string[] | null;
 					languages?: string[] | null;
+					last_name?: string | null;
+					linkedin?: string | null;
+					phone?: string | null;
 					projects?: Json[] | null;
 					skills?: string[] | null;
 					status?: string | null;
@@ -141,15 +156,23 @@ export type Database = {
 					updated_at?: string;
 					user_id?: string | null;
 					version?: number | null;
+					website?: string | null;
 				};
 				Update: {
+					address?: string | null;
 					certifications?: string[] | null;
 					created_at?: string;
 					education?: Json[] | null;
+					email?: string | null;
 					experience?: Json[] | null;
+					first_name?: string | null;
+					github?: string | null;
 					id?: string;
 					interests?: string[] | null;
 					languages?: string[] | null;
+					last_name?: string | null;
+					linkedin?: string | null;
+					phone?: string | null;
 					projects?: Json[] | null;
 					skills?: string[] | null;
 					status?: string | null;
@@ -159,6 +182,7 @@ export type Database = {
 					updated_at?: string;
 					user_id?: string | null;
 					version?: number | null;
+					website?: string | null;
 				};
 				Relationships: [];
 			};

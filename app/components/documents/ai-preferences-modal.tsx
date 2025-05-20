@@ -9,12 +9,14 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePreferences } from "@/hooks/api-hooks/usePreferences";
 import { AI_PROVIDERS, RECOMMENDED_MODEL, RECOMMENDED_TONE, TONES } from "@/lib/ai/config";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
+import { cn } from "@/lib/utils";
 import { useOutletContext } from "@remix-run/react";
-
+import { Check, Sparkles } from "lucide-react";
 import { useState } from "react";
 
 const MODELS = Object.values(AI_PROVIDERS).flatMap((provider) =>
@@ -33,6 +35,7 @@ type Preferences = {
 export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
 	const [open, setOpen] = useState(false);
+	const [activeTab, setActiveTab] = useState("model");
 
 	const { preferences, isLoadingPreferences, updatePreferences, isUpdatingPreferences } = usePreferences({
 		supabase,
@@ -54,69 +57,152 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 					<Button variant="outline">AI Preferences</Button>
 				</DialogTrigger>
 			)}
-			<DialogContent className="sm:max-w-md">
+			<DialogContent className="sm:max-w-[500px]">
 				<DialogHeader>
-					<DialogTitle>AI Preferences</DialogTitle>
+					<DialogTitle className="flex items-center gap-2">
+						<Sparkles className="h-5 w-5 text-emerald-500" />
+						AI Preferences
+					</DialogTitle>
 					<DialogDescription>
 						Control your default AI model and tone for document generation.
 					</DialogDescription>
 				</DialogHeader>
-				<div className="space-y-2">
-					<Label htmlFor="model">Default Model</Label>
-					<Select
-						value={preferences?.default_model ?? RECOMMENDED_MODEL}
-						onValueChange={(v) => handleChange("default_model", v)}
-					>
-						<SelectTrigger>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{MODELS.map((model) => (
-								<SelectItem
-									key={model.value}
-									value={model.value}
-									className={model.value === RECOMMENDED_MODEL ? "font-bold text-primary" : ""}
-								>
-									{model.label}
-									{model.value === RECOMMENDED_MODEL && (
-										<span className="ml-2 text-xs text-primary">(Recommended)</span>
-									)}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-				<div className="space-y-2">
-					<Label htmlFor="tone">Tone</Label>
-					<Select
-						value={preferences?.preferred_tone ?? RECOMMENDED_TONE}
-						onValueChange={(v) => handleChange("preferred_tone", v)}
-					>
-						<SelectTrigger>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{TONES.map((tone) => (
-								<SelectItem
-									key={tone.value}
-									value={tone.value}
-									className={tone.value === RECOMMENDED_TONE ? "font-bold text-primary" : ""}
-								>
-									{tone.label}
-									{tone.value === RECOMMENDED_TONE && (
-										<span className="ml-2 text-xs text-primary">(Recommended)</span>
-									)}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
+
+				<Tabs value={activeTab} onValueChange={setActiveTab} className="mt-2">
+					<TabsList className="grid w-full grid-cols-2">
+						<TabsTrigger value="model">AI Model</TabsTrigger>
+						<TabsTrigger value="tone">Writing Tone</TabsTrigger>
+					</TabsList>
+
+					<TabsContent value="model" className="space-y-4 py-4">
+						<div className="space-y-2">
+							<Label htmlFor="model">Select your preferred AI model</Label>
+							<div className="grid grid-cols-1 gap-3">
+								{Object.values(AI_PROVIDERS).map((provider) => (
+									<div key={provider.id} className="space-y-2">
+										<h3 className="text-sm font-medium text-gray-500">{provider.displayName}</h3>
+										<div className="grid grid-cols-1 gap-2">
+											{provider.modelIds.map((modelId) => {
+												const isSelected = preferences?.default_model === modelId;
+												return (
+													<div
+														key={modelId}
+														className={cn(
+															"flex items-center justify-between rounded-lg border p-3 cursor-pointer transition-all",
+															isSelected
+																? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
+																: "hover:border-gray-300 dark:hover:border-gray-600",
+														)}
+														onClick={() => handleChange("default_model", modelId)}
+														onKeyDown={(e) => {
+															if (e.key === "Enter" || e.key === " ") {
+																handleChange("default_model", modelId);
+															}
+														}}
+														tabIndex={0}
+														role="button"
+														aria-pressed={isSelected}
+													>
+														<div className="flex items-center gap-3">
+															<div
+																className={cn(
+																	"flex h-5 w-5 items-center justify-center rounded-full border",
+																	isSelected
+																		? "border-emerald-500 bg-emerald-500 text-white"
+																		: "border-gray-300 dark:border-gray-600",
+																)}
+															>
+																{isSelected && <Check className="h-3 w-3" />}
+															</div>
+															<div>
+																<p className="text-sm font-medium">{modelId}</p>
+																<p className="text-xs text-gray-500">
+																	{modelId === RECOMMENDED_MODEL && (
+																		<span className="text-emerald-500">
+																			Recommended
+																		</span>
+																	)}
+																</p>
+															</div>
+														</div>
+													</div>
+												);
+											})}
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					</TabsContent>
+
+					<TabsContent value="tone" className="space-y-4 py-4">
+						<div className="space-y-2">
+							<Label>Select your preferred writing tone</Label>
+							<RadioGroup
+								value={preferences?.preferred_tone ?? RECOMMENDED_TONE}
+								onValueChange={(value) => handleChange("preferred_tone", value)}
+								className="grid grid-cols-1 gap-3"
+							>
+								{TONES.map((tone) => {
+									const Icon = tone.icon;
+									const isRecommended = tone.value === RECOMMENDED_TONE;
+									return (
+										<div key={tone.value} className="relative">
+											<RadioGroupItem
+												value={tone.value}
+												id={tone.value}
+												className="peer sr-only"
+											/>
+											<Label
+												htmlFor={tone.value}
+												className={cn(
+													"flex flex-col items-start justify-between rounded-lg border p-4",
+													"cursor-pointer transition-all hover:border-emerald-500/50",
+													"peer-data-[state=checked]:border-emerald-500 peer-data-[state=checked]:bg-emerald-50 dark:peer-data-[state=checked]:bg-emerald-950/20",
+												)}
+											>
+												<div className="flex w-full items-start justify-between">
+													<div className="flex items-center gap-3">
+														<div className="rounded-full bg-emerald-100 p-2 dark:bg-emerald-900">
+															<Icon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+														</div>
+														<div>
+															<p className="font-medium">{tone.label}</p>
+															<p className="text-sm text-gray-500">{tone.description}</p>
+														</div>
+													</div>
+													{isRecommended && (
+														<span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-400">
+															Recommended
+														</span>
+													)}
+												</div>
+												{tone.example && (
+													<div className="mt-3 w-full">
+														<div className="rounded-md bg-gray-100 p-2 text-xs dark:bg-gray-800">
+															<p className="italic">{tone.example}</p>
+														</div>
+													</div>
+												)}
+											</Label>
+										</div>
+									);
+								})}
+							</RadioGroup>
+						</div>
+					</TabsContent>
+				</Tabs>
+
 				<DialogFooter>
 					<Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={isLoading}>
 						Cancel
 					</Button>
-					<Button disabled={isLoading} onClick={() => setOpen(false)}>
-						Close
+					<Button
+						disabled={isLoading}
+						onClick={() => setOpen(false)}
+						className="bg-emerald-600 hover:bg-emerald-700 text-white"
+					>
+						Save Preferences
 					</Button>
 				</DialogFooter>
 			</DialogContent>

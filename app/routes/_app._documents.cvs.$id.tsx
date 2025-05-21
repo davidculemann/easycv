@@ -17,7 +17,7 @@ import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, json, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
-import { AlertTriangle, Check, ExternalLink, Pencil, Settings, Trash2, X } from "lucide-react";
+import { AlertTriangle, Check, ExternalLink, Pencil, Settings2, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
@@ -267,8 +267,8 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 					<AIPreferencesModal
 						trigger={
 							<Button variant="outline" size="sm" className="gap-2">
-								<Settings className="h-4 w-4" />
-								<span className="hidden sm:inline">AI Settings</span>
+								<Settings2 className="h-4 w-4" />
+								<span className="hidden sm:inline">AI Preferences</span>
 							</Button>
 						}
 					/>

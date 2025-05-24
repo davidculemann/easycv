@@ -16,6 +16,7 @@ import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { createCVDocument, getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
+import { cn } from "@/lib/utils";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
@@ -94,6 +95,8 @@ function CVCard({
 		docId: cv.id,
 	});
 
+	const [isFallback, setIsFallback] = useState(false);
+	console.log("+++++ isFallback ++++++++", isFallback);
 	return (
 		<motion.div
 			layout
@@ -114,10 +117,11 @@ function CVCard({
 					<img
 						src={thumbnail}
 						alt={`${cv.title} preview`}
-						className="h-full object-cover rounded-t-md"
+						className={cn("h-full object-cover rounded-t-md", isFallback && "dark:invert")}
 						loading="lazy"
 						onError={(e) => {
-							e.currentTarget.src = "/assets/fallback.svg";
+							setIsFallback(true);
+							if (!isFallback) e.currentTarget.src = "/assets/fallback.svg";
 						}}
 					/>
 				</div>

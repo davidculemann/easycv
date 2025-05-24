@@ -138,7 +138,7 @@ export default function Index() {
 							the perfect CV, tailored to your experience and industry.
 						</p>
 						<div className="space-x-4 flex">
-							<Link to="/signin">
+							<Link to="/signin" prefetch="intent">
 								<Button size="lg">Create Your CV</Button>
 							</Link>
 						</div>

@@ -9,6 +9,9 @@ export default function AuthLayout() {
 
 	return (
 		<main className="h-full px-8 sm:px-0">
+			<Link to="/dashboard" prefetch="render" tabIndex={-1} aria-hidden="true" className="hidden">
+				Prefetch Dashboard
+			</Link>
 			<Link
 				to="/"
 				className={cn(buttonVariants({ variant: "ghost" }), "absolute left-4 top-4 md:left-8 md:top-8 z-10")}

@@ -13,7 +13,11 @@ export default function SiteHeader() {
 				<span className="flex gap-4 items-center">
 					<ThemeToggle />
 					<nav>
-						<Link to="/signin" className={cn(buttonVariants({ variant: "secondary" }), "px-4")}>
+						<Link
+							to="/signin"
+							className={cn(buttonVariants({ variant: "secondary" }), "px-4")}
+							prefetch="intent"
+						>
 							Sign in
 						</Link>
 					</nav>

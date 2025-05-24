@@ -16,7 +16,7 @@ export default function SiteHeader() {
 						<Link
 							to="/signin"
 							className={cn(buttonVariants({ variant: "secondary" }), "px-4")}
-							prefetch="intent"
+							prefetch="render"
 						>
 							Sign in
 						</Link>

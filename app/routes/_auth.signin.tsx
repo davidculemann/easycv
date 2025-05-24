@@ -74,7 +74,11 @@ export default function SignIn() {
 					<div className="grid gap-2">
 						<div className="flex items-center">
 							<Label htmlFor="password">Password</Label>
-							<Link to="/forgot-password" className="ml-auto inline-block text-sm underline">
+							<Link
+								to="/forgot-password"
+								className="ml-auto inline-block text-sm underline"
+								prefetch="intent"
+							>
 								Forgot your password?
 							</Link>
 						</div>
@@ -96,7 +100,7 @@ export default function SignIn() {
 				</div>
 				<div className="mt-4 text-center text-sm">
 					Don't have an account?
-					<Link className="underline ml-2" to="/signup">
+					<Link className="underline ml-2" to="/signup" prefetch="render">
 						Sign Up
 					</Link>
 				</div>

@@ -114,7 +114,7 @@ function CVCard({
 						loading="lazy"
 						onError={(e) => {
 							setIsFallback(true);
-							if (!isFallback) e.currentTarget.src = "/assets/fallback.svg";
+							if (!isFallback) e.currentTarget.src = "/assets/fallback-small.svg";
 						}}
 					/>
 				</div>
@@ -126,7 +126,6 @@ function CVCard({
 }
 
 function CVFooter({ cv, supabase, user }: { cv: any; supabase: SupabaseClient; user: User }) {
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [isRenaming, setIsRenaming] = useState(false);
 
 	const { deleteCV, renameCV, duplicateCV } = useCV({ supabase, id: cv.id });

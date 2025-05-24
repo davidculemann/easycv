@@ -61,7 +61,7 @@ function CVList() {
 	}
 
 	return (
-		<div className="flex flex-wrap gap-4 justify-center sm:justify-start">
+		<div className="flex flex-wrap gap-4 justify-center">
 			<Card className="document-card border-dashed border-muted-foreground border flex flex-col items-center justify-center gap-3 relative overflow-hidden">
 				<div className="font-semibold text-center">Create New CV</div>
 				<div className="flex flex-col gap-2 w-full px-2">
@@ -96,7 +96,7 @@ function CVCard({
 	});
 
 	const [isFallback, setIsFallback] = useState(false);
-	console.log("+++++ isFallback ++++++++", isFallback);
+
 	return (
 		<motion.div
 			layout

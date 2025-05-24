@@ -22,7 +22,7 @@ export function CVPreviewPanel({
 	id,
 }: CVPreviewPanelProps) {
 	return (
-		<div className="flex-1 flex flex-col w-full max-w-full">
+		<div className="flex-1 flex flex-col w-full max-w-full" style={{ viewTransitionName: `cv-card-${id}` }}>
 			<div className="border-b p-2 pr-4 flex items-center justify-between bg-background overflow-x-auto h-[53px]">
 				<div className="flex items-center gap-2 w-full justify-end">
 					<Button

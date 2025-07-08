@@ -26,29 +26,53 @@ import { GlobalPendingIndicator } from "./components/layout/global-pending-indic
 import { Toaster } from "./components/ui/sonner";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-	const { session, headers } = await getSupabaseWithSessionHeaders({
-		request,
-	});
-	const env = getSupabaseEnv();
-	const completeEnv = process.env;
+	try {
+		const { session, headers } = await getSupabaseWithSessionHeaders({
+			request,
+		});
+		const env = getSupabaseEnv();
+		const completeEnv = process.env;
 
-	const url = new URL(request.url);
+		const url = new URL(request.url);
 
-	return json(
-		{
-			env,
-			completeEnv,
-			session,
-			requestInfo: {
-				hints: getHints(request),
-				userPrefs: {
-					theme: getTheme(request),
+		return json(
+			{
+				env,
+				completeEnv,
+				session,
+				requestInfo: {
+					hints: getHints(request),
+					userPrefs: {
+						theme: getTheme(request),
+					},
 				},
+				host: url.host,
 			},
-			host: url.host,
-		},
-		{ headers },
-	);
+			{ headers },
+		);
+	} catch (error) {
+		console.error("Root loader error:", error);
+
+		// Return a minimal response that won't crash the app
+		return json(
+			{
+				env: {
+					SUPABASE_URL: process.env.SUPABASE_URL || "",
+					SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
+				},
+				completeEnv: process.env,
+				session: null,
+				requestInfo: {
+					hints: getHints(request),
+					userPrefs: {
+						theme: getTheme(request),
+					},
+				},
+				host: new URL(request.url).host,
+			},
+			{ status: 500 },
+		);
+	}
 };
 
 export default function App() {

@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 
 export function ErrorBoundaryContent({ error }: { error: Error }) {
 	if (!isRouteErrorResponse(error)) {
-		return <DefaultErrorComponent />;
+		return <DefaultErrorComponent error={error} />;
 	}
 
 	return (
@@ -33,12 +33,27 @@ export function ErrorBoundaryContent({ error }: { error: Error }) {
 	);
 }
 
-function DefaultErrorComponent() {
+function DefaultErrorComponent({ error }: { error: Error }) {
+	const isDevelopment = process.env.NODE_ENV === "development";
+
 	return (
 		<div className="bg-background text-foreground flex flex-col items-center justify-center min-h-screen p-4">
 			<h1 className="font-mono text-[20vw] md:text-[15vw] leading-none">Error</h1>
 			<p className="text-xl md:text-2xl mt-4 mb-8 text-center">An unexpected error occurred</p>
-			<Button asChild variant="outline">
+
+			{isDevelopment && (
+				<details className="mt-4 max-w-2xl w-full">
+					<summary className="cursor-pointer text-sm text-muted-foreground">
+						Error details (development only)
+					</summary>
+					<pre className="mt-2 p-4 bg-muted rounded text-xs overflow-auto">
+						{error.message}
+						{error.stack && `\n\n${error.stack}`}
+					</pre>
+				</details>
+			)}
+
+			<Button asChild variant="outline" className="mt-4">
 				<Link to="/">Go back home</Link>
 			</Button>
 		</div>

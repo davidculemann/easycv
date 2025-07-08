@@ -51,6 +51,8 @@ export function PersonalInfoForm({
 					<h3 className="text-lg font-medium">Personal Information</h3>
 					<p className="text-sm text-muted-foreground">Update your personal details</p>
 				</div>
+				<Separator />
+
 				<div>
 					<FormLabel className="text-xs font-medium text-muted-foreground">Name</FormLabel>
 					<div className="grid gap-4 md:grid-cols-2">

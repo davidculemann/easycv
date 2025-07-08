@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -73,6 +74,7 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 					<h3 className="text-lg font-medium">Experience</h3>
 					<p className="text-sm text-muted-foreground">Add your work experience</p>
 				</div>
+				<Separator />
 				<DynamicFieldArrayForm
 					form={form}
 					arrayName="experiences"

@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -74,6 +75,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 					<h3 className="text-lg font-medium">Education</h3>
 					<p className="text-sm text-muted-foreground">Add your educational background</p>
 				</div>
+				<Separator />
 				<DynamicFieldArrayForm
 					form={form}
 					arrayName="educations"

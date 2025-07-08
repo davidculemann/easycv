@@ -35,5 +35,24 @@ export function usePreferences({ supabase, id }: { supabase: SupabaseClient<Data
 		},
 	});
 
-	return { isLoadingPreferences, isUpdatingPreferences, preferences, updatePreferences };
+	// Enhanced update function that accepts callbacks
+	const updatePreferencesWithCallbacks = (
+		update: Partial<Database["public"]["Tables"]["preferences"]["Update"]>,
+		callbacks?: {
+			onSuccess?: () => void;
+			onError?: (error: Error) => void;
+		},
+	) => {
+		updatePreferences(update, {
+			onSuccess: callbacks?.onSuccess,
+			onError: callbacks?.onError,
+		});
+	};
+
+	return {
+		isLoadingPreferences,
+		isUpdatingPreferences,
+		preferences,
+		updatePreferences: updatePreferencesWithCallbacks,
+	};
 }

@@ -251,19 +251,28 @@ export type Database = {
 					default_model: string | null;
 					id: number;
 					preferred_tone: string | null;
+					generation_language: string | null;
 					user_id: string | null;
+					created_at: string | null;
+					updated_at: string | null;
 				};
 				Insert: {
 					default_model?: string | null;
 					id?: number;
 					preferred_tone?: string | null;
+					generation_language?: string | null;
 					user_id?: string | null;
+					created_at?: string | null;
+					updated_at?: string | null;
 				};
 				Update: {
 					default_model?: string | null;
 					id?: number;
 					preferred_tone?: string | null;
+					generation_language?: string | null;
 					user_id?: string | null;
+					created_at?: string | null;
+					updated_at?: string | null;
 				};
 				Relationships: [];
 			};

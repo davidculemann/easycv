@@ -2,12 +2,31 @@ import { redirect } from "@remix-run/node";
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export const getSupabaseEnv = () => ({
-	SUPABASE_URL: process.env.SUPABASE_URL!,
-	SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
-});
+const validateEnv = () => {
+	const required = {
+		SUPABASE_URL: process.env.SUPABASE_URL,
+		SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+	};
+
+	const missing = Object.entries(required)
+		.filter(([, value]) => !value)
+		.map(([key]) => key);
+
+	if (missing.length > 0) {
+		throw new Error(`Missing required environment variables: ${missing.join(", ")}. Please check your .env file.`);
+	}
+};
+
+export const getSupabaseEnv = () => {
+	validateEnv();
+	return {
+		SUPABASE_URL: process.env.SUPABASE_URL!,
+		SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
+	};
+};
 
 export function getSupabaseWithHeaders({ request }: { request: Request }) {
+	validateEnv();
 	const headers = new Headers();
 
 	const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {

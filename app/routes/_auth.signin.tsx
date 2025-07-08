@@ -100,7 +100,7 @@ export default function SignIn() {
 				</div>
 				<div className="mt-4 text-center text-sm">
 					Don't have an account?
-					<Link className="underline ml-2" to="/signup" prefetch="render">
+					<Link className="underline ml-2" to="/signup" prefetch="intent">
 						Sign Up
 					</Link>
 				</div>

@@ -11,9 +11,8 @@ import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.serv
 import { validateEmail, validatePassword } from "@/lib/utils";
 import { type ActionFunctionArgs, type LoaderFunctionArgs, json } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
-import axios from "axios";
 import { motion } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -26,90 +25,64 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
+	const { supabase, headers } = getSupabaseWithHeaders({ request });
 
 	if (!validateEmail(email)) {
-		return json({ message: "Invalid email address." }, { status: 400 });
+		return json({ message: "Please enter a valid email address." }, { status: 400 });
 	}
 
 	if (!validatePassword(password)) {
 		return json(
-			{
-				message:
-					"Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.",
-			},
+			{ message: "Password must be at least 8 characters long and contain at least one number." },
 			{ status: 400 },
 		);
 	}
 
-	const { supabase } = getSupabaseWithHeaders({ request });
-
 	const { error } = await supabase.auth.signUp({
 		email,
 		password,
+		options: {
+			emailRedirectTo: `${new URL(request.url).origin}/dashboard`,
+		},
 	});
 
 	if (error) {
 		return json({ message: error.message }, { status: 400 });
 	}
 
-	return json({ success: true, message: "Check your email for the confirmation code.", email, password });
+	return json({ message: "Check your email for the confirmation link." }, { headers });
 }
 
 type ActionStatus = {
 	success: boolean;
 	message: string;
-	email: string;
-	password: string;
 };
 
-export default function Signup() {
+export default function SignUp() {
 	const navigation = useNavigation();
 	const actionData = useActionData<ActionStatus | undefined>();
-	const isSignupComplete = actionData?.success && actionData?.email && actionData?.password;
+	const [showOTP, setShowOTP] = useState(false);
 	const { supabase } = useOutletContext<SupabaseOutletContext>();
 
 	useEffect(() => {
 		if (actionData?.message) {
-			if (actionData.success) {
-				toast.success(actionData.message);
-			} else {
-				toast.error(actionData.message);
-			}
+			if (actionData?.success) toast.success(actionData.message);
+			if (!actionData?.success) toast.error(actionData?.message);
 		}
 	}, [actionData]);
 
-	async function handleSubmitOTP(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
-		const form = event.currentTarget;
-		const formData = new FormData(form);
-		try {
-			await axios.post("api/confirm-signup-otp", formData);
-			toast.success("Successfully signed up.");
-			if (actionData)
-				supabase.auth.signInWithPassword({
-					email: actionData.email,
-					password: actionData.password,
-				});
-		} catch (error) {
-			if (axios.isAxiosError(error) && error.response) {
-				const { message: errorMessage = "An unexpected error occurred. Please try again." } =
-					error.response.data;
-				toast.error(errorMessage);
-			} else if (error instanceof Error) {
-				toast.error(error.message);
-			} else {
-				toast.error("An unexpected error occurred. Please try again.");
-			}
-		}
-	}
+	const handleResendOTP = async () => {
+		// For now, we'll just show a message since we need the email
+		toast.info("Please check your email for the OTP code.");
+	};
 
-	if (isSignupComplete)
+	if (showOTP) {
 		return (
-			<div className="mx-auto grid w-[350px] gap-6">
-				<Icons.logo className="lg:hidden h-12 mx-auto" />
-				<ConfirmOTP onSubmit={handleSubmitOTP} additionalFormData={{ email: actionData.email }} />
-			</div>
+			<motion.div {...enterLeftAnimation} layout="position">
+				<ConfirmOTP />
+			</motion.div>
 		);
+	}
 
 	return (
 		<motion.div {...enterLeftAnimation} layout="position">
@@ -117,21 +90,26 @@ export default function Signup() {
 				<Icons.logo className="lg:hidden h-12 mx-auto" />
 				<div className="grid gap-2 text-center">
 					<h1 className="text-3xl font-bold">Create an account</h1>
-					<p className="text-balance text-muted-foreground">Enter an email and password</p>
+					<p className="text-balance text-muted-foreground">Enter your email below to create your account</p>
 				</div>
 				<div className="grid gap-4">
 					<div className="grid gap-2">
 						<Label htmlFor="email">Email</Label>
-						<Input id="email" type="email" name="email" placeholder="email@example.com" required />
+						<Input
+							id="email"
+							type="email"
+							name="email"
+							placeholder="m@example.com"
+							required
+							autoComplete="email"
+						/>
 					</div>
 					<div className="grid gap-2">
-						<div className="flex items-center h-5">
-							<Label htmlFor="password">Password</Label>
-						</div>
-						<Input id="password" type="password" name="password" required autoComplete="new-password" />
+						<Label htmlFor="password">Password</Label>
+						<Input id="password" type="password" name="password" autoComplete="new-password" required />
 					</div>
 					<LoadingButton className="w-full" loading={navigation.state === "submitting"}>
-						Sign up
+						Create account
 					</LoadingButton>
 					<div className="relative">
 						<div className="absolute inset-0 flex items-center">
@@ -146,8 +124,8 @@ export default function Signup() {
 				</div>
 				<div className="mt-4 text-center text-sm">
 					Already have an account?
-					<Link className="underline ml-2" to="/signin">
-						Sign In
+					<Link className="underline ml-2" to="/signin" prefetch="intent">
+						Sign in
 					</Link>
 				</div>
 			</Form>

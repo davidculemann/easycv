@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "remix vite:build",
-		"dev": "dotenv -- node ./server.js",
+		"dev": "NODE_ENV=development dotenv -- node ./server.js",
+		"dev:debug": "NODE_ENV=development dotenv -- node --inspect ./server.js",
 		"start": "cross-env NODE_ENV=production node ./server.js",
 		"typecheck": "tsc",
 		"deploy-production": "vercel --prod",

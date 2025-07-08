@@ -6,16 +6,42 @@ import morgan from "morgan";
 
 installGlobals();
 
-const viteDevServer =
-	process.env.NODE_ENV === "production"
-		? undefined
-		: await import("vite").then((vite) =>
-				vite.createServer({
-					server: {
-						middlewareMode: true,
-					},
-				}),
-			);
+// Validate required environment variables early
+const validateEnv = () => {
+	const required = {
+		SUPABASE_URL: process.env.SUPABASE_URL,
+		SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+	};
+
+	const missing = Object.entries(required)
+		.filter(([, value]) => !value)
+		.map(([key]) => key);
+
+	if (missing.length > 0) {
+		console.error(`❌ Missing required environment variables: ${missing.join(", ")}`);
+		console.error("Please check your .env file and ensure all required variables are set.");
+		process.exit(1);
+	}
+};
+
+// Validate environment variables
+validateEnv();
+
+let viteDevServer;
+if (process.env.NODE_ENV === "development") {
+	try {
+		const { createServer } = await import("vite");
+		viteDevServer = await createServer({
+			server: {
+				middlewareMode: true,
+			},
+		});
+		console.log("✅ Vite dev server created successfully");
+	} catch (error) {
+		console.error("❌ Failed to create Vite dev server:", error);
+		process.exit(1);
+	}
+}
 
 // Create a request handler for Remix
 const remixHandler = createRequestHandler({
@@ -54,6 +80,12 @@ app.use(
 );
 
 app.use(morgan("tiny"));
+
+// Add error handling middleware
+app.use((error, req, res, next) => {
+	console.error("Express error:", error);
+	res.status(500).json({ error: "Internal server error" });
+});
 
 // handle SSR requests
 app.all("*", remixHandler);

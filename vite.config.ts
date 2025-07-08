@@ -25,4 +25,21 @@ export default defineConfig({
 			},
 		}),
 	],
+	server: {
+		port: 3000,
+		strictPort: true,
+	},
+	optimizeDeps: {
+		include: ["@remix-run/react", "@remix-run/node"],
+	},
+	build: {
+		rollupOptions: {
+			onwarn(warning, warn) {
+				// Ignore certain warnings that are not critical
+				if (warning.code === "CIRCULAR_DEPENDENCY") return;
+				if (warning.code === "UNUSED_EXTERNAL_IMPORT") return;
+				warn(warning);
+			},
+		},
+	},
 });

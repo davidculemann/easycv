@@ -52,6 +52,7 @@ export function DateField({
 										}
 									}}
 									initialFocus
+									captionLayout="dropdown"
 								/>
 							</PopoverContent>
 						</Popover>

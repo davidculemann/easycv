@@ -1,11 +1,9 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
 	"files": {
-		"ignore": ["build/**"]
+		"includes": ["**", "!**/build/**"]
 	},
-	"organizeImports": {
-		"enabled": true
-	},
+	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -50,7 +48,7 @@
 	"formatter": {
 		"enabled": true,
 		"formatWithErrors": false,
-		"ignore": [],
+		"includes": ["**"],
 		"indentStyle": "tab",
 		"indentWidth": 4,
 		"lineWidth": 120,

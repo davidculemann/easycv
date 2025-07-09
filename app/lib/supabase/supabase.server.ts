@@ -45,11 +45,7 @@ export function getSupabaseWithHeaders({ request }: { request: Request }) {
 	return { supabase, headers };
 }
 
-export async function getSupabaseWithSessionHeaders({
-	request,
-}: {
-	request: Request;
-}) {
+export async function getSupabaseWithSessionHeaders({ request }: { request: Request }) {
 	const { supabase, headers } = getSupabaseWithHeaders({
 		request,
 	});
@@ -64,7 +60,11 @@ export const requireUser = async ({
 	supabase,
 	headers,
 	redirectTo = "/signin",
-}: { redirectTo?: string; supabase: SupabaseClient; headers: Headers }) => {
+}: {
+	redirectTo?: string;
+	supabase: SupabaseClient;
+	headers: Headers;
+}) => {
 	const {
 		data: { user },
 		error,
@@ -78,7 +78,11 @@ export const forbidUser = async ({
 	supabase,
 	headers,
 	redirectTo = "/dashboard",
-}: { supabase: SupabaseClient; headers?: Headers; redirectTo?: string }) => {
+}: {
+	supabase: SupabaseClient;
+	headers?: Headers;
+	redirectTo?: string;
+}) => {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();

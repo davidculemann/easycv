@@ -38,8 +38,12 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 			name,
 			onSuccess,
 			onError,
-		}: { id: string; name: string; onSuccess?: () => void; onError?: () => void }) =>
-			renameCVDocument({ supabase, id, name, onSuccess, onError }),
+		}: {
+			id: string;
+			name: string;
+			onSuccess?: () => void;
+			onError?: () => void;
+		}) => renameCVDocument({ supabase, id, name, onSuccess, onError }),
 		onMutate: async ({ id, name }) => {
 			await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.cvs.single, id] });
 			await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.cvs.all] });

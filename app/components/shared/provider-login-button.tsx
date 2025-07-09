@@ -14,11 +14,7 @@ const providerDisplayName: Partial<Record<Provider, string>> = {
 	github: "GitHub",
 };
 
-export default function ProviderLoginButton({
-	provider,
-}: {
-	provider: Provider;
-}) {
+export default function ProviderLoginButton({ provider }: { provider: Provider }) {
 	const { supabase } = useOutletContext<SupabaseOutletContext>();
 
 	const handleSignIn = async () => {

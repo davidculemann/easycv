@@ -80,7 +80,12 @@ function CVCard({
 	supabase,
 	user,
 	handleOpenCV,
-}: { cv: any; supabase: SupabaseClient; user: User; handleOpenCV: (id: string) => void }) {
+}: {
+	cv: any;
+	supabase: SupabaseClient;
+	user: User;
+	handleOpenCV: (id: string) => void;
+}) {
 	const thumbnail = getDocumentThumbnailUrl({
 		supabase,
 		userId: user?.id,

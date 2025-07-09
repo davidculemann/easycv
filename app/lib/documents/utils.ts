@@ -5,7 +5,12 @@ export function getDocumentThumbnailUrl({
 	userId,
 	docType,
 	docId,
-}: { supabase: TypedSupabaseClient; userId: string | undefined; docType: string; docId: string }) {
+}: {
+	supabase: TypedSupabaseClient;
+	userId: string | undefined;
+	docType: string;
+	docId: string;
+}) {
 	const { data } = supabase.storage.from("documents").getPublicUrl(`${docType}/${userId}/${docId}.jpg`);
 
 	return data?.publicUrl ?? "";

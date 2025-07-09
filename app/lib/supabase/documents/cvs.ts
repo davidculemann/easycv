@@ -40,7 +40,10 @@ export async function getCVDocuments({
 export async function getLastXDocuments({
 	supabase,
 	limit = 5,
-}: { supabase: SupabaseClient<Database>; limit: number }) {
+}: {
+	supabase: SupabaseClient<Database>;
+	limit: number;
+}) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
@@ -127,7 +130,12 @@ export async function deleteCVDocument({
 	id,
 	onSuccess,
 	onError,
-}: { supabase: SupabaseClient<Database>; id: string; onSuccess?: () => void; onError?: () => void }) {
+}: {
+	supabase: SupabaseClient<Database>;
+	id: string;
+	onSuccess?: () => void;
+	onError?: () => void;
+}) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();
@@ -150,7 +158,11 @@ export async function updateCVDocument({
 	supabase,
 	id,
 	cv,
-}: { supabase: SupabaseClient<Database>; id: string; cv: Partial<ParsedCVProfile> }) {
+}: {
+	supabase: SupabaseClient<Database>;
+	id: string;
+	cv: Partial<ParsedCVProfile>;
+}) {
 	const { education, experience, skills, projects } = cv;
 	const { data, error } = await supabase
 		.from("cvs")
@@ -264,7 +276,12 @@ export async function duplicateCVDocument({
 	id,
 	onSuccess,
 	onError,
-}: { supabase: SupabaseClient<Database>; id: string; onSuccess?: () => void; onError?: () => void }) {
+}: {
+	supabase: SupabaseClient<Database>;
+	id: string;
+	onSuccess?: () => void;
+	onError?: () => void;
+}) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();

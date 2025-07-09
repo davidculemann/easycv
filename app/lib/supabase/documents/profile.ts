@@ -87,7 +87,10 @@ export async function createUserProfile({
 export async function updateUserProfile({
 	supabase,
 	profile,
-}: { supabase: SupabaseClient<Database>; profile: Partial<CVProfileInput> }) {
+}: {
+	supabase: SupabaseClient<Database>;
+	profile: Partial<CVProfileInput>;
+}) {
 	const {
 		data: { user },
 	} = await supabase.auth.getUser();

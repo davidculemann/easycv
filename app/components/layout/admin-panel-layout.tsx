@@ -3,11 +3,7 @@ import { cn } from "@/lib/utils";
 import { useStore } from "zustand";
 import { Sidebar } from "./sidebar";
 
-export default function AdminPanelLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {
 	const sidebar = useStore(useSidebarToggle, (state) => state);
 
 	if (!sidebar) return null;

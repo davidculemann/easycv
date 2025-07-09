@@ -5,7 +5,10 @@ import type { Subscription } from "types/stripe";
 export default function SubscriptionPlanPill({
 	subscription,
 	planId,
-}: { subscription?: Subscription; planId?: string }) {
+}: {
+	subscription?: Subscription;
+	planId?: string;
+}) {
 	const resolvedPlanId = planId ?? subscription?.plan_id;
 	const isPro = isProPlan(resolvedPlanId);
 

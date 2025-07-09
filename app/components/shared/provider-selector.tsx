@@ -6,7 +6,11 @@ export default function ProviderSelector({
 	model,
 	setModel,
 	isPro,
-}: { model: string; setModel: (model: string) => void; isPro: boolean }) {
+}: {
+	model: string;
+	setModel: (model: string) => void;
+	isPro: boolean;
+}) {
 	const MODEL_LIST = Object.values(AI_PROVIDERS);
 
 	return (

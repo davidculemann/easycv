@@ -1,7 +1,7 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
 	"files": {
-		"includes": ["**", "!**/build/**", "!**/node_modules/**", "!.react-router/**"]
+		"includes": ["**", "!**/build/**", "!**/node_modules/**", "!.react-router/**/*.*", "!db_types.ts"]
 	},
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"vcs": {

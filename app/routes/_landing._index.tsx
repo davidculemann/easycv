@@ -124,7 +124,7 @@ export default function Index() {
 	}
 
 	return (
-		<div className="flex flex-col bg-gradient-to-br from-orange-50/80 via-background to-blue-50/60 dark:from-orange-950/20 dark:via-background dark:to-blue-950/20">
+		<div className="flex flex-col bg-gradient-to-br from-orange-50/70 via-background to-blue-50/50 dark:from-orange-950/15 dark:via-background dark:to-blue-950/15">
 			<main className="flex-1">
 				<motion.section className="space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-24" {...enterAnimation}>
 					<div className="container flex max-w-[64rem] flex-col items-center gap-4 text-center">

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { type ActionFunctionArgs, type LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import { motion } from "motion/react";
 import { useEffect } from "react";
@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
-		return json({ message: error.message }, { status: 400 });
+		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
 	}
 
 	return redirect("/dashboard", { headers });

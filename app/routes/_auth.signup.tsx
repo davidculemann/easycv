@@ -6,10 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
-
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail, validatePassword } from "@/lib/utils";
-import { type ActionFunctionArgs, type LoaderFunctionArgs, json } from "@remix-run/node";
+import { type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
@@ -28,12 +27,12 @@ export async function action({ request }: ActionFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
 
 	if (!validateEmail(email)) {
-		return json({ message: "Please enter a valid email address." }, { status: 400 });
+		throw new Response(JSON.stringify({ message: "Please enter a valid email address." }), { status: 400 });
 	}
 
 	if (!validatePassword(password)) {
-		return json(
-			{ message: "Password must be at least 8 characters long and contain at least one number." },
+		throw new Response(
+			JSON.stringify({ message: "Password must be at least 8 characters long and contain at least one number." }),
 			{ status: 400 },
 		);
 	}
@@ -47,10 +46,10 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
-		return json({ message: error.message }, { status: 400 });
+		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
 	}
 
-	return json({ message: "Check your email for the confirmation link." }, { headers });
+	return { message: "Check your email for the confirmation link." };
 }
 
 type ActionStatus = {

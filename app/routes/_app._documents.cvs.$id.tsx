@@ -52,7 +52,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
 	const params = useParams();
 	const { id } = params;
-	const { updateCV, isUpdatingCV, cv, deleteCV, isDeletingCV, renameCV } = useCV({
+	const { updateCV, isUpdatingCV, cv, deleteCV, renameCV } = useCV({
 		supabase,
 		id: id ?? "",
 	});
@@ -65,7 +65,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 	const [isSaved, _setIsSaved] = useState(true);
 	const [activeTab, setActiveTab] = useState("personal");
 
-	const { isLoading, object, submit } = useObject({
+	const { object, submit } = useObject({
 		api: "/api/cv/generate",
 		schema: z.object({
 			cv: CVContextSchema,

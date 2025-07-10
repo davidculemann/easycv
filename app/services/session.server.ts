@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from "@remix-run/node";
+import { createCookieSessionStorage } from "react-router";
 
 if (!process.env.SESSION_SECRET) {
 	throw new Error("SESSION_SECRET is missing in your .env file");

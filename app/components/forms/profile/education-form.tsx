@@ -63,7 +63,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 		<BaseForm
 			form={form}
 			isSubmitting={isSubmitting}
-			method="post"
+			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}

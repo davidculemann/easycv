@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { buttonVariants } from "@/components/ui/button";
 import { marketingConfig } from "@/config/marketing";
 import { cn } from "@/lib/utils";

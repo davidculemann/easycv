@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Check, Copy, Download, Pencil, X } from "lucide-react";

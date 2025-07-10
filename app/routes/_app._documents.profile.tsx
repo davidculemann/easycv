@@ -1,5 +1,5 @@
-import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
+import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "react-router";
+import { useActionData, useLoaderData, useNavigation, useSearchParams } from "react-router";
 import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -141,7 +141,11 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Profile() {
-	const actionData = useActionData<typeof action>();
+	const actionData = useActionData<typeof action>() as
+		| { success: true; noNavigate?: boolean }
+		| { success: false; message: string }
+		| { error: string }
+		| undefined;
 	const { profile: rawProfile } = useLoaderData<typeof loader>() as { profile: ParsedCVProfile };
 	const profile = ensureValidProfile(rawProfile);
 	const navigation = useNavigation();
@@ -179,10 +183,12 @@ export default function Profile() {
 
 	useEffect(() => {
 		if (actionData) {
-			if (actionData.success) {
+			if ("success" in actionData && actionData.success) {
 				toast.success("Profile updated successfully");
-				if (!actionData.noNavigate) handleNext();
-			} else if (actionData.message) toast.error(actionData.message);
+				if (!("noNavigate" in actionData && actionData.noNavigate)) handleNext();
+			} else if ("message" in actionData && actionData.message) {
+				toast.error(actionData.message);
+			}
 		}
 	}, [actionData]);
 

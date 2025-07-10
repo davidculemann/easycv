@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData, useNavigate, useOutletContext } from "react-router";
 import { ArrowRight, FileEdit, FilePlus, Info, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";

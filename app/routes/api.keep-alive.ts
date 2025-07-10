@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { keepAliveConfig as config } from "../lib/supabase/keep-alive/config";

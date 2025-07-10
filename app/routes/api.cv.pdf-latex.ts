@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "react-router";
 import axios from "axios";
 import { generateLatexTemplate } from "@/lib/documents/latex-pdf";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";

@@ -1,5 +1,5 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Form, Link } from "@remix-run/react";
+import type { MetaFunction } from "react-router";
+import { Form, Link } from "react-router";
 import axios from "axios";
 import { motion, useInView } from "motion/react";
 import { useRef, useState } from "react";

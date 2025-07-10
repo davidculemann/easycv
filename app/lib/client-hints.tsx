@@ -1,7 +1,6 @@
 import { getHintUtils } from "@epic-web/client-hints";
 import { clientHint as colorSchemeHint, subscribeToSchemeChange } from "@epic-web/client-hints/color-scheme";
-import type { SerializeFrom } from "@remix-run/node";
-import { useRevalidator, useRouteLoaderData } from "@remix-run/react";
+import { useRevalidator, useRouteLoaderData } from "react-router";
 import * as React from "react";
 import type { loader as rootLoader } from "@/root";
 import { useOptimisticTheme } from "@/routes/resources.theme-toggle";
@@ -14,7 +13,7 @@ export const { getHints } = hintsUtils;
 
 // Remix theme utils below
 export function useRequestInfo() {
-	const data = useRouteLoaderData("root") as SerializeFrom<typeof rootLoader>;
+	const data = useRouteLoaderData("root") as Awaited<ReturnType<typeof rootLoader>>;
 	return data.requestInfo;
 }
 

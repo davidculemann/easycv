@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 
 export async function action({ request }: LoaderFunctionArgs) {

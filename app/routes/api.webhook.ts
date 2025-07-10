@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "react-router";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { ERRORS } from "@/lib/constants";

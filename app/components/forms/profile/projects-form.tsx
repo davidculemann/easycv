@@ -68,7 +68,7 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 		<BaseForm
 			form={form}
 			isSubmitting={isSubmitting}
-			method="post"
+			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}

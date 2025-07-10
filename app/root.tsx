@@ -5,7 +5,7 @@ import { useSupabase } from "@/lib/supabase/supabase";
 import { getSupabaseEnv, getSupabaseWithSessionHeaders } from "@/lib/supabase/supabase.server";
 import { getTheme } from "@/lib/theme.server";
 import "@/styles/tailwind.css";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
 import {
 	Links,
 	Meta,
@@ -16,7 +16,7 @@ import {
 	useLoaderData,
 	useRouteError,
 	useRouteLoaderData,
-} from "@remix-run/react";
+} from "react-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import "cal-sans";
 import clsx from "clsx";

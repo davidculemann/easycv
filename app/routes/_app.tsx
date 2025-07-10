@@ -4,9 +4,9 @@ import PageLoading from "@/components/shared/page-loading";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { getLocaleCurrency } from "@/services/stripe/stripe.server";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "react-router";
+import { redirect } from "react-router";
+import { Outlet, useLoaderData, useNavigate, useOutletContext } from "react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -60,15 +60,20 @@ export default function AuthLayout() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if ("sessionAvailable" in loaderData && !loaderData.sessionAvailable) {
-			supabase.auth.getSession().then(({ data: { session } }) => {
+		const checkSession = async () => {
+			if ("sessionAvailable" in loaderData && !loaderData.sessionAvailable) {
+				const {
+					data: { session },
+				} = await supabase.auth.getSession();
 				if (!session) return navigate("/signin");
-			});
-		}
-		if ("message" in loaderData) {
-			toast.error(loaderData.message as string);
-			return navigate("/signin");
-		}
+			}
+			if ("message" in loaderData) {
+				toast.error(loaderData.message as string);
+				return navigate("/signin");
+			}
+		};
+
+		checkSession();
 	}, [loaderData, supabase, navigate]);
 
 	if (isLoading || !user) {

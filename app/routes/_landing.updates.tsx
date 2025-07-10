@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "react-router";
 import { MDXTimeline } from "@/components/mdx-timeline";
 import type { MDXUpdate } from "@/lib/mdx";
 import { getAllUpdates } from "@/lib/mdx";

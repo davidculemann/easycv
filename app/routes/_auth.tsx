@@ -1,4 +1,4 @@
-import { Link, Outlet, useOutletContext } from "@remix-run/react";
+import { Link, Outlet, useOutletContext } from "react-router";
 import { Icons } from "@/components/icons";
 import { buttonVariants } from "@/components/ui/button";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";

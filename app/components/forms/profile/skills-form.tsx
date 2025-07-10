@@ -27,7 +27,7 @@ export function SkillsForm({ defaultValues, isSubmitting, formType, wasCompleted
 		<BaseForm
 			form={form}
 			isSubmitting={isSubmitting}
-			method="post"
+			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}

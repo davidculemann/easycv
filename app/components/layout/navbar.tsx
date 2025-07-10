@@ -1,4 +1,4 @@
-import { Link, useNavigate, useOutletContext } from "@remix-run/react";
+import { Link, useNavigate, useOutletContext } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import { Fragment } from "react";
 import type { Subscription } from "types/stripe";

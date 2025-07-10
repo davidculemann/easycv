@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Link } from "@remix-run/react";
+import { isRouteErrorResponse, Link } from "react-router";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

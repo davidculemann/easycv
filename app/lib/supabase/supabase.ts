@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useRevalidator } from "@remix-run/react";
+import { useLocation, useNavigate, useRevalidator } from "react-router";
 import { createBrowserClient } from "@supabase/ssr";
 import type { Session, SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "db_types";

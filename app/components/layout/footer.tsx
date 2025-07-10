@@ -1,4 +1,4 @@
-import { Link } from "@remix-run/react";
+import { Link } from "react-router";
 import { Github, Linkedin, Twitter } from "lucide-react";
 import { siteConfig } from "@/config/site";
 

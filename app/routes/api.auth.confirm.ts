@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "react-router";
+import { redirect } from "react-router";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 

@@ -1,4 +1,4 @@
-import { type FormMethod, Form as RemixForm, useSearchParams } from "@remix-run/react";
+import { type FormMethod, Form as RemixForm, useSearchParams } from "react-router";
 import { ChevronRight, SaveIcon } from "lucide-react";
 import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";

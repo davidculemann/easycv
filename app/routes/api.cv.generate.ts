@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "react-router";
 import { streamObject } from "ai";
 import { z } from "zod";
 import { AI_PROVIDERS } from "@/lib/ai/config";

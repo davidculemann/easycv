@@ -1,4 +1,4 @@
-import { createRequestHandler } from "@remix-run/express";
+import { createRequestHandler } from "@react-router/express";
 import compression from "compression";
 import express from "express";
 import morgan from "morgan";
@@ -43,8 +43,16 @@ if (process.env.NODE_ENV === "development") {
 // Create a request handler for Remix
 const remixHandler = createRequestHandler({
 	build: viteDevServer
-		? () => viteDevServer.ssrLoadModule("virtual:remix/server-build")
+		? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
 		: () => import("./build/server/index.js"),
+	getLoadContext: () => ({
+		env: {
+			SUPABASE_URL: process.env.SUPABASE_URL,
+			SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+			NODE_ENV: process.env.NODE_ENV,
+			PORT: process.env.PORT,
+		},
+	}),
 });
 
 const app = express();

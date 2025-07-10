@@ -1,4 +1,4 @@
-import { Outlet, useOutletContext } from "@remix-run/react";
+import { Outlet, useOutletContext } from "react-router";
 import SiteHeader from "@/components/landing/site-header";
 import { Footer } from "@/components/layout/footer";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";

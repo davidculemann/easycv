@@ -1,4 +1,4 @@
-import { useLocation, useParams } from "@remix-run/react";
+import { useLocation, useParams } from "react-router";
 import { FileBadge2, LayoutGrid, LetterText, type LucideIcon, Settings, UserPen } from "lucide-react";
 
 type Submenu = {

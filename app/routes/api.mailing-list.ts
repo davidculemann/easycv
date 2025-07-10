@@ -1,4 +1,4 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs } from "react-router";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail } from "@/lib/utils";
 

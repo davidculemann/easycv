@@ -2,68 +2,64 @@
 
 import type { GetInfo, GetAnnotations } from "react-router/internal";
 
-type Module = typeof import("../_auth.forgot-password.js");
+type Module = typeof import("../_auth.forgot-password.js")
 
 type Info = GetInfo<{
-	file: "routes/_auth.forgot-password.tsx";
-	module: Module;
-}>;
+  file: "routes/_auth.forgot-password.tsx",
+  module: Module
+}>
 
-type Matches = [
-	{
-		id: "root";
-		module: typeof import("../../root.js");
-	},
-	{
-		id: "auth";
-		module: typeof import("../_auth.js");
-	},
-	{
-		id: "auth-forgot-password";
-		module: typeof import("../_auth.forgot-password.js");
-	},
-];
+type Matches = [{
+  id: "root";
+  module: typeof import("../../root.js");
+}, {
+  id: "routes/_auth";
+  module: typeof import("../_auth.js");
+}, {
+  id: "routes/_auth.forgot-password";
+  module: typeof import("../_auth.forgot-password.js");
+}];
 
-type Annotations = GetAnnotations<Info & { module: Module; matches: Matches }>;
+type Annotations = GetAnnotations<Info & { module: Module, matches: Matches }>;
 
 export namespace Route {
-	// links
-	export type LinkDescriptors = Annotations["LinkDescriptors"];
-	export type LinksFunction = Annotations["LinksFunction"];
+  // links
+  export type LinkDescriptors = Annotations["LinkDescriptors"];
+  export type LinksFunction = Annotations["LinksFunction"];
 
-	// meta
-	export type MetaArgs = Annotations["MetaArgs"];
-	export type MetaDescriptors = Annotations["MetaDescriptors"];
-	export type MetaFunction = Annotations["MetaFunction"];
+  // meta
+  export type MetaArgs = Annotations["MetaArgs"];
+  export type MetaDescriptors = Annotations["MetaDescriptors"];
+  export type MetaFunction = Annotations["MetaFunction"];
 
-	// headers
-	export type HeadersArgs = Annotations["HeadersArgs"];
-	export type HeadersFunction = Annotations["HeadersFunction"];
+  // headers
+  export type HeadersArgs = Annotations["HeadersArgs"];
+  export type HeadersFunction = Annotations["HeadersFunction"];
 
-	// unstable_middleware
-	export type unstable_MiddlewareFunction = Annotations["unstable_MiddlewareFunction"];
+  // unstable_middleware
+  export type unstable_MiddlewareFunction = Annotations["unstable_MiddlewareFunction"];
 
-	// unstable_clientMiddleware
-	export type unstable_ClientMiddlewareFunction = Annotations["unstable_ClientMiddlewareFunction"];
+  // unstable_clientMiddleware
+  export type unstable_ClientMiddlewareFunction = Annotations["unstable_ClientMiddlewareFunction"];
 
-	// loader
-	export type LoaderArgs = Annotations["LoaderArgs"];
+  // loader
+  export type LoaderArgs = Annotations["LoaderArgs"];
 
-	// clientLoader
-	export type ClientLoaderArgs = Annotations["ClientLoaderArgs"];
+  // clientLoader
+  export type ClientLoaderArgs = Annotations["ClientLoaderArgs"];
 
-	// action
-	export type ActionArgs = Annotations["ActionArgs"];
+  // action
+  export type ActionArgs = Annotations["ActionArgs"];
 
-	// clientAction
-	export type ClientActionArgs = Annotations["ClientActionArgs"];
+  // clientAction
+  export type ClientActionArgs = Annotations["ClientActionArgs"];
 
-	// HydrateFallback
-	export type HydrateFallbackProps = Annotations["HydrateFallbackProps"];
+  // HydrateFallback
+  export type HydrateFallbackProps = Annotations["HydrateFallbackProps"];
 
-	// Component
-	export type ComponentProps = Annotations["ComponentProps"];
+  // Component
+  export type ComponentProps = Annotations["ComponentProps"];
 
-	// ErrorBoundary
-	export type ErrorBoundaryProps = Annotations["ErrorBoundaryProps"];
+  // ErrorBoundary
+  export type ErrorBoundaryProps = Annotations["ErrorBoundaryProps"];
 }

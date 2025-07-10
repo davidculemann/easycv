@@ -2,68 +2,64 @@
 
 import type { GetInfo, GetAnnotations } from "react-router/internal";
 
-type Module = typeof import("../_app._documents.js");
+type Module = typeof import("../_app._documents.js")
 
 type Info = GetInfo<{
-	file: "routes/_app._documents.tsx";
-	module: Module;
-}>;
+  file: "routes/_app._documents.tsx",
+  module: Module
+}>
 
-type Matches = [
-	{
-		id: "root";
-		module: typeof import("../../root.js");
-	},
-	{
-		id: "app";
-		module: typeof import("../_app.js");
-	},
-	{
-		id: "app-documents";
-		module: typeof import("../_app._documents.js");
-	},
-];
+type Matches = [{
+  id: "root";
+  module: typeof import("../../root.js");
+}, {
+  id: "routes/_app";
+  module: typeof import("../_app.js");
+}, {
+  id: "routes/_app._documents";
+  module: typeof import("../_app._documents.js");
+}];
 
-type Annotations = GetAnnotations<Info & { module: Module; matches: Matches }>;
+type Annotations = GetAnnotations<Info & { module: Module, matches: Matches }>;
 
 export namespace Route {
-	// links
-	export type LinkDescriptors = Annotations["LinkDescriptors"];
-	export type LinksFunction = Annotations["LinksFunction"];
+  // links
+  export type LinkDescriptors = Annotations["LinkDescriptors"];
+  export type LinksFunction = Annotations["LinksFunction"];
 
-	// meta
-	export type MetaArgs = Annotations["MetaArgs"];
-	export type MetaDescriptors = Annotations["MetaDescriptors"];
-	export type MetaFunction = Annotations["MetaFunction"];
+  // meta
+  export type MetaArgs = Annotations["MetaArgs"];
+  export type MetaDescriptors = Annotations["MetaDescriptors"];
+  export type MetaFunction = Annotations["MetaFunction"];
 
-	// headers
-	export type HeadersArgs = Annotations["HeadersArgs"];
-	export type HeadersFunction = Annotations["HeadersFunction"];
+  // headers
+  export type HeadersArgs = Annotations["HeadersArgs"];
+  export type HeadersFunction = Annotations["HeadersFunction"];
 
-	// unstable_middleware
-	export type unstable_MiddlewareFunction = Annotations["unstable_MiddlewareFunction"];
+  // unstable_middleware
+  export type unstable_MiddlewareFunction = Annotations["unstable_MiddlewareFunction"];
 
-	// unstable_clientMiddleware
-	export type unstable_ClientMiddlewareFunction = Annotations["unstable_ClientMiddlewareFunction"];
+  // unstable_clientMiddleware
+  export type unstable_ClientMiddlewareFunction = Annotations["unstable_ClientMiddlewareFunction"];
 
-	// loader
-	export type LoaderArgs = Annotations["LoaderArgs"];
+  // loader
+  export type LoaderArgs = Annotations["LoaderArgs"];
 
-	// clientLoader
-	export type ClientLoaderArgs = Annotations["ClientLoaderArgs"];
+  // clientLoader
+  export type ClientLoaderArgs = Annotations["ClientLoaderArgs"];
 
-	// action
-	export type ActionArgs = Annotations["ActionArgs"];
+  // action
+  export type ActionArgs = Annotations["ActionArgs"];
 
-	// clientAction
-	export type ClientActionArgs = Annotations["ClientActionArgs"];
+  // clientAction
+  export type ClientActionArgs = Annotations["ClientActionArgs"];
 
-	// HydrateFallback
-	export type HydrateFallbackProps = Annotations["HydrateFallbackProps"];
+  // HydrateFallback
+  export type HydrateFallbackProps = Annotations["HydrateFallbackProps"];
 
-	// Component
-	export type ComponentProps = Annotations["ComponentProps"];
+  // Component
+  export type ComponentProps = Annotations["ComponentProps"];
 
-	// ErrorBoundary
-	export type ErrorBoundaryProps = Annotations["ErrorBoundaryProps"];
+  // ErrorBoundary
+  export type ErrorBoundaryProps = Annotations["ErrorBoundaryProps"];
 }

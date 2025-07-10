@@ -8,7 +8,7 @@ import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail, validatePassword } from "@/lib/utils";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { Form, Link, useActionData, useNavigation } from "react-router";
+import { Form, Link, useActionData, useFetcher, useNavigation } from "react-router";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -79,6 +79,7 @@ type ActionStatus = {
 export default function SignUp() {
 	const navigation = useNavigation();
 	const actionData = useActionData<ActionStatus | undefined>();
+	const resendFetcher = useFetcher<ActionStatus>();
 	const [showOTP, setShowOTP] = useState(false);
 	const [email, setEmail] = useState("");
 
@@ -97,7 +98,17 @@ export default function SignUp() {
 		}
 	}, [actionData]);
 
-	const handleResendOTP = async () => {
+	useEffect(() => {
+		if (resendFetcher.data?.message) {
+			if (resendFetcher.data?.success) {
+				toast.success(resendFetcher.data.message);
+			} else {
+				toast.error(resendFetcher.data.message);
+			}
+		}
+	}, [resendFetcher.data]);
+
+	const handleResendOTP = () => {
 		if (!email) {
 			toast.error("Email not found. Please try signing up again.");
 			return;
@@ -106,29 +117,18 @@ export default function SignUp() {
 		const formData = new FormData();
 		formData.append("email", email);
 		formData.append("intent", "resend");
-
-		try {
-			const response = await fetch("/signup", {
-				method: "POST",
-				body: formData,
-			});
-
-			const result = await response.json();
-
-			if (response.ok) {
-				toast.success(result.message);
-			} else {
-				toast.error(result.message || "Failed to resend OTP");
-			}
-		} catch {
-			toast.error("Failed to resend OTP. Please try again.");
-		}
+		resendFetcher.submit(formData, { method: "POST", action: "/signup" });
 	};
 
 	if (showOTP) {
 		return (
 			<motion.div {...enterLeftAnimation} layout="position">
-				<ConfirmOTP path="/api/confirm-signup-otp" additionalFormData={{ email }} onResend={handleResendOTP} />
+				<ConfirmOTP
+					path="/api/confirm-signup-otp"
+					additionalFormData={{ email }}
+					onResend={handleResendOTP}
+					isLoading={resendFetcher.state !== "idle"}
+				/>
 			</motion.div>
 		);
 	}

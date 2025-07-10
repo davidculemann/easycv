@@ -14,8 +14,13 @@ export async function action({ request }: LoaderFunctionArgs) {
 	});
 
 	if (error) {
-		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
+		// On failure, RETURN a 400 response. The client fetcher will catch this in `fetcher.data`.
+		return new Response(JSON.stringify({ message: error.message }), {
+			status: 400,
+			headers: { "Content-Type": "application/json" },
+		});
 	}
 
+	// On success, the server sends the redirect, along with the new session cookie.
 	return redirect("/dashboard", { headers });
 }

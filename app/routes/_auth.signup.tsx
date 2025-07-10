@@ -8,10 +8,12 @@ import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail, validatePassword } from "@/lib/utils";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { Form, Link, useActionData, useFetcher, useNavigation } from "react-router";
+import { Form, Link, redirect, useActionData, useFetcher, useNavigation } from "react-router";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
+import { createClient } from "@supabase/supabase-js";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
@@ -24,7 +26,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
 	const intent = formData.get("intent") as string;
-	const { supabase } = getSupabaseWithHeaders({ request });
+	const { supabase, headers } = getSupabaseWithHeaders({ request });
 
 	if (intent === "resend") {
 		// Handle resend OTP
@@ -55,6 +57,23 @@ export async function action({ request }: ActionFunctionArgs) {
 		};
 	}
 
+	// Use the admin client to check for an existing, confirmed user.
+	const supabaseAdmin = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+	const {
+		data: { users },
+		error: listUsersError,
+	} = await supabaseAdmin.auth.admin.listUsers();
+
+	if (listUsersError) {
+		return { success: false, message: "An unexpected error occurred. Please try again." };
+	}
+
+	const existingUser = users.find((user) => user.email === email);
+
+	if (existingUser?.email_confirmed_at) {
+		return { success: false, message: "An account with this email already exists." };
+	}
+
 	const { error } = await supabase.auth.signUp({
 		email,
 		password,
@@ -64,6 +83,9 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
+		if (error.message.includes("User already registered")) {
+			return { success: false, message: "An account with this email already exists." };
+		}
 		return { success: false, message: error.message };
 	}
 

@@ -35,7 +35,13 @@
 			"correctness": {
 				"noEmptyPattern": "off",
 				"useExhaustiveDependencies": "off",
-				"noChildrenProp": "off"
+				"noChildrenProp": "off",
+				"noUnusedVariables": {
+					"level": "warn",
+					"options": {
+						"ignoreRestSiblings": true
+					}
+				}
 			},
 			"complexity": {
 				"noForEach": "off"

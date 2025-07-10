@@ -22,6 +22,7 @@ export default defineConfig({
 				v3_throwAbortReason: true,
 				v3_singleFetch: true,
 				v3_lazyRouteDiscovery: true,
+				unstable_optimizeDeps: true,
 			},
 		}),
 	],

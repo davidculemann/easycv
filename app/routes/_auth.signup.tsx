@@ -23,7 +23,26 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
-	const { supabase, headers } = getSupabaseWithHeaders({ request });
+	const intent = formData.get("intent") as string;
+	const { supabase } = getSupabaseWithHeaders({ request });
+
+	if (intent === "resend") {
+		// Handle resend OTP
+		if (!validateEmail(email)) {
+			throw new Response(JSON.stringify({ message: "Please enter a valid email address." }), { status: 400 });
+		}
+
+		const { error } = await supabase.auth.resend({
+			type: "signup",
+			email,
+		});
+
+		if (error) {
+			throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
+		}
+
+		return { message: "OTP code resent successfully!", success: true };
+	}
 
 	if (!validateEmail(email)) {
 		throw new Response(JSON.stringify({ message: "Please enter a valid email address." }), { status: 400 });
@@ -48,35 +67,68 @@ export async function action({ request }: ActionFunctionArgs) {
 		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
 	}
 
-	return { message: "Check your email for the confirmation link." };
+	return { message: "Check your email for the OTP code.", success: true, email };
 }
 
 type ActionStatus = {
 	success: boolean;
 	message: string;
+	email?: string;
 };
 
 export default function SignUp() {
 	const navigation = useNavigation();
 	const actionData = useActionData<ActionStatus | undefined>();
-	const [showOTP, _setShowOTP] = useState(false);
+	const [showOTP, setShowOTP] = useState(false);
+	const [email, setEmail] = useState("");
 
 	useEffect(() => {
 		if (actionData?.message) {
-			if (actionData?.success) toast.success(actionData.message);
-			if (!actionData?.success) toast.error(actionData?.message);
+			if (actionData?.success) {
+				toast.success(actionData.message);
+				if (actionData.email) {
+					setEmail(actionData.email);
+				}
+				setShowOTP(true);
+			}
+			if (!actionData?.success) {
+				toast.error(actionData?.message);
+			}
 		}
 	}, [actionData]);
 
-	const _handleResendOTP = async () => {
-		// For now, we'll just show a message since we need the email
-		toast.info("Please check your email for the OTP code.");
+	const handleResendOTP = async () => {
+		if (!email) {
+			toast.error("Email not found. Please try signing up again.");
+			return;
+		}
+
+		const formData = new FormData();
+		formData.append("email", email);
+		formData.append("intent", "resend");
+
+		try {
+			const response = await fetch("/signup", {
+				method: "POST",
+				body: formData,
+			});
+
+			const result = await response.json();
+
+			if (response.ok) {
+				toast.success(result.message);
+			} else {
+				toast.error(result.message || "Failed to resend OTP");
+			}
+		} catch {
+			toast.error("Failed to resend OTP. Please try again.");
+		}
 	};
 
 	if (showOTP) {
 		return (
 			<motion.div {...enterLeftAnimation} layout="position">
-				<ConfirmOTP />
+				<ConfirmOTP path="/api/confirm-signup-otp" additionalFormData={{ email }} onResend={handleResendOTP} />
 			</motion.div>
 		);
 	}

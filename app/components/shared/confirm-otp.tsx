@@ -1,4 +1,5 @@
 import { Form } from "@remix-run/react";
+import { Button } from "../ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp";
 import { Label } from "../ui/label";
 
@@ -6,10 +7,12 @@ export default function ConfirmOTP({
 	path,
 	additionalFormData = {},
 	onSubmit,
+	onResend,
 }: {
 	path?: string;
 	additionalFormData?: Record<string, string>;
 	onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+	onResend?: () => void;
 }) {
 	return (
 		<div className="mx-auto grid w-[350px] gap-6">
@@ -60,6 +63,13 @@ export default function ConfirmOTP({
 					<input key={key} type="hidden" name={key} value={value} />
 				))}
 			</Form>
+			{onResend && (
+				<div className="text-center">
+					<Button variant="link" onClick={onResend} className="text-sm">
+						Resend OTP
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 }

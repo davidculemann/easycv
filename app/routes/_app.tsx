@@ -50,12 +50,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const { data: subscription } = await supabase.from("subscriptions").select("*").eq("user_id", user.id).single();
 	const currency = getLocaleCurrency(request);
 
-	return { profile, subscription, currency };
+	return { profile, subscription, currency, user };
 }
 
 export default function AuthLayout() {
 	const loaderData = useLoaderData<typeof loader>();
-	const { supabase, isLoading, user } = useOutletContext<SupabaseOutletContext>();
+	const { supabase, isLoading } = useOutletContext<SupabaseOutletContext>();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -75,11 +75,12 @@ export default function AuthLayout() {
 		checkSession();
 	}, [loaderData, supabase, navigate]);
 
+	const { profile, subscription, currency, user } = loaderData;
+
 	if (isLoading || !user) {
 		return <PageLoading />;
 	}
 
-	const { profile, subscription, currency } = loaderData;
 	const outletContext = { supabase, profile, subscription, currency, user } as SupabaseOutletContext;
 
 	return (

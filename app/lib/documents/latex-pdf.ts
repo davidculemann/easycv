@@ -1,13 +1,6 @@
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 
-interface Project {
-	name: string;
-	description?: string | string[];
-	link?: string;
-	skills?: string;
-}
-
 export function generateLatexTemplate(data: ParsedCVProfile | null | undefined) {
 	const validData = data ? ensureValidProfile(data) : ensureValidProfile(null);
 

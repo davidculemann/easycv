@@ -13,31 +13,10 @@ type Pages = {
 	"/": {
 		params: {};
 	};
-	"/api/confirm-signup-otp": {
+	"/pricing": {
 		params: {};
 	};
-	"/resources/theme-toggle": {
-		params: {};
-	};
-	"/api/auth/confirm": {
-		params: {};
-	};
-	"/api/cv/pdf-latex": {
-		params: {};
-	};
-	"/api/mailing-list": {
-		params: {};
-	};
-	"/api/cv/generate": {
-		params: {};
-	};
-	"/api/keep-alive": {
-		params: {};
-	};
-	"/api/webhook": {
-		params: {};
-	};
-	"/healthcheck": {
+	"/updates": {
 		params: {};
 	};
 	"/terms-of-service": {
@@ -46,10 +25,10 @@ type Pages = {
 	"/privacy-policy": {
 		params: {};
 	};
-	"/pricing": {
+	"/signin": {
 		params: {};
 	};
-	"/updates": {
+	"/signup": {
 		params: {};
 	};
 	"/forgot-password": {
@@ -61,36 +40,60 @@ type Pages = {
 	"/signout": {
 		params: {};
 	};
-	"/signin": {
+	"/dashboard": {
 		params: {};
 	};
-	"/signup": {
+	"/documents": {
 		params: {};
 	};
-	"/cover-letters": {
+	"/documents/cvs": {
 		params: {};
 	};
-	"/cvs": {
-		params: {};
-	};
-	"/cvs/:id": {
+	"/documents/cvs/:id": {
 		params: {
 			id: string;
 		};
 	};
-	"/profile": {
+	"/documents/cover-letters": {
 		params: {};
 	};
-	"/dashboard": {
+	"/documents/profile": {
 		params: {};
 	};
 	"/account": {
 		params: {};
 	};
+	"/account/billing": {
+		params: {};
+	};
 	"/account/settings": {
 		params: {};
 	};
-	"/account/billing": {
+	"/api/auth/confirm": {
+		params: {};
+	};
+	"/api/confirm-signup-otp": {
+		params: {};
+	};
+	"/api/cv/generate": {
+		params: {};
+	};
+	"/api/cv/pdf-latex": {
+		params: {};
+	};
+	"/api/keep-alive": {
+		params: {};
+	};
+	"/api/mailing-list": {
+		params: {};
+	};
+	"/api/webhook": {
+		params: {};
+	};
+	"/healthcheck": {
+		params: {};
+	};
+	"/resources/theme-toggle": {
 		params: {};
 	};
 };
@@ -100,167 +103,179 @@ type RouteFiles = {
 		id: "root";
 		page:
 			| "/"
-			| "/api/confirm-signup-otp"
-			| "/resources/theme-toggle"
-			| "/api/auth/confirm"
-			| "/api/cv/pdf-latex"
-			| "/api/mailing-list"
-			| "/api/cv/generate"
-			| "/api/keep-alive"
-			| "/api/webhook"
-			| "/healthcheck"
-			| "/terms-of-service"
-			| "/privacy-policy"
 			| "/pricing"
 			| "/updates"
+			| "/terms-of-service"
+			| "/privacy-policy"
+			| "/signin"
+			| "/signup"
 			| "/forgot-password"
 			| "/update-password"
 			| "/signout"
-			| "/signin"
-			| "/signup"
-			| "/cover-letters"
-			| "/cvs"
-			| "/cvs/:id"
-			| "/profile"
 			| "/dashboard"
+			| "/documents"
+			| "/documents/cvs"
+			| "/documents/cvs/:id"
+			| "/documents/cover-letters"
+			| "/documents/profile"
 			| "/account"
+			| "/account/billing"
 			| "/account/settings"
-			| "/account/billing";
-	};
-	"routes/api.confirm-signup-otp.ts": {
-		id: "routes/api.confirm-signup-otp";
-		page: "/api/confirm-signup-otp";
-	};
-	"routes/resources.theme-toggle.tsx": {
-		id: "routes/resources.theme-toggle";
-		page: "/resources/theme-toggle";
-	};
-	"routes/api.auth.confirm.ts": {
-		id: "routes/api.auth.confirm";
-		page: "/api/auth/confirm";
-	};
-	"routes/api.cv.pdf-latex.ts": {
-		id: "routes/api.cv.pdf-latex";
-		page: "/api/cv/pdf-latex";
-	};
-	"routes/api.mailing-list.ts": {
-		id: "routes/api.mailing-list";
-		page: "/api/mailing-list";
-	};
-	"routes/api.cv.generate.ts": {
-		id: "routes/api.cv.generate";
-		page: "/api/cv/generate";
-	};
-	"routes/api.keep-alive.ts": {
-		id: "routes/api.keep-alive";
-		page: "/api/keep-alive";
-	};
-	"routes/api.webhook.ts": {
-		id: "routes/api.webhook";
-		page: "/api/webhook";
-	};
-	"routes/healthcheck.ts": {
-		id: "routes/healthcheck";
-		page: "/healthcheck";
+			| "/api/auth/confirm"
+			| "/api/confirm-signup-otp"
+			| "/api/cv/generate"
+			| "/api/cv/pdf-latex"
+			| "/api/keep-alive"
+			| "/api/mailing-list"
+			| "/api/webhook"
+			| "/healthcheck"
+			| "/resources/theme-toggle";
 	};
 	"routes/_landing.tsx": {
-		id: "routes/_landing";
-		page: "/terms-of-service" | "/privacy-policy" | "/pricing" | "/updates" | "/";
+		id: "landing";
+		page: "/" | "/pricing" | "/updates" | "/terms-of-service" | "/privacy-policy";
 	};
-	"routes/_landing.terms-of-service.tsx": {
-		id: "routes/_landing.terms-of-service";
-		page: "/terms-of-service";
-	};
-	"routes/_landing.privacy-policy.tsx": {
-		id: "routes/_landing.privacy-policy";
-		page: "/privacy-policy";
+	"routes/_landing._index.tsx": {
+		id: "landing-index";
+		page: "/";
 	};
 	"routes/_landing.pricing.tsx": {
-		id: "routes/_landing.pricing";
+		id: "landing-pricing";
 		page: "/pricing";
 	};
 	"routes/_landing.updates.tsx": {
-		id: "routes/_landing.updates";
+		id: "landing-updates";
 		page: "/updates";
 	};
-	"routes/_landing._index.tsx": {
-		id: "routes/_landing._index";
-		page: "/";
+	"routes/_landing.terms-of-service.tsx": {
+		id: "landing-terms";
+		page: "/terms-of-service";
+	};
+	"routes/_landing.privacy-policy.tsx": {
+		id: "landing-privacy";
+		page: "/privacy-policy";
 	};
 	"routes/_auth.tsx": {
-		id: "routes/_auth";
-		page: "/forgot-password" | "/update-password" | "/signout" | "/signin" | "/signup";
-	};
-	"routes/_auth.forgot-password.tsx": {
-		id: "routes/_auth.forgot-password";
-		page: "/forgot-password";
-	};
-	"routes/_auth.update-password.tsx": {
-		id: "routes/_auth.update-password";
-		page: "/update-password";
-	};
-	"routes/_auth.signout.tsx": {
-		id: "routes/_auth.signout";
-		page: "/signout";
+		id: "auth";
+		page: "/" | "/signin" | "/signup" | "/forgot-password" | "/update-password" | "/signout";
 	};
 	"routes/_auth.signin.tsx": {
-		id: "routes/_auth.signin";
+		id: "auth-signin";
 		page: "/signin";
 	};
 	"routes/_auth.signup.tsx": {
-		id: "routes/_auth.signup";
+		id: "auth-signup";
 		page: "/signup";
 	};
+	"routes/_auth.forgot-password.tsx": {
+		id: "auth-forgot-password";
+		page: "/forgot-password";
+	};
+	"routes/_auth.update-password.tsx": {
+		id: "auth-update-password";
+		page: "/update-password";
+	};
+	"routes/_auth.signout.tsx": {
+		id: "auth-signout";
+		page: "/signout";
+	};
 	"routes/_app.tsx": {
-		id: "routes/_app";
+		id: "app";
 		page:
-			| "/cover-letters"
-			| "/cvs"
-			| "/cvs/:id"
-			| "/profile"
+			| "/"
 			| "/dashboard"
+			| "/documents"
+			| "/documents/cvs"
+			| "/documents/cvs/:id"
+			| "/documents/cover-letters"
+			| "/documents/profile"
 			| "/account"
-			| "/account/settings"
-			| "/account/billing";
-	};
-	"routes/_app._documents.tsx": {
-		id: "routes/_app._documents";
-		page: "/cover-letters" | "/cvs" | "/cvs/:id" | "/profile";
-	};
-	"routes/_app._documents.cover-letters.tsx": {
-		id: "routes/_app._documents.cover-letters";
-		page: "/cover-letters";
-	};
-	"routes/_app._documents.cvs._index.tsx": {
-		id: "routes/_app._documents.cvs._index";
-		page: "/cvs";
-	};
-	"routes/_app._documents.cvs.$id.tsx": {
-		id: "routes/_app._documents.cvs.$id";
-		page: "/cvs/:id";
-	};
-	"routes/_app._documents.profile.tsx": {
-		id: "routes/_app._documents.profile";
-		page: "/profile";
+			| "/account/billing"
+			| "/account/settings";
 	};
 	"routes/_app.dashboard.tsx": {
-		id: "routes/_app.dashboard";
+		id: "app-dashboard";
 		page: "/dashboard";
 	};
+	"routes/_app._documents.tsx": {
+		id: "app-documents";
+		page:
+			| "/documents"
+			| "/documents/cvs"
+			| "/documents/cvs/:id"
+			| "/documents/cover-letters"
+			| "/documents/profile";
+	};
+	"components/layout/pathless-layout.tsx": {
+		id: "app-documents-cvs";
+		page: "/documents/cvs" | "/documents/cvs/:id";
+	};
+	"routes/_app._documents.cvs._index.tsx": {
+		id: "app-documents-cvs-index";
+		page: "/documents/cvs";
+	};
+	"routes/_app._documents.cvs.$id.tsx": {
+		id: "app-documents-cvs-id";
+		page: "/documents/cvs/:id";
+	};
+	"routes/_app._documents.cover-letters.tsx": {
+		id: "app-documents-cover-letters";
+		page: "/documents/cover-letters";
+	};
+	"routes/_app._documents.profile.tsx": {
+		id: "app-documents-profile";
+		page: "/documents/profile";
+	};
 	"routes/_app.account.tsx": {
-		id: "routes/_app.account";
-		page: "/account" | "/account/settings" | "/account/billing";
-	};
-	"routes/_app.account.settings.tsx": {
-		id: "routes/_app.account.settings";
-		page: "/account/settings";
-	};
-	"routes/_app.account.billing.tsx": {
-		id: "routes/_app.account.billing";
-		page: "/account/billing";
+		id: "app-account";
+		page: "/account" | "/account/billing" | "/account/settings";
 	};
 	"routes/_app.account._index.tsx": {
-		id: "routes/_app.account._index";
+		id: "app-account-index";
 		page: "/account";
+	};
+	"routes/_app.account.billing.tsx": {
+		id: "app-account-billing";
+		page: "/account/billing";
+	};
+	"routes/_app.account.settings.tsx": {
+		id: "app-account-settings";
+		page: "/account/settings";
+	};
+	"routes/api.auth.confirm.ts": {
+		id: "api-auth-confirm";
+		page: "/api/auth/confirm";
+	};
+	"routes/api.confirm-signup-otp.ts": {
+		id: "api-confirm-signup-otp";
+		page: "/api/confirm-signup-otp";
+	};
+	"routes/api.cv.generate.ts": {
+		id: "api-cv-generate";
+		page: "/api/cv/generate";
+	};
+	"routes/api.cv.pdf-latex.ts": {
+		id: "api-cv-pdf-latex";
+		page: "/api/cv/pdf-latex";
+	};
+	"routes/api.keep-alive.ts": {
+		id: "api-keep-alive";
+		page: "/api/keep-alive";
+	};
+	"routes/api.mailing-list.ts": {
+		id: "api-mailing-list";
+		page: "/api/mailing-list";
+	};
+	"routes/api.webhook.ts": {
+		id: "api-webhook";
+		page: "/api/webhook";
+	};
+	"routes/healthcheck.ts": {
+		id: "healthcheck";
+		page: "/healthcheck";
+	};
+	"routes/resources.theme-toggle.tsx": {
+		id: "resources-theme-toggle";
+		page: "/resources/theme-toggle";
 	};
 };

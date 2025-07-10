@@ -18,23 +18,26 @@ interface MDXTimelineProps {
 	alternating?: boolean;
 }
 
+function TimelineUpdate({ update }: { update: MDXUpdate }) {
+	const Component = React.useMemo(() => getMDXComponent(update.code), [update.code]);
+	return (
+		<TimelineEntry
+			key={update.slug}
+			status={update.frontmatter.status || "default"}
+			title={update.frontmatter.title}
+			startedDate={update.frontmatter.started_date}
+		>
+			<Component components={components} />
+		</TimelineEntry>
+	);
+}
+
 export function MDXTimeline({ updates, alternating = true }: MDXTimelineProps) {
 	return (
 		<TimelineBuilder alternating={alternating}>
-			{updates.map((update) => {
-				const Component = React.useMemo(() => getMDXComponent(update.code), [update.code]);
-
-				return (
-					<TimelineEntry
-						key={update.slug}
-						status={update.frontmatter.status || "default"}
-						title={update.frontmatter.title}
-						startedDate={update.frontmatter.started_date}
-					>
-						<Component components={components} />
-					</TimelineEntry>
-				);
-			})}
+			{updates.map((update) => (
+				<TimelineUpdate key={update.slug} update={update} />
+			))}
 		</TimelineBuilder>
 	);
 }

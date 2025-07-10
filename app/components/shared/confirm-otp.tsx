@@ -14,6 +14,8 @@ export default function ConfirmOTP({
 	onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
 	onResend?: () => void;
 }) {
+	const email = additionalFormData.email || "your email";
+
 	return (
 		<div className="mx-auto grid w-[350px] gap-6">
 			<div>
@@ -21,7 +23,7 @@ export default function ConfirmOTP({
 					Confirm OTP
 				</h2>
 				<p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-					Enter the code sent to your email.
+					Enter the code sent to {email}.
 				</p>
 			</div>
 			<Form

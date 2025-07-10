@@ -55,7 +55,6 @@
 		"@types/cookie": "^0.6.0",
 		"@types/tar": "^6.1.13",
 		"@types/tar-stream": "^3.1.4",
-		"@vercel/remix": "^2.16.7",
 		"ai": "^4.3.17",
 		"axios": "^1.10.0",
 		"cal-sans": "^1.0.1",

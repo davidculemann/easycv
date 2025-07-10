@@ -112,6 +112,8 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.1.1",
 		"@remix-run/dev": "^2.16.8",
+		"@remix-run/fs-routes": "^2.16.8",
+		"@remix-run/route-config": "^2.16.8",
 		"@tailwindcss/container-queries": "^0.1.1",
 		"@tailwindcss/typography": "0.5.10",
 		"@tanstack/eslint-plugin-query": "^5.81.2",

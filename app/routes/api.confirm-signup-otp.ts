@@ -1,8 +1,8 @@
-import type { LoaderFunctionArgs } from "react-router";
+import { redirect, type LoaderFunctionArgs } from "react-router";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 
 export async function action({ request }: LoaderFunctionArgs) {
-	const { supabase } = getSupabaseWithHeaders({ request });
+	const { supabase, headers } = getSupabaseWithHeaders({ request });
 	const formData = await request.formData();
 	const otp = formData.get("otp") as string;
 	const email = formData.get("email") as string;
@@ -17,5 +17,5 @@ export async function action({ request }: LoaderFunctionArgs) {
 		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
 	}
 
-	return { message: "Success!" };
+	return redirect("/dashboard", { headers });
 }

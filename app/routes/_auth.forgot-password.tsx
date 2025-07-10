@@ -1,3 +1,8 @@
+import { motion } from "motion/react";
+import { useEffect } from "react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import { Form, Link, useActionData, useNavigation } from "react-router";
+import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { LoadingButton } from "@/components/shared/loading-button";
 import { Input } from "@/components/ui/input";
@@ -5,11 +10,6 @@ import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail } from "@/lib/utils";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { Form, Link, useActionData, useNavigation } from "react-router";
-import { motion } from "motion/react";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });

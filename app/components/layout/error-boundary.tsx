@@ -1,5 +1,5 @@
-import { isRouteErrorResponse, Link } from "react-router";
 import { ExternalLink } from "lucide-react";
+import { isRouteErrorResponse, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 
 export function ErrorBoundaryContent({ error }: { error: Error }) {

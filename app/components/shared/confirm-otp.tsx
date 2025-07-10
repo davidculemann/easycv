@@ -1,8 +1,8 @@
+import { useEffect } from "react";
 import { useFetcher } from "react-router";
 import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp";
 import { Label } from "../ui/label";
-import { useEffect } from "react";
 import { LoadingButton } from "./loading-button";
 
 type ActionStatus = {

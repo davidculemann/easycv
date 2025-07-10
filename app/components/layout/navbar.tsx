@@ -1,6 +1,6 @@
-import { Link, useNavigate, useOutletContext } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import { Fragment } from "react";
+import { Link, useNavigate, useOutletContext } from "react-router";
 import type { Subscription } from "types/stripe";
 import { useCurrentPage } from "@/hooks/use-current-page";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";

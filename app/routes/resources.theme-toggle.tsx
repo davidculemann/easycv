@@ -1,6 +1,6 @@
+import { MoonIcon, SunIcon } from "lucide-react";
 import type { ActionFunction } from "react-router";
 import { useFetcher, useFetchers } from "react-router";
-import { MoonIcon, SunIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTheme } from "@/lib/client-hints";

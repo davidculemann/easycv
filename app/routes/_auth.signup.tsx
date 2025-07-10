@@ -1,3 +1,9 @@
+import { createClient } from "@supabase/supabase-js";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import { Form, Link, useActionData, useFetcher, useNavigation } from "react-router";
+import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import ConfirmOTP from "@/components/shared/confirm-otp";
 import { LoadingButton } from "@/components/shared/loading-button";
@@ -7,13 +13,6 @@ import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail, validatePassword } from "@/lib/utils";
-import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { Form, Link, redirect, useActionData, useFetcher, useNavigation } from "react-router";
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-
-import { createClient } from "@supabase/supabase-js";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
@@ -26,7 +25,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
 	const intent = formData.get("intent") as string;
-	const { supabase, headers } = getSupabaseWithHeaders({ request });
+	const { supabase } = getSupabaseWithHeaders({ request });
 
 	if (intent === "resend") {
 		// Handle resend OTP

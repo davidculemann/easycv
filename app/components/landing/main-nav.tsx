@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router";
 import * as React from "react";
+import { Link, useLocation } from "react-router";
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import type { MainNavItem } from "@/lib/types";

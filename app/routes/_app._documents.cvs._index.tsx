@@ -1,10 +1,10 @@
-import type { LoaderFunctionArgs } from "react-router";
-import { useLoaderData, useNavigate, useOutletContext } from "react-router";
 import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { Check, Copy, Download, Pencil, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
+import type { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router";
 import { toast } from "sonner";
 import CVActions, { type Action } from "@/components/documents/cv-actions";
 import { Button } from "@/components/ui/button";

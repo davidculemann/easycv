@@ -1,7 +1,14 @@
-import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "react-router";
-import { useActionData, useLoaderData, useNavigation, useSearchParams } from "react-router";
 import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import {
+	type ActionFunctionArgs,
+	type LoaderFunctionArgs,
+	redirect,
+	useActionData,
+	useLoaderData,
+	useNavigation,
+	useSearchParams,
+} from "react-router";
 import { toast } from "sonner";
 import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";

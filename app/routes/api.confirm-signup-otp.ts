@@ -1,4 +1,4 @@
-import { redirect, type LoaderFunctionArgs } from "react-router";
+import { type LoaderFunctionArgs, redirect } from "react-router";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 
 export async function action({ request }: LoaderFunctionArgs) {

@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs } from "react-router";
 import axios from "axios";
+import type { ActionFunctionArgs } from "react-router";
 import { generateLatexTemplate } from "@/lib/documents/latex-pdf";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 

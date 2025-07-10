@@ -1,5 +1,5 @@
-import { useOutletContext } from "react-router";
 import type { Provider } from "@supabase/supabase-js";
+import { useOutletContext } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";

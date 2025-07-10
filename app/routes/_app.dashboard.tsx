@@ -1,8 +1,8 @@
-import type { LoaderFunctionArgs } from "react-router";
-import { Link, useLoaderData, useNavigate, useOutletContext } from "react-router";
 import { ArrowRight, FileEdit, FilePlus, Info, Plus } from "lucide-react";
 import { motion } from "motion/react";
 import { useMemo, useState } from "react";
+import type { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData, useNavigate, useOutletContext } from "react-router";
 import { toast } from "sonner";
 import type { FormType, ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { ensureValidProfile } from "@/components/forms/profile/logic/types";

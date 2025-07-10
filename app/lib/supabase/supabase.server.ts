@@ -1,6 +1,6 @@
-import { redirect } from "react-router";
 import { createServerClient, parseCookieHeader, serializeCookieHeader } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { redirect } from "react-router";
 
 const validateEnv = () => {
 	const required = {

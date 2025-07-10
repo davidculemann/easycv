@@ -1,6 +1,6 @@
-import { useOutletContext } from "react-router";
 import { Check, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router";
 import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 import { Badge } from "@/components/ui/badge";

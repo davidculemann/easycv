@@ -1,6 +1,6 @@
+import { CreditCard, Settings, User } from "lucide-react";
 import type { LoaderFunctionArgs } from "react-router";
 import { Outlet, useOutletContext } from "react-router";
-import { CreditCard, Settings, User } from "lucide-react";
 import type { Currency, Subscription } from "types/stripe";
 import SidebarNav from "@/components/account/sidebar-nav";
 import { Container } from "@/components/layout/container";

@@ -1,8 +1,8 @@
-import type { MetaFunction } from "react-router";
-import { Form, Link } from "react-router";
 import axios from "axios";
 import { motion, useInView } from "motion/react";
 import { useRef, useState } from "react";
+import type { MetaFunction } from "react-router";
+import { Form, Link } from "react-router";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

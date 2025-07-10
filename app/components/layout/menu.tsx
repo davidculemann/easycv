@@ -1,5 +1,5 @@
-import { Link, useFetcher } from "react-router";
 import { Ellipsis, LogOut } from "lucide-react";
+import { Link, useFetcher } from "react-router";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";

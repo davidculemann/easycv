@@ -1,7 +1,7 @@
 import { getHintUtils } from "@epic-web/client-hints";
 import { clientHint as colorSchemeHint, subscribeToSchemeChange } from "@epic-web/client-hints/color-scheme";
-import { useRevalidator, useRouteLoaderData } from "react-router";
 import * as React from "react";
+import { useRevalidator, useRouteLoaderData } from "react-router";
 import type { loader as rootLoader } from "@/root";
 import { useOptimisticTheme } from "@/routes/resources.theme-toggle";
 

@@ -1,14 +1,13 @@
+import { useEffect } from "react";
+import type { LoaderFunctionArgs } from "react-router";
+import { Outlet, redirect, useLoaderData, useNavigate, useOutletContext } from "react-router";
+import { toast } from "sonner";
 import AdminPanelLayout from "@/components/layout/admin-panel-layout";
 import { ContentLayout } from "@/components/layout/content-layout";
 import PageLoading from "@/components/shared/page-loading";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { getLocaleCurrency } from "@/services/stripe/stripe.server";
-import type { LoaderFunctionArgs } from "react-router";
-import { redirect } from "react-router";
-import { Outlet, useLoaderData, useNavigate, useOutletContext } from "react-router";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });

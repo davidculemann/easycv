@@ -1,3 +1,12 @@
+import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { AlertTriangle, Check, ExternalLink, Pencil, Settings2, Trash2, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "react-router";
+import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
+import { z } from "zod";
 import AIPreferencesModal from "@/components/documents/ai-preferences-modal";
 import CVFormPanel from "@/components/documents/cv-form-panel";
 import CVPreviewPanel from "@/components/documents/cv-preview-panel";
@@ -13,15 +22,6 @@ import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { experimental_useObject as useObject } from "@ai-sdk/react";
-import type { LoaderFunctionArgs } from "react-router";
-import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "react-router";
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { AlertTriangle, Check, ExternalLink, Pencil, Settings2, Trash2, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useMediaQuery } from "usehooks-ts";
-import { z } from "zod";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });

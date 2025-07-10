@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from "react-router";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { LoaderFunctionArgs } from "react-router";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { keepAliveConfig as config } from "../lib/supabase/keep-alive/config";
 import { determineAction, generateRandomString, type QueryResponse } from "../lib/supabase/keep-alive/helper";

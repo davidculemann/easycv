@@ -1,6 +1,6 @@
+import type { EmailOtpType } from "@supabase/supabase-js";
 import type { LoaderFunctionArgs } from "react-router";
 import { redirect } from "react-router";
-import type { EmailOtpType } from "@supabase/supabase-js";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {

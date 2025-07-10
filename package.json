@@ -5,9 +5,9 @@
 	"type": "module",
 	"scripts": {
 		"build": "remix vite:build",
-		"dev": "NODE_ENV=development dotenv -- node ./server.js",
+		"dev": "remix vite:dev",
 		"dev:debug": "NODE_ENV=development dotenv -- node --inspect ./server.js",
-		"start": "cross-env NODE_ENV=production node ./server.js",
+		"start": "remix-serve ./build/server/index.js",
 		"typecheck": "tsc",
 		"deploy-production": "vercel --prod",
 		"format": "npx @biomejs/biome format --write .",

@@ -1,5 +1,6 @@
 {
 	"include": ["**/*.ts", "**/*.tsx", "server.js"],
+	"exclude": ["supabase/functions/**/*"],
 	"compilerOptions": {
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
 		"types": ["@react-router/node", "node", "vite/client"],

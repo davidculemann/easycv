@@ -1,11 +1,10 @@
+import { Link, useFetcher } from "@remix-run/react";
 import { Ellipsis, LogOut } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useCurrentPage } from "@/hooks/use-current-page";
 import { cn } from "@/lib/utils";
-import { Link, useFetcher } from "@remix-run/react";
 import { CollapseMenuButton } from "./collapse-menu-button";
 
 interface MenuProps {

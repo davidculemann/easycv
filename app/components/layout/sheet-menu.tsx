@@ -1,8 +1,8 @@
+import { Link } from "@remix-run/react";
+import { MenuIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { siteConfig } from "@/config/site";
-import { Link } from "@remix-run/react";
-import { MenuIcon } from "lucide-react";
 import { Icons } from "../icons";
 import { Menu } from "./menu";
 

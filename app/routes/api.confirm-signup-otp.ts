@@ -1,5 +1,5 @@
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
 
 export async function action({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -14,8 +14,8 @@ export async function action({ request }: LoaderFunctionArgs) {
 	});
 
 	if (error) {
-		return json({ message: error.message }, { status: 400 });
+		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
 	}
 
-	return json({ message: "Success!" }, { status: 200 });
+	return { message: "Success!" };
 }

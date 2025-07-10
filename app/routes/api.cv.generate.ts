@@ -1,12 +1,12 @@
+import type { ActionFunctionArgs } from "@remix-run/node";
+import { streamObject } from "ai";
+import { z } from "zod";
 import { AI_PROVIDERS } from "@/lib/ai/config";
 import { deepseek } from "@/lib/ai/deepseek";
 import { openai } from "@/lib/ai/openai";
 import { CVContextSchema } from "@/lib/documents/types";
 import { getSupabaseWithHeaders, requireUser } from "@/lib/supabase/supabase.server";
 import { isProPlan } from "@/services/stripe/plans";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { streamObject } from "ai";
-import { z } from "zod";
 
 export const maxDuration = 60;
 

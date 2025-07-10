@@ -1,11 +1,11 @@
-import SidebarNav from "@/components/account/sidebar-nav";
-import { Container } from "@/components/layout/container";
-import { Separator } from "@/components/ui/separator";
-import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet, useOutletContext } from "@remix-run/react";
 import { CreditCard, Settings, User } from "lucide-react";
 import type { Currency, Subscription } from "types/stripe";
+import SidebarNav from "@/components/account/sidebar-nav";
+import { Container } from "@/components/layout/container";
+import { Separator } from "@/components/ui/separator";
+import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 

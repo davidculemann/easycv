@@ -1,3 +1,5 @@
+import { Form, Link } from "@remix-run/react";
+import type { UserMetadata } from "@supabase/supabase-js";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -6,8 +8,6 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Form, Link } from "@remix-run/react";
-import type { UserMetadata } from "@supabase/supabase-js";
 import { Button } from "../ui/button";
 import { UserAvatar } from "./user-avatar";
 

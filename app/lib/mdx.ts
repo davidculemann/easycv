@@ -1,7 +1,7 @@
-import matter from "gray-matter";
-import { bundleMDX } from "mdx-bundler";
 import fs from "node:fs/promises";
 import path from "node:path";
+import matter from "gray-matter";
+import { bundleMDX } from "mdx-bundler";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
@@ -68,7 +68,7 @@ export async function getAllUpdates(): Promise<MDXUpdate[]> {
 export async function getUpdateSlugs(): Promise<string[]> {
 	try {
 		await fs.access(UPDATES_PATH);
-	} catch (error) {
+	} catch (_error) {
 		await fs.mkdir(UPDATES_PATH, { recursive: true });
 		return [];
 	}

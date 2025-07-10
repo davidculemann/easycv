@@ -1,10 +1,10 @@
-import { useCurrentPage } from "@/hooks/use-current-page";
-import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
-import { ThemeToggle } from "@/routes/resources.theme-toggle";
 import { Link, useNavigate, useOutletContext } from "@remix-run/react";
 import { ChevronLeft } from "lucide-react";
 import { Fragment } from "react";
 import type { Subscription } from "types/stripe";
+import { useCurrentPage } from "@/hooks/use-current-page";
+import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
+import { ThemeToggle } from "@/routes/resources.theme-toggle";
 import SubscriptionPlanPill from "../shared/subscription-plan-pill";
 import {
 	Breadcrumb,

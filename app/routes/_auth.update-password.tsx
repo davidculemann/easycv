@@ -1,14 +1,14 @@
+import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
+import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
+import { motion } from "motion/react";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail } from "@/lib/utils";
-import { type LoaderFunctionArgs, type MetaFunction, json } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { motion } from "motion/react";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
 export const meta: MetaFunction = () => {
 	return [{ title: "Update password" }];
@@ -25,30 +25,30 @@ export async function action({ request }: LoaderFunctionArgs) {
 	const confirmPassword = formData.get("confirm-password") as string;
 
 	if (!password || !confirmPassword || typeof password !== "string" || typeof confirmPassword !== "string") {
-		return json<ActionResponse>(
-			{
+		throw new Response(
+			JSON.stringify({
 				success: false,
 				message: "Form not submitted correctly.",
-			},
+			}),
 			{ status: 400 },
 		);
 	}
 	if (password !== confirmPassword) {
-		return json<ActionResponse>(
-			{
+		throw new Response(
+			JSON.stringify({
 				success: false,
 				message: "Passwords do not match.",
-			},
+			}),
 			{ status: 400 },
 		);
 	}
 
 	if (!validateEmail(email)) {
-		return json<ActionResponse>({ success: false, message: "Invalid email address." }, { status: 400 });
+		throw new Response(JSON.stringify({ success: false, message: "Invalid email address." }), { status: 400 });
 	}
 
 	if (!password) {
-		return json<ActionResponse>({ success: false, message: "Password is required." }, { status: 400 });
+		throw new Response(JSON.stringify({ success: false, message: "Password is required." }), { status: 400 });
 	}
 
 	const { error } = await supabase.auth.updateUser({
@@ -57,10 +57,10 @@ export async function action({ request }: LoaderFunctionArgs) {
 	});
 
 	if (error) {
-		return json<ActionResponse>({ success: false, message: error.message }, { status: 400 });
+		throw new Response(JSON.stringify({ success: false, message: error.message }), { status: 400 });
 	}
 
-	return json<ActionResponse>({ success: true, message: "Successfully updated password." });
+	return { success: true, message: "Successfully updated password." };
 }
 
 export default function UpdatePassword() {

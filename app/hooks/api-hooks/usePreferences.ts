@@ -1,8 +1,8 @@
-import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
-import { editPreferences, getPreferences } from "@/lib/supabase/documents/preferences";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Database } from "db_types";
+import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
+import { editPreferences, getPreferences } from "@/lib/supabase/documents/preferences";
 
 export function usePreferences({ supabase, id }: { supabase: SupabaseClient<Database>; id?: string }) {
 	const queryClient = useQueryClient();

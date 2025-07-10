@@ -1,3 +1,8 @@
+import { useOutletContext } from "@remix-run/react";
+import { Check, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,11 +30,6 @@ import {
 } from "@/lib/ai/config";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { cn } from "@/lib/utils";
-import { useOutletContext } from "@remix-run/react";
-import { Check, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useMediaQuery } from "usehooks-ts";
 import { Drawer, DrawerContent, DrawerTrigger } from "../ui/drawer";
 
 type Preferences = {

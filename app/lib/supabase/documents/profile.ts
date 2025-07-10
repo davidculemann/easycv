@@ -1,7 +1,7 @@
-import type { CVProfileInput, ParsedCVProfile } from "@/components/forms/profile/logic/types";
-import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
+import type { CVProfileInput, ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 
 export function parseJsonFields(profile: any): ParsedCVProfile {
 	if (!profile) return ensureValidProfile(null);

@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Link, isRouteErrorResponse } from "@remix-run/react";
+import { isRouteErrorResponse, Link } from "@remix-run/react";
 import { ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function ErrorBoundaryContent({ error }: { error: Error }) {
 	if (!isRouteErrorResponse(error)) {

@@ -1,9 +1,9 @@
+import { Plus, Trash2 } from "lucide-react";
+import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2 } from "lucide-react";
-import { useFormContext } from "react-hook-form";
 
 export function BulletPoints({
 	fieldName,
@@ -23,7 +23,7 @@ export function BulletPoints({
 	return (
 		<div className="space-y-2">
 			<FormLabel className="text-xs font-medium text-muted-foreground">{label}</FormLabel>
-			{(form.watch(fieldName) || []).map((item: string, descIndex: number) => (
+			{(form.watch(fieldName) || []).map((_item: string, descIndex: number) => (
 				<div key={`${fieldName}-${descIndex}`} className="flex gap-2 items-center">
 					<FormField
 						name={`${fieldName}.${descIndex}`}

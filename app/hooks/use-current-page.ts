@@ -184,7 +184,7 @@ export const useCurrentPage = () => {
 	const breadcrumbs = currentPath
 		.split("/")
 		.filter(Boolean)
-		.reduce<Array<{ href: string; label: string }>>((acc, segment, index, arr) => {
+		.reduce<Array<{ href: string; label: string }>>((acc, _segment, index, arr) => {
 			const path = `/${arr.slice(0, index + 1).join("/")}`;
 			const page = findActivePage(path);
 			if (page && !page.hidden) {

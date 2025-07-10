@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail } from "@/lib/utils";
-import { type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import { motion } from "motion/react";
 import { useEffect } from "react";
@@ -20,7 +20,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const email = formData.get("email") as string;
-	const { supabase, headers } = getSupabaseWithHeaders({ request });
+	const { supabase } = getSupabaseWithHeaders({ request });
 
 	if (!validateEmail(email)) {
 		throw new Response(JSON.stringify({ message: "Please enter a valid email address." }), { status: 400 });

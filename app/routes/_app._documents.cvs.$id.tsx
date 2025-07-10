@@ -15,8 +15,8 @@ import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, json, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
-import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
+import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Check, ExternalLink, Pencil, Settings2, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -45,7 +45,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	const { data } = await supabase.from("cv_profiles").select("completed").eq("user_id", user.id).single();
 
-	return json({ dehydratedState: dehydrate(queryClient), profileCompleted: data?.completed });
+	return { dehydratedState: dehydrate(queryClient), profileCompleted: data?.completed };
 }
 
 export function CV({ profileCompleted }: { profileCompleted: boolean }) {
@@ -58,11 +58,11 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 	});
 
 	const isMobile = useMediaQuery("(max-width: 768px)");
-	const [model, setModel] = useState("deepseek");
+	const [model, _setModel] = useState("deepseek");
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [pdfData, setPdfData] = useState<string | null>(null);
 	const [isEditingName, setIsEditingName] = useState(false);
-	const [isSaved, setIsSaved] = useState(true);
+	const [isSaved, _setIsSaved] = useState(true);
 	const [activeTab, setActiveTab] = useState("personal");
 
 	const { isLoading, object, submit } = useObject({
@@ -72,7 +72,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 		}),
 	});
 
-	function handleSaveChanges() {
+	function _handleSaveChanges() {
 		if (!object) return;
 		updateCV({ id: id ?? "", cv: object.cv as CVContext });
 	}
@@ -106,7 +106,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 				try {
 					const errorData = JSON.parse(errorText);
 					errorMessage = errorData.error || errorMessage;
-				} catch (e) {
+				} catch (_e) {
 					errorMessage = errorText || errorMessage;
 				}
 
@@ -138,7 +138,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 		}
 	};
 
-	function handleGenerateCV() {
+	function _handleGenerateCV() {
 		submit({
 			context: {
 				profile: dataToDisplay,

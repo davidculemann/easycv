@@ -1,10 +1,9 @@
+import { Link, useLocation } from "@remix-run/react";
 import * as React from "react";
-
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import type { MainNavItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Link, useLocation } from "@remix-run/react";
 import { MobileNav } from "./mobile-nav";
 
 interface MainNavProps {

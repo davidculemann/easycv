@@ -1,7 +1,7 @@
+import { useLoaderData } from "@remix-run/react";
 import { MDXTimeline } from "@/components/mdx-timeline";
 import type { MDXUpdate } from "@/lib/mdx";
 import { getAllUpdates } from "@/lib/mdx";
-import { useLoaderData } from "@remix-run/react";
 
 export const loader = async () => {
 	const updates = await getAllUpdates();

@@ -62,7 +62,7 @@ async function createUpdate() {
 	try {
 		const editor = process.env.EDITOR || "code";
 		execSync(`${editor} ${filePath}`);
-	} catch (error) {
+	} catch (_error) {
 		console.log(`\nTo edit the file, open: ${filePath}`);
 	}
 

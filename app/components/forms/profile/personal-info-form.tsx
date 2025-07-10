@@ -1,10 +1,10 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Github, Globe, Linkedin } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { BaseForm } from "../shared/base-form";
 import { type FormType, type PersonalInfoFormValues, personalInfoSchema } from "./logic/types";
 
@@ -33,7 +33,7 @@ export function PersonalInfoForm({
 		form.reset(defaultValues);
 	}, [defaultValues, form]);
 
-	const values = form.watch();
+	const _values = form.watch();
 
 	return (
 		<BaseForm

@@ -1,6 +1,6 @@
+import { Outlet, useMatches, useOutletContext } from "@remix-run/react";
 import { Container } from "@/components/layout/container";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
-import { Outlet, useMatches, useOutletContext } from "@remix-run/react";
 
 export default function Documents() {
 	const outletContext = useOutletContext<SupabaseOutletContext>();

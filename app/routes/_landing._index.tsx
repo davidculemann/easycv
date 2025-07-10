@@ -1,19 +1,17 @@
-import { title } from "@/config.shared";
 import type { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
-
+import { Form, Link } from "@remix-run/react";
+import axios from "axios";
+import { motion, useInView } from "motion/react";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
+import { title } from "@/config.shared";
 import { containerVariants, enterAnimation, itemVariants } from "@/lib/framer/animations";
 import { validateEmail } from "@/lib/utils";
-import { Form } from "@remix-run/react";
-import axios from "axios";
-import { motion, useInView } from "motion/react";
-import { useRef, useState } from "react";
-import { toast } from "sonner";
 
 export const meta: MetaFunction = () => {
 	return [

@@ -1,8 +1,8 @@
+import { Link } from "@remix-run/react";
 import { buttonVariants } from "@/components/ui/button";
 import { marketingConfig } from "@/config/marketing";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/routes/resources.theme-toggle";
-import { Link } from "@remix-run/react";
 import MainNav from "./main-nav";
 
 export default function SiteHeader() {

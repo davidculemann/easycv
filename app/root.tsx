@@ -12,7 +12,6 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	json,
 	useFetcher,
 	useLoaderData,
 	useRouteError,
@@ -27,7 +26,7 @@ import { Toaster } from "./components/ui/sonner";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	try {
-		const { session, headers } = await getSupabaseWithSessionHeaders({
+		const { session } = await getSupabaseWithSessionHeaders({
 			request,
 		});
 		const env = getSupabaseEnv();
@@ -35,43 +34,37 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 		const url = new URL(request.url);
 
-		return json(
-			{
-				env,
-				completeEnv,
-				session,
-				requestInfo: {
-					hints: getHints(request),
-					userPrefs: {
-						theme: getTheme(request),
-					},
+		return {
+			env,
+			completeEnv,
+			session,
+			requestInfo: {
+				hints: getHints(request),
+				userPrefs: {
+					theme: getTheme(request),
 				},
-				host: url.host,
 			},
-			{ headers },
-		);
+			host: url.host,
+		};
 	} catch (error) {
 		console.error("Root loader error:", error);
 
 		// Return a minimal response that won't crash the app
-		return json(
-			{
-				env: {
-					SUPABASE_URL: process.env.SUPABASE_URL || "",
-					SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
-				},
-				completeEnv: process.env,
-				session: null,
-				requestInfo: {
-					hints: getHints(request),
-					userPrefs: {
-						theme: getTheme(request),
-					},
-				},
-				host: new URL(request.url).host,
+		return {
+			env: {
+				SUPABASE_URL: process.env.SUPABASE_URL || "",
+				SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || "",
 			},
-			{ status: 500 },
-		);
+			completeEnv: process.env,
+			session: null,
+			requestInfo: {
+				hints: getHints(request),
+				userPrefs: {
+					theme: getTheme(request),
+				},
+			},
+			host: new URL(request.url).host,
+		};
 	}
 };
 
@@ -102,7 +95,7 @@ export default function App() {
 
 export function Document({ children }: { children: React.ReactNode }) {
 	const loaderData = useRouteLoaderData<typeof loader>("root");
-	const completeEnv = loaderData?.completeEnv;
+	const _completeEnv = loaderData?.completeEnv;
 	const theme = useTheme();
 	const nonce = useNonce();
 

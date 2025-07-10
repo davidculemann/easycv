@@ -1,3 +1,5 @@
+import { MoreVertical, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import {
@@ -9,8 +11,6 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { MoreVertical, Trash2 } from "lucide-react";
-import { useState } from "react";
 
 export type Action = {
 	label: string;

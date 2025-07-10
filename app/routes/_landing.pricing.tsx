@@ -1,10 +1,10 @@
+import { useNavigate } from "@remix-run/react";
+import { CheckCircle2 } from "lucide-react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "@remix-run/react";
-import { CheckCircle2 } from "lucide-react";
-import { useState } from "react";
 
 type PricingSwitchProps = {
 	onSwitch: (value: string) => void;

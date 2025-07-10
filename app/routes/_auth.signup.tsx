@@ -5,11 +5,10 @@ import ProviderLoginButton from "@/components/shared/provider-login-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
-import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail, validatePassword } from "@/lib/utils";
-import { type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -60,8 +59,7 @@ type ActionStatus = {
 export default function SignUp() {
 	const navigation = useNavigation();
 	const actionData = useActionData<ActionStatus | undefined>();
-	const [showOTP, setShowOTP] = useState(false);
-	const { supabase } = useOutletContext<SupabaseOutletContext>();
+	const [showOTP, _setShowOTP] = useState(false);
 
 	useEffect(() => {
 		if (actionData?.message) {
@@ -70,7 +68,7 @@ export default function SignUp() {
 		}
 	}, [actionData]);
 
-	const handleResendOTP = async () => {
+	const _handleResendOTP = async () => {
 		// For now, we'll just show a message since we need the email
 		toast.info("Please check your email for the OTP code.");
 	};

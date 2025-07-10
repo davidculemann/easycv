@@ -1,8 +1,7 @@
+import type { ActionFunctionArgs } from "@remix-run/node";
+import axios from "axios";
 import { generateLatexTemplate } from "@/lib/documents/latex-pdf";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import axios from "axios";
 
 export async function action({ request }: ActionFunctionArgs) {
 	try {
@@ -12,7 +11,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			data: { user },
 		} = await supabase.auth.getUser();
 		if (!user) {
-			return json({ error: "Unauthorized" }, { status: 401 });
+			throw new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
 		}
 
 		const formData = await request.formData();
@@ -20,7 +19,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		const cvData = formData.get("cvData")?.toString();
 
 		if (!cvId || !cvData) {
-			return json({ error: "Missing required data" }, { status: 400 });
+			throw new Response(JSON.stringify({ error: "Missing required data" }), { status: 400 });
 		}
 
 		const data = JSON.parse(cvData);
@@ -54,7 +53,7 @@ export async function action({ request }: ActionFunctionArgs) {
 				status: 200,
 				headers: {
 					"Content-Type": "application/pdf",
-					"Content-Disposition": `attachment; filename="cv-${cvId}.pdf"`,
+					"Content-Disposition": `attachment; filename=\"cv-${cvId}.pdf\"`,
 				},
 			});
 		} catch (error) {
@@ -66,22 +65,24 @@ export async function action({ request }: ActionFunctionArgs) {
 						console.error("LaTeX API error:", errorText);
 						try {
 							const errorJson = JSON.parse(errorText);
-							return json({ error: errorJson.error || "LaTeX API error" }, { status: 500 });
+							throw new Response(JSON.stringify({ error: errorJson.error || "LaTeX API error" }), {
+								status: 500,
+							});
 						} catch {
-							return json({ error: errorText }, { status: 500 });
+							throw new Response(JSON.stringify({ error: errorText }), { status: 500 });
 						}
 					}
 				}
-				return json({ error: error.message }, { status: 500 });
+				throw new Response(JSON.stringify({ error: error.message }), { status: 500 });
 			}
 			throw error;
 		}
 	} catch (error) {
 		console.error("PDF generation error:", error);
-		return json(
-			{
+		throw new Response(
+			JSON.stringify({
 				error: error instanceof Error ? error.message : "Unknown error",
-			},
+			}),
 			{ status: 500 },
 		);
 	}

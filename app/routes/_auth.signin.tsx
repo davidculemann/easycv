@@ -1,3 +1,8 @@
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { Form, Link, redirect, useActionData, useNavigation } from "@remix-run/react";
+import { motion } from "motion/react";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { LoadingButton } from "@/components/shared/loading-button";
 import ProviderLoginButton from "@/components/shared/provider-login-button";
@@ -5,11 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
-import { motion } from "motion/react";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });

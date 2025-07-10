@@ -1,10 +1,10 @@
+import { X } from "lucide-react";
+import { useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
-import { useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
 
 export interface FormTagListProps {
 	className?: string;

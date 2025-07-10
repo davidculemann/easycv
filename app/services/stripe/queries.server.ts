@@ -1,6 +1,6 @@
+import type Stripe from "stripe";
 import { ERRORS } from "@/lib/constants";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import type Stripe from "stripe";
 import { HOST_URL } from "../misc.server";
 import { PLANS } from "./plans";
 import { getLocaleCurrency, stripe } from "./stripe.server";

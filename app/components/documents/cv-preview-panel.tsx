@@ -1,6 +1,6 @@
+import { Download, RefreshCw, Upload } from "lucide-react";
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, Upload } from "lucide-react";
 
 interface CVPreviewPanelProps {
 	cv: ParsedCVProfile | null | undefined;

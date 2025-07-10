@@ -1,6 +1,6 @@
-import type { MDXUpdate } from "@/lib/mdx";
 import { getMDXComponent } from "mdx-bundler/client";
 import React from "react";
+import type { MDXUpdate } from "@/lib/mdx";
 import { TimelineBuilder, TimelineEntry } from "./timeline-builder";
 
 // MDX components with custom elements

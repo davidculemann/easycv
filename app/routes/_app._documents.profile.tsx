@@ -1,3 +1,8 @@
+import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
+import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import SidebarNav from "@/components/account/sidebar-nav";
 import { EducationForm } from "@/components/forms/profile/education-form";
 import { ExperienceForm } from "@/components/forms/profile/experience-form";
@@ -18,11 +23,6 @@ import { Progress } from "@/components/ui/progress";
 import { getUserProfile, updateUserProfile } from "@/lib/supabase/documents/profile";
 import { handleProfileSectionUpdate } from "@/lib/supabase/profile-action-helpers";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { type ActionFunctionArgs, type LoaderFunctionArgs, redirect } from "@remix-run/node";
-import { useActionData, useLoaderData, useNavigation, useSearchParams } from "@remix-run/react";
-import { Briefcase, CheckCircle2, Folder, GraduationCap, User, Wrench } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });

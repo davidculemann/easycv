@@ -3,7 +3,6 @@ import compression from "compression";
 import express from "express";
 import morgan from "morgan";
 
-
 // Validate required environment variables early
 const validateEnv = () => {
 	const required = {
@@ -80,7 +79,7 @@ app.use(
 app.use(morgan("tiny"));
 
 // Add error handling middleware
-app.use((error, req, res, next) => {
+app.use((error, _req, res, _next) => {
 	console.error("Express error:", error);
 	res.status(500).json({ error: "Internal server error" });
 });

@@ -5,24 +5,10 @@ import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { getLocaleCurrency } from "@/services/stripe/stripe.server";
 import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { Outlet, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
 import { useEffect } from "react";
 import { toast } from "sonner";
-
-type LoaderSuccess = {
-	profile: any;
-	subscription: any;
-	currency: ReturnType<typeof getLocaleCurrency>;
-};
-
-type LoaderError =
-	| {
-			message: string;
-	  }
-	| {
-			sessionAvailable: false;
-	  };
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
@@ -37,7 +23,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 			// Redirect to clean URL after successful exchange
 			return redirect("/dashboard", { headers });
 		} catch (error: any) {
-			return json<LoaderError>({ message: error?.message || "Authentication failed" }, { status: 400 });
+			throw new Response(JSON.stringify({ message: error?.message || "Authentication failed" }), { status: 400 });
 		}
 	}
 
@@ -47,7 +33,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	} = await supabase.auth.getUser();
 
 	if (error || !user) {
-		return json<LoaderError>({ sessionAvailable: false }, { status: 401 });
+		throw new Response(JSON.stringify({ sessionAvailable: false }), { status: 401 });
 	}
 
 	const { data: profile, error: profileError } = await supabase
@@ -57,13 +43,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		.single();
 
 	if (profileError || !profile) {
-		return json<LoaderError>({ message: profileError?.message || "Could not get profile" }, { status: 400 });
+		throw new Response(JSON.stringify({ message: profileError?.message || "Could not get profile" }), {
+			status: 400,
+		});
 	}
 
 	const { data: subscription } = await supabase.from("subscriptions").select("*").eq("user_id", user.id).single();
 	const currency = getLocaleCurrency(request);
 
-	return json<LoaderSuccess>({ profile, subscription, currency }, { headers });
+	return { profile, subscription, currency };
 }
 
 export default function AuthLayout() {
@@ -78,7 +66,7 @@ export default function AuthLayout() {
 			});
 		}
 		if ("message" in loaderData) {
-			toast.error(loaderData.message);
+			toast.error(loaderData.message as string);
 			return navigate("/signin");
 		}
 	}, [loaderData, supabase, navigate]);
@@ -87,7 +75,7 @@ export default function AuthLayout() {
 		return <PageLoading />;
 	}
 
-	const { profile, subscription, currency } = loaderData as LoaderSuccess;
+	const { profile, subscription, currency } = loaderData;
 	const outletContext = { supabase, profile, subscription, currency, user } as SupabaseOutletContext;
 
 	return (

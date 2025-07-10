@@ -23,7 +23,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
 
 	if (!validateEmail(email)) {
-		throw new Response(JSON.stringify({ message: "Please enter a valid email address." }), { status: 400 });
+		return { success: false, message: "Please enter a valid email address." };
 	}
 
 	const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -31,7 +31,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
-		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
+		return { success: false, message: error.message };
 	}
 
 	return { message: "Check your email for the reset link.", success: true };

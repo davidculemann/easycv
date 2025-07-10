@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
-		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
+		return { success: false, message: error.message };
 	}
 
 	return redirect("/dashboard", { headers });

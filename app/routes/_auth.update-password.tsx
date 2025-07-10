@@ -25,30 +25,24 @@ export async function action({ request }: LoaderFunctionArgs) {
 	const confirmPassword = formData.get("confirm-password") as string;
 
 	if (!password || !confirmPassword || typeof password !== "string" || typeof confirmPassword !== "string") {
-		throw new Response(
-			JSON.stringify({
-				success: false,
-				message: "Form not submitted correctly.",
-			}),
-			{ status: 400 },
-		);
+		return {
+			success: false,
+			message: "Form not submitted correctly.",
+		};
 	}
 	if (password !== confirmPassword) {
-		throw new Response(
-			JSON.stringify({
-				success: false,
-				message: "Passwords do not match.",
-			}),
-			{ status: 400 },
-		);
+		return {
+			success: false,
+			message: "Passwords do not match.",
+		};
 	}
 
 	if (!validateEmail(email)) {
-		throw new Response(JSON.stringify({ success: false, message: "Invalid email address." }), { status: 400 });
+		return { success: false, message: "Invalid email address." };
 	}
 
 	if (!password) {
-		throw new Response(JSON.stringify({ success: false, message: "Password is required." }), { status: 400 });
+		return { success: false, message: "Password is required." };
 	}
 
 	const { error } = await supabase.auth.updateUser({
@@ -57,7 +51,7 @@ export async function action({ request }: LoaderFunctionArgs) {
 	});
 
 	if (error) {
-		throw new Response(JSON.stringify({ success: false, message: error.message }), { status: 400 });
+		return { success: false, message: error.message };
 	}
 
 	return { success: true, message: "Successfully updated password." };

@@ -29,7 +29,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	if (intent === "resend") {
 		// Handle resend OTP
 		if (!validateEmail(email)) {
-			throw new Response(JSON.stringify({ message: "Please enter a valid email address." }), { status: 400 });
+			return { success: false, message: "Please enter a valid email address." };
 		}
 
 		const { error } = await supabase.auth.resend({
@@ -38,21 +38,21 @@ export async function action({ request }: ActionFunctionArgs) {
 		});
 
 		if (error) {
-			throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
+			return { success: false, message: error.message };
 		}
 
 		return { message: "OTP code resent successfully!", success: true };
 	}
 
 	if (!validateEmail(email)) {
-		throw new Response(JSON.stringify({ message: "Please enter a valid email address." }), { status: 400 });
+		return { success: false, message: "Please enter a valid email address." };
 	}
 
 	if (!validatePassword(password)) {
-		throw new Response(
-			JSON.stringify({ message: "Password must be at least 8 characters long and contain at least one number." }),
-			{ status: 400 },
-		);
+		return {
+			success: false,
+			message: "Password must be at least 8 characters long and contain at least one number.",
+		};
 	}
 
 	const { error } = await supabase.auth.signUp({
@@ -64,7 +64,7 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
-		throw new Response(JSON.stringify({ message: error.message }), { status: 400 });
+		return { success: false, message: error.message };
 	}
 
 	return { message: "Check your email for the OTP code.", success: true, email };

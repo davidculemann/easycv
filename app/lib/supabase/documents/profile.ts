@@ -99,11 +99,7 @@ export async function updateUserProfile({
 		throw new Error("User not found");
 	}
 
-	const { data: existingProfile, error: fetchError } = await supabase
-		.from("cv_profiles")
-		.select("id")
-		.eq("user_id", user.id)
-		.single();
+	const { data: existingProfile } = await supabase.from("cv_profiles").select("id").eq("user_id", user.id).single();
 
 	let error: { message: string } | null = null;
 

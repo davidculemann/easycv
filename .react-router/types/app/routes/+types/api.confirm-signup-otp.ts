@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/api.confirm-signup-otp";
+		id: "api-confirm-signup-otp";
 		module: typeof import("../api.confirm-signup-otp.js");
 	},
 ];

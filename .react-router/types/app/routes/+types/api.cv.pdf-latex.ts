@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/api.cv.pdf-latex";
+		id: "api-cv-pdf-latex";
 		module: typeof import("../api.cv.pdf-latex.js");
 	},
 ];

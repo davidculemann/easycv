@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/api.webhook";
+		id: "api-webhook";
 		module: typeof import("../api.webhook.js");
 	},
 ];

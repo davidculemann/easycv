@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/healthcheck";
+		id: "healthcheck";
 		module: typeof import("../healthcheck.js");
 	},
 ];

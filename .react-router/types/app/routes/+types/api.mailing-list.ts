@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/api.mailing-list";
+		id: "api-mailing-list";
 		module: typeof import("../api.mailing-list.js");
 	},
 ];

@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/api.keep-alive";
+		id: "api-keep-alive";
 		module: typeof import("../api.keep-alive.js");
 	},
 ];

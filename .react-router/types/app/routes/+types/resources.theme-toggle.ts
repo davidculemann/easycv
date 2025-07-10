@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/resources.theme-toggle";
+		id: "resources-theme-toggle";
 		module: typeof import("../resources.theme-toggle.js");
 	},
 ];

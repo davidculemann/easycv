@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/api.cv.generate";
+		id: "api-cv-generate";
 		module: typeof import("../api.cv.generate.js");
 	},
 ];

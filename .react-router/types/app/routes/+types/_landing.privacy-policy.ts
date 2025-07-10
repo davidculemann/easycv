@@ -15,11 +15,11 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/_landing";
+		id: "landing";
 		module: typeof import("../_landing.js");
 	},
 	{
-		id: "routes/_landing.privacy-policy";
+		id: "landing-privacy";
 		module: typeof import("../_landing.privacy-policy.js");
 	},
 ];

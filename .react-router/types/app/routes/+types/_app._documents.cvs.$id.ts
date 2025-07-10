@@ -15,15 +15,19 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/_app";
+		id: "app";
 		module: typeof import("../_app.js");
 	},
 	{
-		id: "routes/_app._documents";
+		id: "app-documents";
 		module: typeof import("../_app._documents.js");
 	},
 	{
-		id: "routes/_app._documents.cvs.$id";
+		id: "app-documents-cvs";
+		module: typeof import("../../components/layout/pathless-layout.js");
+	},
+	{
+		id: "app-documents-cvs-id";
 		module: typeof import("../_app._documents.cvs.$id.js");
 	},
 ];

@@ -15,11 +15,11 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/_app";
+		id: "app";
 		module: typeof import("../_app.js");
 	},
 	{
-		id: "routes/_app._documents";
+		id: "app-documents";
 		module: typeof import("../_app._documents.js");
 	},
 ];

@@ -15,7 +15,7 @@ type Matches = [
 		module: typeof import("../../root.js");
 	},
 	{
-		id: "routes/_auth";
+		id: "auth";
 		module: typeof import("../_auth.js");
 	},
 ];

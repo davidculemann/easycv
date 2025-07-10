@@ -70,7 +70,7 @@ export default function ForgotPassword() {
 							id="email"
 							type="email"
 							name="email"
-							placeholder="m@example.com"
+							placeholder="email@example.com"
 							required
 							autoComplete="email"
 						/>

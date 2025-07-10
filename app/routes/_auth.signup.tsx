@@ -96,7 +96,7 @@ export default function SignUp() {
 							id="email"
 							type="email"
 							name="email"
-							placeholder="m@example.com"
+							placeholder="email@example.com"
 							required
 							autoComplete="email"
 						/>

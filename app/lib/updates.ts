@@ -81,8 +81,8 @@ export const timelineItems: Update[] = [
 			{ side: "left", text: "User Profile Forms" },
 			{ side: "right", text: "Started (1/04/2025)", variant: "secondary" },
 		],
-		dotStatus: "current",
-		lineDone: false,
+		dotStatus: "done",
+		lineDone: true,
 		content: {
 			content: [
 				{
@@ -92,6 +92,38 @@ export const timelineItems: Update[] = [
 				{
 					type: "paragraph",
 					text: "Using React Hook Form with Zod validation to ensure data quality and a smooth user experience. The collected information will feed into the AI generation system to create more accurate and personalized career documents.",
+				},
+			],
+		},
+	},
+	{
+		headings: [
+			{ side: "left", text: "Migrating from Remix to React Router v7" },
+			{ side: "right", text: "Started (07/07/2025)", variant: "secondary" },
+		],
+		dotStatus: "done",
+		lineDone: true,
+		content: {
+			content: [
+				{
+					type: "paragraph",
+					text: "Migrating from Remix v2 to React Router v7, this was a pain - a lot of changes with little documentation available. It had to be done sooner instead of later before react router diverges further.",
+				},
+			],
+		},
+	},
+	{
+		headings: [
+			{ side: "left", text: "Getting it ready for launch" },
+			{ side: "right", text: "Started (11/07/2025)", variant: "secondary" },
+		],
+		dotStatus: "current",
+		lineDone: false,
+		content: {
+			content: [
+				{
+					type: "paragraph",
+					text: "Last week before launch, going through some security issues and auth bugs, finalising the pricing structure and finishing off little features.",
 				},
 			],
 		},

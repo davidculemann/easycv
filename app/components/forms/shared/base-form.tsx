@@ -1,7 +1,7 @@
 import { ChevronRight, SaveIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { type FormMethod, Form as ReactRouterForm, useSearchParams } from "react-router";
+import { type FormMethod, Form as ReactRouterForm, useSearchParams, useSubmit } from "react-router";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -32,6 +32,8 @@ export function BaseForm({
 	onBack,
 }: BaseFormProps) {
 	const [, setSearchParams] = useSearchParams();
+	const submit = useSubmit();
+	const formRef = useRef<HTMLFormElement>(null);
 
 	useEffect(() => {
 		form.reset(defaultValues, { keepValues: true });
@@ -54,9 +56,12 @@ export function BaseForm({
 		if (prevSection) setSearchParams({ section: prevSection });
 	}
 
-	const handleSubmit = async (data: any) => {
+	const handleSubmit = (data: any) => {
 		if (onSubmit) {
 			onSubmit(data);
+		} else if (formRef.current) {
+			submit(formRef.current);
+			return;
 		}
 		if (nextSection && !shouldSkip) {
 			handleNext();
@@ -65,7 +70,12 @@ export function BaseForm({
 
 	return (
 		<Form {...form}>
-			<ReactRouterForm onSubmit={form.handleSubmit(handleSubmit)} method={method} className="space-y-8 flex-1">
+			<ReactRouterForm
+				ref={formRef}
+				onSubmit={form.handleSubmit(handleSubmit)}
+				method={method}
+				className="space-y-8 flex-1"
+			>
 				<CardContent>{children}</CardContent>
 				<CardFooter>
 					<div className="w-full flex justify-between gap-2">

@@ -52,6 +52,13 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 		prevFieldsLength.current = fields.length;
 	}, [fields]);
 
+	// Set first item as open by default if no item is currently open
+	useEffect(() => {
+		if (!openItemId && fields.length > 0) {
+			setOpenItemId(fields[0]?.id);
+		}
+	}, [openItemId, fields]);
+
 	// Keep hidden input value updated with current form data
 	useEffect(() => {
 		const hiddenInput = document.querySelector('input[name="projects"]') as HTMLInputElement;
@@ -75,7 +82,7 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="projects" value={JSON.stringify(projects)} />
-			<div className="space-y-6">
+			<div className="space-y-4">
 				<div>
 					<h3 className="text-lg font-medium">Projects</h3>
 					<p className="text-sm text-muted-foreground">Add your personal or professional project</p>

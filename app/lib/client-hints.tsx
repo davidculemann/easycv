@@ -11,7 +11,6 @@ const hintsUtils = getHintUtils({
 
 export const { getHints } = hintsUtils;
 
-// Remix theme utils below
 export function useRequestInfo() {
 	const data = useRouteLoaderData("root") as Awaited<ReturnType<typeof rootLoader>>;
 	return data.requestInfo;

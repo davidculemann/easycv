@@ -1,8 +1,8 @@
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Link, useLocation, useNavigate } from "@remix-run/react";
-import { useState } from "react";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
 	items: {

@@ -1,7 +1,7 @@
-import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import type { LoaderFunctionArgs } from "react-router";
+import { redirect } from "react-router";
+import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);

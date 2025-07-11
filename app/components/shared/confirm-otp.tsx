@@ -1,16 +1,35 @@
-import { Form } from "@remix-run/react";
+import { useEffect } from "react";
+import { useFetcher } from "react-router";
+import { toast } from "sonner";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp";
 import { Label } from "../ui/label";
+import { LoadingButton } from "./loading-button";
+
+type ActionStatus = {
+	message: string;
+};
 
 export default function ConfirmOTP({
 	path,
 	additionalFormData = {},
-	onSubmit,
+	onResend,
+	isLoading,
 }: {
-	path?: string;
+	path: string;
 	additionalFormData?: Record<string, string>;
-	onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+	onResend?: () => void;
+	isLoading?: boolean;
 }) {
+	const email = additionalFormData.email || "your email";
+	const fetcher = useFetcher<ActionStatus>();
+
+	useEffect(() => {
+		// A successful submission redirects, so `fetcher.data` will only be populated on an error.
+		if (fetcher.data) {
+			toast.error(fetcher.data.message);
+		}
+	}, [fetcher.data]);
+
 	return (
 		<div className="mx-auto grid w-[350px] gap-6">
 			<div>
@@ -18,29 +37,24 @@ export default function ConfirmOTP({
 					Confirm OTP
 				</h2>
 				<p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-					Enter the code sent to your email.
+					Enter the code sent to {email}.
 				</p>
 			</div>
-			<Form
-				className="space-y-6 flex flex-col items-center"
-				method="POST"
-				action={path}
-				navigate={false}
-				onSubmit={onSubmit}
-				id="otp-confirmation-form"
-			>
+			<fetcher.Form className="space-y-6 flex flex-col items-center" method="POST" action={path}>
 				<div>
 					<Label htmlFor="otp" className="sr-only">
 						OTP
 					</Label>
 					<InputOTP
 						maxLength={6}
-						type="otp"
 						name="otp"
-						onComplete={() => {
-							const form = document.getElementById("otp-confirmation-form") as HTMLFormElement;
-							const event = new Event("submit", { bubbles: true, cancelable: true });
-							form.dispatchEvent(event);
+						onComplete={(value) => {
+							const formData = new FormData();
+							formData.append("otp", value);
+							for (const [key, val] of Object.entries(additionalFormData)) {
+								formData.append(key, val);
+							}
+							fetcher.submit(formData, { method: "POST", action: path });
 						}}
 					>
 						<InputOTPGroup>
@@ -59,7 +73,14 @@ export default function ConfirmOTP({
 				{Object.entries(additionalFormData).map(([key, value]) => (
 					<input key={key} type="hidden" name={key} value={value} />
 				))}
-			</Form>
+			</fetcher.Form>
+			{onResend && (
+				<div className="text-center">
+					<LoadingButton variant="link" onClick={onResend} className="text-sm" loading={isLoading}>
+						Resend OTP
+					</LoadingButton>
+				</div>
+			)}
 		</div>
 	);
 }

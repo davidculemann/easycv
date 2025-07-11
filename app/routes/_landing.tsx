@@ -1,7 +1,7 @@
+import { Outlet, useOutletContext } from "react-router";
 import SiteHeader from "@/components/landing/site-header";
 import { Footer } from "@/components/layout/footer";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
-import { Outlet, useOutletContext } from "@remix-run/react";
 
 export default function MarketingLayout() {
 	const { supabase } = useOutletContext<SupabaseOutletContext>();

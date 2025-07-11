@@ -1,9 +1,9 @@
+import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { useStore } from "@/hooks/use-store";
 import { cn } from "@/lib/utils";
-import { Link } from "@remix-run/react";
 import { Icons } from "../icons";
 import { Menu } from "./menu";
 import { SidebarToggle } from "./sidebar-toggle";

@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
 	Timeline,
 	TimelineContent,
@@ -7,7 +8,6 @@ import {
 	TimelineLine,
 } from "@/components/ui/timeline";
 import { cn } from "@/lib/utils";
-import React, { useEffect } from "react";
 
 export type Side = "left" | "right";
 export type Status = "done" | "current" | "default" | "error";

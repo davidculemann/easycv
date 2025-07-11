@@ -1,6 +1,6 @@
+import { MapPin } from "lucide-react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MapPin } from "lucide-react";
 
 export function LocationField({ name, inputClassName = "" }: { name: string; inputClassName?: string }) {
 	return (

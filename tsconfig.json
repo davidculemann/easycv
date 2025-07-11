@@ -1,8 +1,9 @@
 {
 	"include": ["**/*.ts", "**/*.tsx", "server.js"],
+	"exclude": ["supabase/functions/**/*"],
 	"compilerOptions": {
 		"lib": ["DOM", "DOM.Iterable", "ES2022"],
-		"types": ["@remix-run/node", "node", "vite/client"],
+		"types": ["@react-router/node", "node", "vite/client"],
 		"isolatedModules": true,
 		"esModuleInterop": true,
 		"jsx": "react-jsx",

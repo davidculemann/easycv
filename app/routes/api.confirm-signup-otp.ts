@@ -1,8 +1,8 @@
+import { type LoaderFunctionArgs, redirect } from "react-router";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
 
 export async function action({ request }: LoaderFunctionArgs) {
-	const { supabase } = getSupabaseWithHeaders({ request });
+	const { supabase, headers } = getSupabaseWithHeaders({ request });
 	const formData = await request.formData();
 	const otp = formData.get("otp") as string;
 	const email = formData.get("email") as string;
@@ -14,8 +14,13 @@ export async function action({ request }: LoaderFunctionArgs) {
 	});
 
 	if (error) {
-		return json({ message: error.message }, { status: 400 });
+		// On failure, RETURN a 400 response. The client fetcher will catch this in `fetcher.data`.
+		return new Response(JSON.stringify({ message: error.message }), {
+			status: 400,
+			headers: { "Content-Type": "application/json" },
+		});
 	}
 
-	return json({ message: "Success!" }, { status: 200 });
+	// On success, the server sends the redirect, along with the new session cookie.
+	return redirect("/dashboard", { headers });
 }

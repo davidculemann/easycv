@@ -1,6 +1,6 @@
-import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
+import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 
 export async function getCVDocuments({
 	supabase,

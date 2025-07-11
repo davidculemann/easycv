@@ -1,3 +1,9 @@
+import { ArrowRight, FileEdit, FilePlus, Info, Plus } from "lucide-react";
+import { motion } from "motion/react";
+import { useMemo, useState } from "react";
+import type { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData, useNavigate, useOutletContext } from "react-router";
+import { toast } from "sonner";
 import type { FormType, ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import { checkSectionCompletion } from "@/components/forms/profile/logic/utils";
@@ -11,12 +17,6 @@ import { createCVDocument, getLastXDocuments } from "@/lib/supabase/documents/cv
 import { parseJsonFields } from "@/lib/supabase/documents/profile";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
-import { ArrowRight, FileEdit, FilePlus, Info, Plus } from "lucide-react";
-import { motion } from "motion/react";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 const ACTIVITY_ITEMS_LIMIT = 3;
 
@@ -231,7 +231,7 @@ function ActionCard({
 			if ("id" in newDocument && newDocument.id) {
 				navigate(`${navigateLink}/${newDocument.id}`);
 			} else throw new Error("No document ID returned");
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Error creating new document");
 		}
 	}

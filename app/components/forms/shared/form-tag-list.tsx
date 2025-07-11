@@ -1,26 +1,19 @@
+import { X } from "lucide-react";
+import { useRef, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
-import { useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
 
 export interface FormTagListProps {
 	className?: string;
 	fieldName: string;
 	label: string;
 	maxTags?: number;
-	placeholder?: string;
 }
 
-export function FormTagList({
-	fieldName,
-	className,
-	label,
-	maxTags = 20,
-	placeholder = "Type and press Enter",
-}: FormTagListProps) {
+export function FormTagList({ fieldName, className, label, maxTags = 20 }: FormTagListProps) {
 	const form = useFormContext();
 	const tags: string[] = form.watch(fieldName) || [];
 	const [inputValue, setInputValue] = useState("");
@@ -77,6 +70,8 @@ export function FormTagList({
 					isFocused ? "ring-2 ring-ring border-gray-300" : "border-gray-200",
 				)}
 				onClick={focusInput}
+				role="button"
+				tabIndex={0}
 				onKeyDown={(e) => {
 					if (e.key === "Enter") {
 						focusInput();

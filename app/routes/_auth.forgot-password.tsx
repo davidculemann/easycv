@@ -1,3 +1,8 @@
+import { motion } from "motion/react";
+import { useEffect } from "react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import { Form, Link, useActionData, useNavigation } from "react-router";
+import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { LoadingButton } from "@/components/shared/loading-button";
 import { Input } from "@/components/ui/input";
@@ -5,11 +10,6 @@ import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail } from "@/lib/utils";
-import { type ActionFunctionArgs, type LoaderFunctionArgs, json } from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation } from "@remix-run/react";
-import { motion } from "motion/react";
-import { useEffect } from "react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
@@ -20,10 +20,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const email = formData.get("email") as string;
-	const { supabase, headers } = getSupabaseWithHeaders({ request });
+	const { supabase } = getSupabaseWithHeaders({ request });
 
 	if (!validateEmail(email)) {
-		return json({ message: "Please enter a valid email address." }, { status: 400 });
+		return { success: false, message: "Please enter a valid email address." };
 	}
 
 	const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -31,10 +31,10 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
-		return json({ message: error.message }, { status: 400 });
+		return { success: false, message: error.message };
 	}
 
-	return json({ message: "Check your email for the reset link.", success: true }, { headers });
+	return { message: "Check your email for the reset link.", success: true };
 }
 
 type ActionStatus = {
@@ -70,7 +70,7 @@ export default function ForgotPassword() {
 							id="email"
 							type="email"
 							name="email"
-							placeholder="m@example.com"
+							placeholder="email@example.com"
 							required
 							autoComplete="email"
 						/>

@@ -1,6 +1,6 @@
-import { siteConfig } from "@/config/site";
-import { Link } from "@remix-run/react";
 import { Github, Linkedin, Twitter } from "lucide-react";
+import { Link } from "react-router";
+import { siteConfig } from "@/config/site";
 
 const SOCIAL_LINKS = [
 	{

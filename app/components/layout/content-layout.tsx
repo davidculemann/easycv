@@ -1,6 +1,6 @@
-import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import type { Subscription } from "types/stripe";
 import { useStore } from "zustand";
+import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { Footer } from "./footer";
 import { Navbar } from "./navbar";
 

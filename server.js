@@ -1,10 +1,7 @@
-import { createRequestHandler } from "@remix-run/express";
-import { installGlobals } from "@remix-run/node";
+import { createRequestHandler } from "@react-router/express";
 import compression from "compression";
 import express from "express";
 import morgan from "morgan";
-
-installGlobals();
 
 // Validate required environment variables early
 const validateEnv = () => {
@@ -46,8 +43,16 @@ if (process.env.NODE_ENV === "development") {
 // Create a request handler for Remix
 const remixHandler = createRequestHandler({
 	build: viteDevServer
-		? () => viteDevServer.ssrLoadModule("virtual:remix/server-build")
+		? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
 		: () => import("./build/server/index.js"),
+	getLoadContext: () => ({
+		env: {
+			SUPABASE_URL: process.env.SUPABASE_URL,
+			SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+			NODE_ENV: process.env.NODE_ENV,
+			PORT: process.env.PORT,
+		},
+	}),
 });
 
 const app = express();
@@ -82,7 +87,7 @@ app.use(
 app.use(morgan("tiny"));
 
 // Add error handling middleware
-app.use((error, req, res, next) => {
+app.use((error, _req, res, _next) => {
 	console.error("Express error:", error);
 	res.status(500).json({ error: "Internal server error" });
 });

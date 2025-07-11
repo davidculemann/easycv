@@ -1,3 +1,11 @@
 {
-	"imports": {}
+	"compilerOptions": {
+		"allowJs": true,
+		"lib": ["deno.window"],
+		"strict": true
+	},
+	"imports": {},
+	"tasks": {
+		"start": "deno run --allow-net --allow-env index.ts"
+	}
 }

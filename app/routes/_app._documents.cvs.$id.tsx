@@ -1,3 +1,12 @@
+import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { AlertTriangle, Check, ExternalLink, Pencil, Settings2, Trash2, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import type { LoaderFunctionArgs } from "react-router";
+import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "react-router";
+import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
+import { z } from "zod";
 import AIPreferencesModal from "@/components/documents/ai-preferences-modal";
 import CVFormPanel from "@/components/documents/cv-form-panel";
 import CVPreviewPanel from "@/components/documents/cv-preview-panel";
@@ -13,15 +22,6 @@ import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
 import { getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
-import { experimental_useObject as useObject } from "@ai-sdk/react";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { Link, json, useLoaderData, useNavigate, useOutletContext, useParams } from "@remix-run/react";
-import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
-import { AlertTriangle, Check, ExternalLink, Pencil, Settings2, Trash2, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useMediaQuery } from "usehooks-ts";
-import { z } from "zod";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -45,34 +45,34 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 	const { data } = await supabase.from("cv_profiles").select("completed").eq("user_id", user.id).single();
 
-	return json({ dehydratedState: dehydrate(queryClient), profileCompleted: data?.completed });
+	return { dehydratedState: dehydrate(queryClient), profileCompleted: data?.completed };
 }
 
 export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
 	const params = useParams();
 	const { id } = params;
-	const { updateCV, isUpdatingCV, cv, deleteCV, isDeletingCV, renameCV } = useCV({
+	const { updateCV, isUpdatingCV, cv, deleteCV, renameCV } = useCV({
 		supabase,
 		id: id ?? "",
 	});
 
 	const isMobile = useMediaQuery("(max-width: 768px)");
-	const [model, setModel] = useState("deepseek");
+	const [model, _setModel] = useState("deepseek");
 	const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
 	const [pdfData, setPdfData] = useState<string | null>(null);
 	const [isEditingName, setIsEditingName] = useState(false);
-	const [isSaved, setIsSaved] = useState(true);
+	const [isSaved, _setIsSaved] = useState(true);
 	const [activeTab, setActiveTab] = useState("personal");
 
-	const { isLoading, object, submit } = useObject({
+	const { object, submit } = useObject({
 		api: "/api/cv/generate",
 		schema: z.object({
 			cv: CVContextSchema,
 		}),
 	});
 
-	function handleSaveChanges() {
+	function _handleSaveChanges() {
 		if (!object) return;
 		updateCV({ id: id ?? "", cv: object.cv as CVContext });
 	}
@@ -106,7 +106,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 				try {
 					const errorData = JSON.parse(errorText);
 					errorMessage = errorData.error || errorMessage;
-				} catch (e) {
+				} catch (_e) {
 					errorMessage = errorText || errorMessage;
 				}
 
@@ -138,7 +138,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 		}
 	};
 
-	function handleGenerateCV() {
+	function _handleGenerateCV() {
 		submit({
 			context: {
 				profile: dataToDisplay,

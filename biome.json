@@ -1,7 +1,7 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
 	"files": {
-		"includes": ["**", "!**/build/**"]
+		"includes": ["**", "!**/build/**", "!**/node_modules/**", "!.react-router/**/*.*", "!db_types.ts"]
 	},
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"vcs": {
@@ -35,7 +35,13 @@
 			"correctness": {
 				"noEmptyPattern": "off",
 				"useExhaustiveDependencies": "off",
-				"noChildrenProp": "off"
+				"noChildrenProp": "off",
+				"noUnusedVariables": {
+					"level": "warn",
+					"options": {
+						"ignoreRestSiblings": true
+					}
+				}
 			},
 			"complexity": {
 				"noForEach": "off"

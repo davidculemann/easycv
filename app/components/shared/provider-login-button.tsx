@@ -1,8 +1,9 @@
+import type { Provider } from "@supabase/supabase-js";
+import { useOutletContext } from "react-router";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
-import { useOutletContext } from "@remix-run/react";
-import type { Provider } from "@supabase/supabase-js";
-import { toast } from "sonner";
+
 //type the below so that the key is always a prodiver type it should
 const providerLogos: Partial<Record<Provider, string>> = {
 	google: "https://www.svgrepo.com/show/475656/google-color.svg",

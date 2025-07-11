@@ -1,7 +1,7 @@
-import type { CVProfileInput, ParsedCVProfile } from "@/components/forms/profile/logic/types";
-import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "db_types";
+import type { CVProfileInput, ParsedCVProfile } from "@/components/forms/profile/logic/types";
+import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 
 export function parseJsonFields(profile: any): ParsedCVProfile {
 	if (!profile) return ensureValidProfile(null);
@@ -99,11 +99,7 @@ export async function updateUserProfile({
 		throw new Error("User not found");
 	}
 
-	const { data: existingProfile, error: fetchError } = await supabase
-		.from("cv_profiles")
-		.select("id")
-		.eq("user_id", user.id)
-		.single();
+	const { data: existingProfile } = await supabase.from("cv_profiles").select("id").eq("user_id", user.id).single();
 
 	let error: { message: string } | null = null;
 

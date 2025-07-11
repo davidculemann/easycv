@@ -1,6 +1,6 @@
+import { useStore } from "zustand";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { cn } from "@/lib/utils";
-import { useStore } from "zustand";
 import { Sidebar } from "./sidebar";
 
 export default function AdminPanelLayout({ children }: { children: React.ReactNode }) {

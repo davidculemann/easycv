@@ -1,3 +1,7 @@
+import { useState } from "react";
+import type { ActionFunctionArgs, MetaFunction } from "react-router";
+import { Form, redirect, useOutletContext } from "react-router";
+import type { Currency, Subscription } from "types/stripe";
 import SubscriptionPlanPill from "@/components/shared/subscription-plan-pill";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -5,13 +9,8 @@ import { siteConfig } from "@/config/site";
 import { INTENTS } from "@/lib/constants";
 import { formatDate } from "@/lib/dates";
 import { getSupabaseWithHeaders, requireUser } from "@/lib/supabase/supabase.server";
-import { CURRENCIES, INTERVALS, type Interval, PLANS, PRICING_PLANS, type Plan } from "@/services/stripe/plans";
+import { CURRENCIES, INTERVALS, type Interval, PLANS, type Plan, PRICING_PLANS } from "@/services/stripe/plans";
 import { createCustomerPortal, createSubscriptionCheckout } from "@/services/stripe/queries.server";
-import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, useOutletContext } from "@remix-run/react";
-import { useState } from "react";
-import type { Currency, Subscription } from "types/stripe";
 
 export const ROUTE_PATH = "/dashboard/settings/billing" as const;
 
@@ -37,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			planInterval,
 			request,
 		});
-		if (!checkoutUrl) return json({ success: false } as const);
+		if (!checkoutUrl) return { success: false };
 		return redirect(checkoutUrl);
 	}
 	if (intent === INTENTS.SUBSCRIPTION_CREATE_CUSTOMER_PORTAL) {
@@ -45,11 +44,11 @@ export async function action({ request }: ActionFunctionArgs) {
 			userId: user.id,
 			request,
 		});
-		if (!customerPortalUrl) return json({ success: false } as const);
+		if (!customerPortalUrl) return { success: false };
 		return redirect(customerPortalUrl);
 	}
 
-	return json({});
+	return {};
 }
 
 export default function Billing() {

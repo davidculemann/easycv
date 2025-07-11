@@ -1,5 +1,5 @@
-import { Link } from "@remix-run/react";
-import React from "react";
+import type React from "react";
+import { Link } from "react-router";
 
 export type Side = "left" | "right" | null | undefined;
 export type Status = "done" | "default" | null | undefined;

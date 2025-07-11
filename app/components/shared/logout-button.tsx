@@ -1,5 +1,5 @@
+import { Form } from "react-router";
 import { Button } from "@/components/ui/button";
-import { Form } from "@remix-run/react";
 
 export default function LogoutButton() {
 	return (

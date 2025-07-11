@@ -1,5 +1,5 @@
-import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
 
 export type DocType = "cvs" | "cover_letters";
 

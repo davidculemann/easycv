@@ -1,5 +1,5 @@
-import { useLocation, useParams } from "@remix-run/react";
 import { FileBadge2, LayoutGrid, LetterText, type LucideIcon, Settings, UserPen } from "lucide-react";
+import { useLocation, useParams } from "react-router";
 
 type Submenu = {
 	href: string;
@@ -184,7 +184,7 @@ export const useCurrentPage = () => {
 	const breadcrumbs = currentPath
 		.split("/")
 		.filter(Boolean)
-		.reduce<Array<{ href: string; label: string }>>((acc, segment, index, arr) => {
+		.reduce<Array<{ href: string; label: string }>>((acc, _segment, index, arr) => {
 			const path = `/${arr.slice(0, index + 1).join("/")}`;
 			const page = findActivePage(path);
 			if (page && !page.hidden) {

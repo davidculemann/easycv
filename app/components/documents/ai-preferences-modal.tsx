@@ -1,3 +1,8 @@
+import { Check, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router";
+import { toast } from "sonner";
+import { useMediaQuery } from "usehooks-ts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,11 +30,6 @@ import {
 } from "@/lib/ai/config";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { cn } from "@/lib/utils";
-import { useOutletContext } from "@remix-run/react";
-import { Check, Sparkles } from "lucide-react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useMediaQuery } from "usehooks-ts";
 import { Drawer, DrawerContent, DrawerTrigger } from "../ui/drawer";
 
 type Preferences = {
@@ -51,14 +51,12 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 
 	const isLoading = isLoadingPreferences || isUpdatingPreferences;
 
-	// Local state to track changes before submitting
 	const [localPreferences, setLocalPreferences] = useState<Preferences>({
 		default_model: RECOMMENDED_MODEL,
 		preferred_tone: RECOMMENDED_TONE,
 		generation_language: DEFAULT_LANGUAGE,
 	});
 
-	// Initialize local preferences when data loads
 	useEffect(() => {
 		if (preferences) {
 			setLocalPreferences({
@@ -90,7 +88,6 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 	}
 
 	function handleCancel() {
-		// Reset local preferences to current values
 		if (preferences) {
 			setLocalPreferences({
 				default_model: preferences.default_model ?? RECOMMENDED_MODEL,
@@ -101,7 +98,6 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 		setOpen(false);
 	}
 
-	// Check if there are any unsaved changes
 	const hasChanges = preferences
 		? localPreferences.default_model !== (preferences.default_model ?? RECOMMENDED_MODEL) ||
 			localPreferences.preferred_tone !== (preferences.preferred_tone ?? RECOMMENDED_TONE) ||
@@ -113,15 +109,7 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 			<Drawer open={open} onOpenChange={setOpen}>
 				<DrawerTrigger asChild>{trigger}</DrawerTrigger>
 				<DrawerContent>
-					<ModalContent
-						preferences={localPreferences}
-						isPro={isPro}
-						handleChange={handleLocalChange}
-						hasChanges={hasChanges}
-						onSave={handleSave}
-						onCancel={handleCancel}
-						isLoading={isLoading}
-					/>
+					<ModalContent preferences={localPreferences} isPro={isPro} handleChange={handleLocalChange} />
 				</DrawerContent>
 			</Drawer>
 		);
@@ -146,15 +134,7 @@ export function AIPreferencesModal({ trigger }: { trigger?: React.ReactNode }) {
 					</DialogDescription>
 				</DialogHeader>
 
-				<ModalContent
-					preferences={localPreferences}
-					isPro={isPro}
-					handleChange={handleLocalChange}
-					hasChanges={hasChanges}
-					onSave={handleSave}
-					onCancel={handleCancel}
-					isLoading={isLoading}
-				/>
+				<ModalContent preferences={localPreferences} isPro={isPro} handleChange={handleLocalChange} />
 
 				<DialogFooter>
 					<Button type="button" variant="outline" onClick={handleCancel} disabled={isLoading}>
@@ -179,18 +159,10 @@ function ModalContent({
 	preferences,
 	isPro,
 	handleChange,
-	hasChanges,
-	onSave,
-	onCancel,
-	isLoading,
 }: {
 	preferences: Preferences;
 	isPro: boolean;
 	handleChange: (field: keyof Preferences, value: string) => void;
-	hasChanges: boolean;
-	onSave: () => void;
-	onCancel: () => void;
-	isLoading: boolean;
 }) {
 	const [activeTab, setActiveTab] = useState("model");
 

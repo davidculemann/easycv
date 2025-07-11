@@ -1,9 +1,9 @@
+import { Link } from "react-router";
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import { useLockBody } from "@/hooks/use-lock-body";
 import type { MainNavItem } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { Link } from "@remix-run/react";
 
 interface MobileNavProps {
 	items: MainNavItem[];

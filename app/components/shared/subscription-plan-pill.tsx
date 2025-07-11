@@ -1,6 +1,6 @@
+import type { Subscription } from "types/stripe";
 import { cn } from "@/lib/utils";
 import { isProPlan } from "@/services/stripe/plans";
-import type { Subscription } from "types/stripe";
 
 export default function SubscriptionPlanPill({
 	subscription,

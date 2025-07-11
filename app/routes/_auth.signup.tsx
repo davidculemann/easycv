@@ -1,3 +1,9 @@
+import { createClient } from "@supabase/supabase-js";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
+import { Form, Link, useActionData, useFetcher, useNavigation } from "react-router";
+import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import ConfirmOTP from "@/components/shared/confirm-otp";
 import { LoadingButton } from "@/components/shared/loading-button";
@@ -5,15 +11,8 @@ import ProviderLoginButton from "@/components/shared/provider-login-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { enterLeftAnimation } from "@/lib/framer/animations";
-import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
-
 import { forbidUser, getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { validateEmail, validatePassword } from "@/lib/utils";
-import { type ActionFunctionArgs, type LoaderFunctionArgs, json } from "@remix-run/node";
-import { Form, Link, useActionData, useNavigation, useOutletContext } from "@remix-run/react";
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase, headers } = getSupabaseWithHeaders({ request });
@@ -25,17 +24,53 @@ export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	const email = formData.get("email") as string;
 	const password = formData.get("password") as string;
-	const { supabase, headers } = getSupabaseWithHeaders({ request });
+	const intent = formData.get("intent") as string;
+	const { supabase } = getSupabaseWithHeaders({ request });
+
+	if (intent === "resend") {
+		// Handle resend OTP
+		if (!validateEmail(email)) {
+			return { success: false, message: "Please enter a valid email address." };
+		}
+
+		const { error } = await supabase.auth.resend({
+			type: "signup",
+			email,
+		});
+
+		if (error) {
+			return { success: false, message: error.message };
+		}
+
+		return { message: "OTP code resent successfully!", success: true };
+	}
 
 	if (!validateEmail(email)) {
-		return json({ message: "Please enter a valid email address." }, { status: 400 });
+		return { success: false, message: "Please enter a valid email address." };
 	}
 
 	if (!validatePassword(password)) {
-		return json(
-			{ message: "Password must be at least 8 characters long and contain at least one number." },
-			{ status: 400 },
-		);
+		return {
+			success: false,
+			message: "Password must be at least 8 characters long and contain at least one number.",
+		};
+	}
+
+	// Use the admin client to check for an existing, confirmed user.
+	const supabaseAdmin = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+	const {
+		data: { users },
+		error: listUsersError,
+	} = await supabaseAdmin.auth.admin.listUsers();
+
+	if (listUsersError) {
+		return { success: false, message: "An unexpected error occurred. Please try again." };
+	}
+
+	const existingUser = users.find((user) => user.email === email);
+
+	if (existingUser?.email_confirmed_at) {
+		return { success: false, message: "An account with this email already exists." };
 	}
 
 	const { error } = await supabase.auth.signUp({
@@ -47,39 +82,74 @@ export async function action({ request }: ActionFunctionArgs) {
 	});
 
 	if (error) {
-		return json({ message: error.message }, { status: 400 });
+		if (error.message.includes("User already registered")) {
+			return { success: false, message: "An account with this email already exists." };
+		}
+		return { success: false, message: error.message };
 	}
 
-	return json({ message: "Check your email for the confirmation link." }, { headers });
+	return { message: "Check your email for the OTP code.", success: true, email };
 }
 
 type ActionStatus = {
 	success: boolean;
 	message: string;
+	email?: string;
 };
 
 export default function SignUp() {
 	const navigation = useNavigation();
 	const actionData = useActionData<ActionStatus | undefined>();
+	const resendFetcher = useFetcher<ActionStatus>();
 	const [showOTP, setShowOTP] = useState(false);
-	const { supabase } = useOutletContext<SupabaseOutletContext>();
+	const [email, setEmail] = useState("");
 
 	useEffect(() => {
 		if (actionData?.message) {
-			if (actionData?.success) toast.success(actionData.message);
-			if (!actionData?.success) toast.error(actionData?.message);
+			if (actionData?.success) {
+				toast.success(actionData.message);
+				if (actionData.email) {
+					setEmail(actionData.email);
+				}
+				setShowOTP(true);
+			}
+			if (!actionData?.success) {
+				toast.error(actionData?.message);
+			}
 		}
 	}, [actionData]);
 
-	const handleResendOTP = async () => {
-		// For now, we'll just show a message since we need the email
-		toast.info("Please check your email for the OTP code.");
+	useEffect(() => {
+		if (resendFetcher.data?.message) {
+			if (resendFetcher.data?.success) {
+				toast.success(resendFetcher.data.message);
+			} else {
+				toast.error(resendFetcher.data.message);
+			}
+		}
+	}, [resendFetcher.data]);
+
+	const handleResendOTP = () => {
+		if (!email) {
+			toast.error("Email not found. Please try signing up again.");
+			return;
+		}
+
+		const formData = new FormData();
+		formData.append("email", email);
+		formData.append("intent", "resend");
+		resendFetcher.submit(formData, { method: "POST", action: "/signup" });
 	};
 
 	if (showOTP) {
 		return (
 			<motion.div {...enterLeftAnimation} layout="position">
-				<ConfirmOTP />
+				<ConfirmOTP
+					path="/api/confirm-signup-otp"
+					additionalFormData={{ email }}
+					onResend={handleResendOTP}
+					isLoading={resendFetcher.state !== "idle"}
+				/>
 			</motion.div>
 		);
 	}
@@ -99,7 +169,7 @@ export default function SignUp() {
 							id="email"
 							type="email"
 							name="email"
-							placeholder="m@example.com"
+							placeholder="email@example.com"
 							required
 							autoComplete="email"
 						/>

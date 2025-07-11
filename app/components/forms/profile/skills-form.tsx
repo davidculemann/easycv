@@ -1,6 +1,6 @@
-import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { Separator } from "@/components/ui/separator";
 import { BaseForm } from "../shared/base-form";
 import FormTagList from "../shared/form-tag-list";
 import { type FormType, type SkillsFormValues, skillsSchema } from "./logic/types";
@@ -27,7 +27,7 @@ export function SkillsForm({ defaultValues, isSubmitting, formType, wasCompleted
 		<BaseForm
 			form={form}
 			isSubmitting={isSubmitting}
-			method="post"
+			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}

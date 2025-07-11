@@ -1,14 +1,14 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray, useForm } from "react-hook-form";
+import type { MetaFunction } from "react-router";
+import { toast } from "sonner";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { MetaFunction } from "@remix-run/node";
-import { useFieldArray, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
 
 export const meta: MetaFunction = () => {
 	return [{ title: "Account Profile | EasyCV" }, { name: "description", content: "Manage your account profile" }];
@@ -101,7 +101,7 @@ export default function ProfileForm() {
 									</SelectTrigger>
 								</FormControl>
 								<SelectContent>
-									<SelectItem value="m@example.com">m@example.com</SelectItem>
+									<SelectItem value="email@example.com">email@example.com</SelectItem>
 									<SelectItem value="m@google.com">m@google.com</SelectItem>
 									<SelectItem value="m@support.com">m@support.com</SelectItem>
 								</SelectContent>

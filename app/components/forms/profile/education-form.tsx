@@ -1,11 +1,11 @@
-import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { Separator } from "@/components/ui/separator";
 import { BaseForm } from "../shared/base-form";
 import { DynamicFieldArrayForm } from "../shared/dynamic-field-array-form";
 import type { EntryFormSectionConfig } from "../shared/entry-form-section";
-import { type EducationFormValues, type FormType, educationSchema } from "./logic/types";
+import { type EducationFormValues, educationSchema, type FormType } from "./logic/types";
 
 interface EducationFormProps {
 	defaultValues: EducationFormValues;
@@ -63,7 +63,7 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 		<BaseForm
 			form={form}
 			isSubmitting={isSubmitting}
-			method="post"
+			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}

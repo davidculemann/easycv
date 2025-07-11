@@ -1,3 +1,11 @@
+import type { SupabaseClient, User } from "@supabase/supabase-js";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { Check, Copy, Download, Pencil, X } from "lucide-react";
+import { motion } from "motion/react";
+import { useState } from "react";
+import type { LoaderFunctionArgs } from "react-router";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router";
+import { toast } from "sonner";
 import CVActions, { type Action } from "@/components/documents/cv-actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,15 +18,6 @@ import { createCVDocument, getCVDocuments } from "@/lib/supabase/documents/cvs";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { getSupabaseWithHeaders } from "@/lib/supabase/supabase.server";
 import { cn } from "@/lib/utils";
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useLoaderData, useNavigate, useOutletContext } from "@remix-run/react";
-import type { SupabaseClient, User } from "@supabase/supabase-js";
-import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
-import { Check, Copy, Download, Pencil, X } from "lucide-react";
-import { motion } from "motion/react";
-import { useState } from "react";
-import { toast } from "sonner";
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const { supabase } = getSupabaseWithHeaders({ request });
@@ -29,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		queryFn: () => getCVDocuments({ supabase }),
 	});
 
-	return json({ dehydratedState: dehydrate(queryClient) });
+	return { dehydratedState: dehydrate(queryClient) };
 }
 
 function CVList() {
@@ -44,7 +43,7 @@ function CVList() {
 			if ("id" in newDocument && newDocument.id) {
 				navigate(`/cvs/${newDocument.id}`);
 			} else throw new Error("No document ID returned");
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Error creating new document");
 		}
 	}
@@ -67,7 +66,7 @@ function CVList() {
 				</div>
 			</Card>
 			<motion.div variants={cvContainerVariants} initial="hidden" animate="show" className="contents">
-				{cvs?.data?.map((cv: any, idx: number) => (
+				{cvs?.data?.map((cv: any, _idx: number) => (
 					<CVCard key={cv.id} cv={cv} supabase={supabase} user={user as User} handleOpenCV={handleOpenCV} />
 				))}
 			</motion.div>

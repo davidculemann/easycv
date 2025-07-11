@@ -1,8 +1,8 @@
+import { Link, Outlet, useOutletContext } from "react-router";
 import { Icons } from "@/components/icons";
 import { buttonVariants } from "@/components/ui/button";
 import type { SupabaseOutletContext } from "@/lib/supabase/supabase";
 import { cn } from "@/lib/utils";
-import { Link, Outlet, useOutletContext } from "@remix-run/react";
 
 export default function AuthLayout() {
 	const { supabase } = useOutletContext<SupabaseOutletContext>();
@@ -16,10 +16,8 @@ export default function AuthLayout() {
 				to="/"
 				className={cn(buttonVariants({ variant: "ghost" }), "absolute left-4 top-4 md:left-8 md:top-8 z-10")}
 			>
-				<>
-					<Icons.chevronLeft className="mr-2 h-4 w-4" />
-					Home
-				</>
+				<Icons.chevronLeft className="mr-2 h-4 w-4" />
+				Home
 			</Link>
 			<div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px] h-full">
 				<div className="flex items-center justify-center py-12 h-full">

@@ -1,9 +1,9 @@
+import { createClient } from "@supabase/supabase-js";
+import type { ActionFunctionArgs } from "react-router";
+import { z } from "zod";
 import { ERRORS } from "@/lib/constants";
 import { PLANS } from "@/services/stripe/plans";
 import { stripe } from "@/services/stripe/stripe.server";
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { createClient } from "@supabase/supabase-js";
-import { z } from "zod";
 
 export const ROUTE_PATH = "/api/webhook" as const;
 

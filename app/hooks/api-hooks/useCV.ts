@@ -1,3 +1,4 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { ParsedCVProfile } from "@/components/forms/profile/logic/types";
 import { queryClient } from "@/lib/react-query/query-client";
 import { QUERY_KEYS } from "@/lib/react-query/queryKeys";
@@ -11,7 +12,6 @@ import {
 	updateCVDocument,
 } from "@/lib/supabase/documents/cvs";
 import type { TypedSupabaseClient } from "@/lib/supabase/supabase";
-import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: string }) => {
 	const { data: cvs } = useQuery({

@@ -129,7 +129,6 @@ export default function Dashboard() {
 								activityItems?.map((cv, index) => <ActivityItem key={cv.id} cv={cv} index={index} />)
 							) : (
 								<div className="flex flex-col items-center justify-center h-full gap-2 p-6">
-									<div className="text-center text-sm text-muted-foreground">No activity yet</div>
 									<Link
 										to={activeTab === "cover-letters" ? "/cover-letter/new" : "/api/new-cv"}
 										className="w-full text-center text-sm hover:underline underline-offset-4 flex items-center justify-center gap-2"
@@ -297,7 +296,6 @@ export function ActivityItem({ cv, index }: ActivityItemProps) {
 				duration: 0.2,
 				ease: "easeOut",
 			}}
-			whileHover={{ backgroundColor: "var(--muted)" }}
 		>
 			<Link
 				to={`/cvs/${cv.id}`}

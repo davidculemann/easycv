@@ -12,7 +12,8 @@ export default function TermsOfService() {
 				<p>
 					These terms and conditions (the "Terms and Conditions") govern the use of
 					{siteConfig.url} (the "Site"). This Site is owned and operated by {siteConfig.author}. This Site is
-					a boilerplate example.
+					a careers platform for job seekers to improve their CVs and cover letters, and plan their job
+					search.
 				</p>
 				<p>
 					By using this Site, you indicate that you have read and understand these Terms and Conditions and
@@ -237,7 +238,8 @@ export default function TermsOfService() {
 				<ul className="list-none space-y-2">
 					<li>07402 099676</li>
 					<li>davidculemann@gmail.com</li>
-					<li>64 Catharine Street</li>
+					<li>Flat 1, 64 Catharine Street</li>
+					<li>Cambridge, CB1 3AW, UK</li>
 				</ul>
 			</section>
 
@@ -247,8 +249,9 @@ export default function TermsOfService() {
 					If you want to cancel your contract of sale with us you may use this form and email or post it back
 					to us at the address below.
 				</p>
-				<p>To: {siteConfig.url}</p>
-				<p>Address: 64 Catharine Street</p>
+				<p>To: {siteConfig.author}</p>
+				<p>Address: Flat 1, 64 Catharine Street</p>
+				<p>Cambridge, CB1 3AW, UK</p>
 				<p>Email: davidculemann@gmail.com</p>
 				<p>I hereby give notice that I cancel my contract of sale of the following goods or services:</p>
 				<ul className="list-none space-y-2">

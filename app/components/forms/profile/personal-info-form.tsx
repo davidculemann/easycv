@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Github, Globe, Linkedin } from "lucide-react";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -28,10 +27,6 @@ export function PersonalInfoForm({
 		defaultValues,
 		mode: "onChange",
 	});
-
-	useEffect(() => {
-		form.reset(defaultValues);
-	}, [defaultValues, form]);
 
 	const _values = form.watch();
 

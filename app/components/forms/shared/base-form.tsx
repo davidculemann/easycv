@@ -36,8 +36,8 @@ export function BaseForm({
 	const formRef = useRef<HTMLFormElement>(null);
 
 	useEffect(() => {
-		form.reset(defaultValues, { keepValues: true });
-	}, [defaultValues]);
+		form.reset(defaultValues, { keepDirtyValues: true });
+	}, [defaultValues, form]);
 
 	const canSubmit = form.formState.isValid && (form.formState.isDirty || wasCompleted);
 	const shouldSkip = !form.formState.isDirty && wasCompleted;
@@ -61,10 +61,6 @@ export function BaseForm({
 			onSubmit(data);
 		} else if (formRef.current) {
 			submit(formRef.current);
-			return;
-		}
-		if (nextSection && !shouldSkip) {
-			handleNext();
 		}
 	};
 
@@ -92,7 +88,7 @@ export function BaseForm({
 									type="submit"
 									disabled={!form.formState.isDirty}
 									variant="secondary"
-									value="saveChanges"
+									value="true"
 									name="saveChanges"
 								>
 									Save Changes
@@ -104,9 +100,7 @@ export function BaseForm({
 									type={shouldSkip ? "button" : "submit"}
 									disabled={!canSubmit || isSubmitting}
 									className="group relative"
-									{...(shouldSkip && {
-										onClick: handleNext,
-									})}
+									onClick={shouldSkip ? handleNext : undefined}
 								>
 									{isFinalSection ? "Finish" : `Next: ${getNextSectionName(nextSection)}`}
 									<ChevronRight className="ml-2 h-4 w-4 hover-slide-x" />

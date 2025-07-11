@@ -1,7 +1,7 @@
 import { ChevronRight, SaveIcon } from "lucide-react";
 import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
-import { type FormMethod, Form as RemixForm, useSearchParams } from "react-router";
+import { type FormMethod, Form as ReactRouterForm, useSearchParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
@@ -65,7 +65,7 @@ export function BaseForm({
 
 	return (
 		<Form {...form}>
-			<RemixForm onSubmit={form.handleSubmit(handleSubmit)} method={method} className="space-y-8 flex-1">
+			<ReactRouterForm onSubmit={form.handleSubmit(handleSubmit)} method={method} className="space-y-8 flex-1">
 				<CardContent>{children}</CardContent>
 				<CardFooter>
 					<div className="w-full flex justify-between gap-2">
@@ -105,7 +105,7 @@ export function BaseForm({
 						</div>
 					</div>
 				</CardFooter>
-			</RemixForm>
+			</ReactRouterForm>
 		</Form>
 	);
 }

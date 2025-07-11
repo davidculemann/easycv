@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CVFormPanelProps {
+	id: string;
 	cv: ParsedCVProfile | null | undefined;
 	updateCV: (...args: any[]) => void;
 	isUpdatingCV: boolean;
@@ -23,18 +24,21 @@ interface CVFormPanelProps {
 	setActiveTab: (tab: string) => void;
 }
 
-export function CVFormPanel({ cv, updateCV, isUpdatingCV, activeTab, setActiveTab }: CVFormPanelProps) {
+export function CVFormPanel({ id, cv, updateCV, isUpdatingCV, activeTab, setActiveTab }: CVFormPanelProps) {
 	const handlePersonalInfoSubmit = (data: PersonalInfoFormValues) => {
 		updateCV({
-			...cv,
-			first_name: data.firstName,
-			last_name: data.lastName,
-			email: data.email,
-			phone: data.phone,
-			address: data.address,
-			linkedin: data.linkedin,
-			github: data.github,
-			website: data.website,
+			cv: {
+				...cv,
+				first_name: data.firstName,
+				last_name: data.lastName,
+				email: data.email,
+				phone: data.phone,
+				address: data.address,
+				linkedin: data.linkedin,
+				github: data.github,
+				website: data.website,
+			},
+			id,
 		});
 	};
 

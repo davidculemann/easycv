@@ -53,10 +53,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 	const { supabase, user } = useOutletContext<SupabaseOutletContext>();
 	const params = useParams();
-	const { id } = params;
+	const { id } = params as { id: string };
 	const { updateCV, isUpdatingCV, cv, deleteCV, renameCV } = useCV({
 		supabase,
-		id: id ?? "",
+		id,
 	});
 
 	const isMobile = useMediaQuery("(max-width: 768px)");
@@ -76,7 +76,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 
 	function _handleSaveChanges() {
 		if (!object) return;
-		updateCV({ id: id ?? "", cv: object.cv as CVContext });
+		updateCV({ id, cv: object.cv as CVContext });
 	}
 
 	const dataToDisplay = object?.cv || cv;
@@ -339,6 +339,7 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 							isUpdatingCV={isUpdatingCV}
 							activeTab={activeTab}
 							setActiveTab={setActiveTab}
+							id={id}
 						/>
 					</div>
 				</ResizablePanel>

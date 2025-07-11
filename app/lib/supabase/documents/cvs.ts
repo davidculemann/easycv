@@ -163,7 +163,21 @@ export async function updateCVDocument({
 	id: string;
 	cv: Partial<ParsedCVProfile>;
 }) {
-	const { education, experience, skills, projects } = cv;
+	const {
+		education,
+		experience,
+		skills,
+		projects,
+		first_name,
+		last_name,
+		email,
+		phone,
+		address,
+		linkedin,
+		github,
+		website,
+	} = cv;
+
 	const { data, error } = await supabase
 		.from("cvs")
 		.update({
@@ -171,6 +185,14 @@ export async function updateCVDocument({
 			experience: experience,
 			skills: skills,
 			projects: projects,
+			first_name: first_name,
+			last_name: last_name,
+			email: email,
+			phone: phone,
+			address: address,
+			linkedin: linkedin,
+			github: github,
+			website: website,
 		})
 		.eq("id", id)
 		.select();

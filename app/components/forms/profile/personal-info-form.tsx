@@ -28,8 +28,6 @@ export function PersonalInfoForm({
 		mode: "onChange",
 	});
 
-	const _values = form.watch();
-
 	return (
 		<BaseForm
 			form={form}
@@ -109,7 +107,6 @@ export function PersonalInfoForm({
 									<FormControl>
 										<Input
 											type="tel"
-											placeholder="Enter 10-12 digit phone number"
 											{...field}
 											onChange={(e) => {
 												field.onChange(e);

@@ -36,9 +36,11 @@ export function DynamicFieldArrayForm({
 		if (fields.length > prevFieldsLength.current) {
 			const lastId = fields[fields.length - 1]?.id;
 			if (lastId) setOpenItemId(lastId);
+		} else if (fields.length > 0 && openItemId === undefined) {
+			setOpenItemId(fields[0].id);
 		}
 		prevFieldsLength.current = fields.length;
-	}, [fields]);
+	}, [fields, openItemId]);
 
 	const currentIndex = entries.findIndex((entry: any) => entry.current);
 

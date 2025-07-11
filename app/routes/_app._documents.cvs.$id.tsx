@@ -1,6 +1,7 @@
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { AlertTriangle, Check, ExternalLink, Pencil, Settings2, Trash2, X } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 import type { LoaderFunctionArgs } from "react-router";
 import { Link, useLoaderData, useNavigate, useOutletContext, useParams } from "react-router";
@@ -15,6 +16,7 @@ import { ensureValidProfile } from "@/components/forms/profile/logic/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { bannerVariants } from "@/lib/framer/animations";
 import { useCV } from "@/hooks/api-hooks/useCV";
 import { useUploadDocument } from "@/hooks/api-hooks/useUploadDocument";
 import { type CVContext, CVContextSchema } from "@/lib/documents/types";
@@ -291,32 +293,42 @@ export function CV({ profileCompleted }: { profileCompleted: boolean }) {
 					</DeleteDocumentConfirmation>
 				</div>
 			</div>
-			{showBanner && (
-				<div className="bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 border-b px-4 py-2">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<AlertTriangle className="h-4 w-4 text-warning-foreground" />
-							<span className="text-sm text-warning-foreground">
-								Complete your profile first to save your profile for future documents!
-							</span>
-						</div>
-						<div className="flex items-center gap-2">
-							<Link to="/profile" className="text-sm hover:underline flex items-center gap-1">
-								<ExternalLink className="h-3 w-3 ml-1" />
-								<span className="hidden sm:inline">Go to Profile</span>
-							</Link>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="h-7 w-7 p-0"
-								onClick={() => setProfileDismissed(false)}
-							>
-								<X className="h-4 w-4" />
-							</Button>
-						</div>
-					</div>
-				</div>
-			)}
+			<motion.div layout>
+				<AnimatePresence>
+					{showBanner && (
+						<motion.div
+							variants={bannerVariants}
+							initial="hidden"
+							animate="visible"
+							exit="exit"
+							className="bg-amber-50 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 border-b px-4 py-2"
+						>
+							<div className="flex items-center justify-between">
+								<div className="flex items-center gap-2">
+									<AlertTriangle className="h-4 w-4 text-warning-foreground" />
+									<span className="text-sm text-warning-foreground">
+										Complete your profile first to save your profile for future documents!
+									</span>
+								</div>
+								<div className="flex items-center gap-2">
+									<Link to="/profile" className="text-sm hover:underline flex items-center gap-1">
+										<ExternalLink className="h-3 w-3 ml-1" />
+										<span className="hidden sm:inline">Go to Profile</span>
+									</Link>
+									<Button
+										variant="ghost"
+										size="sm"
+										className="h-7 w-7 p-0"
+										onClick={() => setProfileDismissed(true)}
+									>
+										<X className="h-4 w-4" />
+									</Button>
+								</div>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
+			</motion.div>
 
 			<ResizablePanelGroup direction={isMobile ? "vertical" : "horizontal"} className="flex-1">
 				<ResizablePanel defaultSize={40} minSize={30}>

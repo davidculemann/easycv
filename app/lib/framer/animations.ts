@@ -59,3 +59,27 @@ export const tileEntryExit = {
 	exit: { opacity: 0, scale: 0, transition: { duration: 0.15 } },
 	layout: true,
 };
+
+export const bannerVariants = {
+	hidden: {
+		opacity: 0,
+		maxHeight: 0,
+		overflow: "hidden",
+	},
+	visible: {
+		opacity: 1,
+		maxHeight: 100,
+		overflow: "visible",
+		transition: {
+			duration: 0.2,
+		},
+	},
+	exit: {
+		opacity: 0,
+		maxHeight: 0,
+		overflow: "hidden",
+		transition: {
+			duration: 0.15,
+		},
+	},
+};

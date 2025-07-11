@@ -1,12 +1,12 @@
 # EasyCV
 
-An AI-powered CV and cover letter generation platform built with Remix, Vite, shadcn/ui, Vercel's AI sdk and Supabase.
+An AI-powered CV and cover letter generation platform built with React Router v7, Vite, shadcn/ui, Vercel's AI sdk and Supabase.
 
 ## About
 
 EasyCV helps users create professional, ATS-friendly CVs and cover letters in minutes. The platform leverages AI to analyze user experience and suggest the best way to present skills and qualifications.
 
-This project is based on [remix-shadcn-boilerplate](https://github.com/davidculemann/remix-shadcn-boilerplate).
+This project is based on a fork of [remix-shadcn-boilerplate](https://github.com/davidculemann/remix-shadcn-boilerplate), and has been migrated to use React Router v7.
 
 ## What's inside?
 
@@ -140,7 +140,7 @@ npm run dev
 
 ## Stack
 
-- [Remix](https://remix.run)
+- [React Router v7](https://reactrouter.com/)
 - [Vite](https://vitejs.dev)
 - [shadcn/ui](https://ui.shadcn.com)
 - [Supabase](https://supabase.io)

@@ -6,7 +6,6 @@
 	"scripts": {
 		"build": "react-router build",
 		"dev": "react-router dev",
-		"dev:debug": "NODE_ENV=development dotenv -- node --inspect ./server.js",
 		"start": "react-router-serve ./build/server/index.js",
 		"typecheck": "react-router typegen && tsc",
 		"deploy-production": "vercel --prod",

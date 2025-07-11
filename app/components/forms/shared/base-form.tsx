@@ -1,5 +1,5 @@
 import { ChevronRight, SaveIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { type FormMethod, Form as ReactRouterForm, useSearchParams, useSubmit } from "react-router";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ export function BaseForm({
 	const [, setSearchParams] = useSearchParams();
 	const submit = useSubmit();
 	const formRef = useRef<HTMLFormElement>(null);
+	const [saveChanges, setSaveChanges] = useState<string | undefined>();
 
 	useEffect(() => {
 		form.reset(defaultValues, { keepDirtyValues: true });
@@ -64,6 +65,10 @@ export function BaseForm({
 		}
 	};
 
+	const handleSaveChanges = () => {
+		setSaveChanges("true");
+	};
+
 	return (
 		<Form {...form}>
 			<ReactRouterForm
@@ -72,6 +77,7 @@ export function BaseForm({
 				method={method}
 				className="space-y-8 flex-1"
 			>
+				{saveChanges && <input type="hidden" name="saveChanges" value={saveChanges} />}
 				<CardContent>{children}</CardContent>
 				<CardFooter>
 					<div className="w-full flex justify-between gap-2">
@@ -88,8 +94,7 @@ export function BaseForm({
 									type="submit"
 									disabled={!form.formState.isDirty}
 									variant="secondary"
-									value="true"
-									name="saveChanges"
+									onClick={handleSaveChanges}
 								>
 									Save Changes
 									<SaveIcon />

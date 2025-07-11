@@ -35,7 +35,6 @@ export function usePreferences({ supabase, id }: { supabase: SupabaseClient<Data
 		},
 	});
 
-	// Enhanced update function that accepts callbacks
 	const updatePreferencesWithCallbacks = (
 		update: Partial<Database["public"]["Tables"]["preferences"]["Update"]>,
 		callbacks?: {

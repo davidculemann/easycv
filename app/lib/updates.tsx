@@ -1,4 +1,4 @@
-import type React from "react";
+import React from "react";
 import { Link } from "react-router";
 
 /**
@@ -116,6 +116,89 @@ export const timelineItems: UpdateDef[] = [
 					personalized career documents.
 				</p>
 			</>
+		),
+	},
+	/* add these:
+{
+		headings: [
+			{ side: "left", text: "User Profile Forms" },
+			{ side: "right", text: "Started (1/04/2025)", variant: "secondary" },
+		],
+		dotStatus: "done",
+		lineDone: true,
+		content: {
+			content: [
+				{
+					type: "paragraph",
+					text: "Building comprehensive forms to collect user information needed for CV and cover letter generation. This includes structured data collection for: personal information, work experience, education, skills, certifications, projects, and languages.",
+				},
+				{
+					type: "paragraph",
+					text: "Using React Hook Form with Zod validation to ensure data quality and a smooth user experience. The collected information will feed into the AI generation system to create more accurate and personalized career documents.",
+				},
+			],
+		},
+	},
+	{
+		headings: [
+			{ side: "left", text: "Migrating from Remix to React Router v7" },
+			{ side: "right", text: "Started (07/07/2025)", variant: "secondary" },
+		],
+		dotStatus: "done",
+		lineDone: true,
+		content: {
+			content: [
+				{
+					type: "paragraph",
+					text: "Migrating from Remix to React Router v7, this was a pain - a lot of changes.",
+				},
+			],
+		},
+	},
+	{
+		headings: [
+			{ side: "left", text: "Getting it ready for launch" },
+			{ side: "right", text: "Started (11/07/2025)", variant: "secondary" },
+		],
+		dotStatus: "current",
+		lineDone: false,
+		content: {
+			content: [
+				{
+					type: "paragraph",
+					text: "Last week before launch, going through some security issues and auth bugs, finalising the pricing structure and finishing off little features.",
+				},
+			],
+		},
+	},
+	*/
+	{
+		headings: [
+			{ side: "left", text: "Migrating from Remix to React Router v7" },
+			{ side: "right", text: "Started (07/07/2025)", variant: "secondary" },
+		],
+		dotStatus: "done",
+		lineDone: true,
+		content: (
+			<p>
+				Migrating from Remix to React Router v7, this was a pain - a lot of changes, a lot of changes with
+				little documentation available. It had to be done sooner instead of later before react router diverges
+				further.
+			</p>
+		),
+	},
+	{
+		headings: [
+			{ side: "left", text: "Getting it ready for launch" },
+			{ side: "right", text: "Started (11/07/2025)", variant: "secondary" },
+		],
+		dotStatus: "current",
+		lineDone: false,
+		content: (
+			<p>
+				Last week before launch, going through some security issues and auth bugs, finalising the pricing
+				structure and finishing off little features.
+			</p>
 		),
 	},
 ];

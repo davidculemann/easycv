@@ -79,7 +79,7 @@ export const bannerVariants = {
 		maxHeight: 0,
 		overflow: "hidden",
 		transition: {
-			duration: 0.15,
+			duration: 0.1,
 		},
 	},
 };

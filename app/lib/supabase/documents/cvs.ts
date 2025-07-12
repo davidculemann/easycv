@@ -158,47 +158,23 @@ export async function updateCVDocument({
 	supabase,
 	id,
 	cv,
+	onSuccess,
+	onError,
 }: {
 	supabase: SupabaseClient<Database>;
 	id: string;
 	cv: Partial<ParsedCVProfile>;
+	onSuccess?: () => void;
+	onError?: () => void;
 }) {
-	const {
-		education,
-		experience,
-		skills,
-		projects,
-		first_name,
-		last_name,
-		email,
-		phone,
-		address,
-		linkedin,
-		github,
-		website,
-	} = cv;
+	const updateData = Object.fromEntries(Object.entries(cv).filter(([_, value]) => value !== undefined));
 
-	const { data, error } = await supabase
-		.from("cvs")
-		.update({
-			education: education,
-			experience: experience,
-			skills: skills,
-			projects: projects,
-			first_name: first_name,
-			last_name: last_name,
-			email: email,
-			phone: phone,
-			address: address,
-			linkedin: linkedin,
-			github: github,
-			website: website,
-		})
-		.eq("id", id)
-		.select();
+	const { data, error } = await supabase.from("cvs").update(updateData).eq("id", id).select();
 	if (error) {
+		onError?.();
 		throw new Error(error.message);
 	}
+	onSuccess?.();
 	return data[0];
 }
 

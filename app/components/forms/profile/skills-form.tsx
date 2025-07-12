@@ -7,12 +7,13 @@ import { type FormType, type SkillsFormValues, skillsSchema } from "./logic/type
 
 interface SkillsFormProps {
 	defaultValues: SkillsFormValues;
-	isSubmitting?: boolean;
 	formType: FormType;
+	onSubmit?: (data: SkillsFormValues) => void;
 	wasCompleted?: boolean;
+	formProps?: Record<string, any>;
 }
 
-export function SkillsForm({ defaultValues, isSubmitting, formType, wasCompleted }: SkillsFormProps) {
+export function SkillsForm({ defaultValues, formType, onSubmit, wasCompleted, formProps = {} }: SkillsFormProps) {
 	const form = useForm<SkillsFormValues>({
 		resolver: zodResolver(skillsSchema),
 		defaultValues: {
@@ -26,11 +27,12 @@ export function SkillsForm({ defaultValues, isSubmitting, formType, wasCompleted
 	return (
 		<BaseForm
 			form={form}
-			isSubmitting={isSubmitting}
 			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}
+			onSubmit={onSubmit}
+			{...formProps}
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="skills" value={JSON.stringify(skills)} />

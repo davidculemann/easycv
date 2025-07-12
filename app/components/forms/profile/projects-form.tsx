@@ -9,9 +9,10 @@ import { type FormType, type ProjectsFormValues, projectsSchema } from "./logic/
 
 interface ProjectsFormProps {
 	defaultValues: ProjectsFormValues;
-	isSubmitting?: boolean;
 	formType: FormType;
+	onSubmit?: (data: ProjectsFormValues) => void;
 	wasCompleted?: boolean;
+	formProps?: Record<string, any>;
 }
 
 const PROJECTS_FORM_CONFIG: EntryFormSectionConfig = {
@@ -38,7 +39,7 @@ const EMPTY_Project = {
 	link: "",
 };
 
-export function ProjectsForm({ defaultValues, isSubmitting, formType, wasCompleted }: ProjectsFormProps) {
+export function ProjectsForm({ defaultValues, formType, onSubmit, wasCompleted, formProps = {} }: ProjectsFormProps) {
 	const form = useForm<ProjectsFormValues>({
 		resolver: zodResolver(projectsSchema),
 		defaultValues: {
@@ -60,11 +61,12 @@ export function ProjectsForm({ defaultValues, isSubmitting, formType, wasComplet
 	return (
 		<BaseForm
 			form={form}
-			isSubmitting={isSubmitting}
 			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}
+			onSubmit={onSubmit}
+			{...formProps}
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="projects" value={JSON.stringify(projects)} />

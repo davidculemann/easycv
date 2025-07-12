@@ -74,8 +74,17 @@ export const useCV = ({ supabase, id }: { supabase: TypedSupabaseClient; id?: st
 	});
 
 	const { mutate: updateCV, isPending: isUpdatingCV } = useMutation({
-		mutationFn: ({ id, cv }: { id: string; cv: Partial<ParsedCVProfile> }) =>
-			updateCVDocument({ supabase, id, cv }),
+		mutationFn: ({
+			id,
+			cv,
+			onSuccess,
+			onError,
+		}: {
+			id: string;
+			cv: Partial<ParsedCVProfile>;
+			onSuccess?: () => void;
+			onError?: () => void;
+		}) => updateCVDocument({ supabase, id, cv, onSuccess, onError }),
 		mutationKey: [QUERY_KEYS.cvs.single, id],
 	});
 

@@ -280,41 +280,51 @@ export default function Profile() {
 								github: profile?.github || "",
 								website: profile?.website || "",
 							}}
-							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion(profile, "personal")}
+							formProps={{
+								isSubmitting,
+							}}
 						/>
 					)}
 					{selectedTab === "education" && (
 						<EducationForm
 							defaultValues={getEducationFormData(profile)}
-							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion(profile, "education")}
+							formProps={{
+								isSubmitting,
+							}}
 						/>
 					)}
 					{selectedTab === "experience" && (
 						<ExperienceForm
 							defaultValues={getExperienceFormData(profile)}
-							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion(profile, "experience")}
+							formProps={{
+								isSubmitting,
+							}}
 						/>
 					)}
 					{selectedTab === "projects" && (
 						<ProjectsForm
 							defaultValues={getProjectsFormData(profile)}
-							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion(profile, "projects")}
+							formProps={{
+								isSubmitting,
+							}}
 						/>
 					)}
 					{selectedTab === "skills" && (
 						<SkillsForm
 							defaultValues={getSkillsFormData(profile)}
-							isSubmitting={isSubmitting}
 							formType={selectedTab}
 							wasCompleted={checkSectionCompletion(profile, "skills")}
+							formProps={{
+								isSubmitting,
+							}}
 						/>
 					)}
 				</main>

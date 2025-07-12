@@ -9,9 +9,10 @@ import { type ExperienceFormValues, experienceSchema, type FormType } from "./lo
 
 interface ExperienceFormProps {
 	defaultValues: ExperienceFormValues;
-	isSubmitting?: boolean;
 	formType: FormType;
+	onSubmit?: (data: ExperienceFormValues) => void;
 	wasCompleted?: boolean;
+	formProps?: Record<string, any>;
 }
 
 const EXPERIENCE_FORM_CONFIG: EntryFormSectionConfig = {
@@ -40,7 +41,13 @@ const EMPTY_EXPERIENCE = {
 	description: [""],
 };
 
-export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompleted }: ExperienceFormProps) {
+export function ExperienceForm({
+	defaultValues,
+	formType,
+	onSubmit,
+	wasCompleted,
+	formProps = {},
+}: ExperienceFormProps) {
 	const form = useForm<ExperienceFormValues>({
 		resolver: zodResolver(experienceSchema),
 		defaultValues: {
@@ -61,11 +68,12 @@ export function ExperienceForm({ defaultValues, isSubmitting, formType, wasCompl
 	return (
 		<BaseForm
 			form={form}
-			isSubmitting={isSubmitting}
 			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}
+			onSubmit={onSubmit}
+			{...formProps}
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="experiences" value={JSON.stringify(experiences)} />

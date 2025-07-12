@@ -28,7 +28,6 @@ export function CVFormPanel({ id, cv, updateCV, isUpdatingCV, activeTab, setActi
 	const handlePersonalInfoSubmit = (data: PersonalInfoFormValues) => {
 		updateCV({
 			cv: {
-				...cv,
 				first_name: data.firstName,
 				last_name: data.lastName,
 				email: data.email,
@@ -39,6 +38,57 @@ export function CVFormPanel({ id, cv, updateCV, isUpdatingCV, activeTab, setActi
 				website: data.website,
 			},
 			id,
+			onSuccess: () => {
+				handleNext();
+			},
+		});
+	};
+
+	const handleExperienceSubmit = (data: any) => {
+		updateCV({
+			cv: {
+				experience: data.experiences,
+			},
+			id,
+			onSuccess: () => {
+				handleNext();
+			},
+		});
+	};
+
+	const handleEducationSubmit = (data: any) => {
+		updateCV({
+			cv: {
+				education: data.educations,
+			},
+			id,
+			onSuccess: () => {
+				handleNext();
+			},
+		});
+	};
+
+	const handleProjectsSubmit = (data: any) => {
+		updateCV({
+			cv: {
+				projects: data.projects,
+			},
+			id,
+			onSuccess: () => {
+				handleNext();
+			},
+		});
+	};
+
+	const handleSkillsSubmit = (data: any) => {
+		updateCV({
+			cv: {
+				skills: data.skills,
+			},
+			id,
+			onSuccess: () => {
+				handleNext();
+			},
 		});
 	};
 
@@ -51,6 +101,29 @@ export function CVFormPanel({ id, cv, updateCV, isUpdatingCV, activeTab, setActi
 		linkedin: cv?.linkedin || "",
 		github: cv?.github || "",
 		website: cv?.website || "",
+	};
+
+	const handleNext = () => {
+		const currentIndex = sectionOrder.indexOf(activeTab as any);
+		const nextSection = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
+		if (nextSection) {
+			setActiveTab(nextSection);
+		}
+	};
+
+	const handleBack = () => {
+		const currentIndex = sectionOrder.indexOf(activeTab as any);
+		const prevSection = currentIndex > 0 ? sectionOrder[currentIndex - 1] : null;
+		if (prevSection) {
+			setActiveTab(prevSection);
+		}
+	};
+
+	const formProps = {
+		isSubmitting: isUpdatingCV,
+		onNext: handleNext,
+		onBack: handleBack,
+		allowSkipWhenNotDirty: true,
 	};
 
 	return (
@@ -90,20 +163,40 @@ export function CVFormPanel({ id, cv, updateCV, isUpdatingCV, activeTab, setActi
 						defaultValues={personalInfoDefaultValues}
 						formType="personal"
 						onSubmit={handlePersonalInfoSubmit}
-						isSubmitting={isUpdatingCV}
+						formProps={formProps}
 					/>
 				</TabsContent>
 				<TabsContent value="experience" className="mt-0">
-					<ExperienceForm defaultValues={getExperienceFormData(cv)} formType="experience" />
+					<ExperienceForm
+						defaultValues={getExperienceFormData(cv)}
+						formType="experience"
+						onSubmit={handleExperienceSubmit}
+						formProps={formProps}
+					/>
 				</TabsContent>
 				<TabsContent value="education" className="mt-0">
-					<EducationForm defaultValues={getEducationFormData(cv)} formType="education" />
+					<EducationForm
+						defaultValues={getEducationFormData(cv)}
+						formType="education"
+						onSubmit={handleEducationSubmit}
+						formProps={formProps}
+					/>
 				</TabsContent>
 				<TabsContent value="projects" className="mt-0">
-					<ProjectsForm defaultValues={getProjectsFormData(cv)} formType="projects" />
+					<ProjectsForm
+						defaultValues={getProjectsFormData(cv)}
+						formType="projects"
+						onSubmit={handleProjectsSubmit}
+						formProps={formProps}
+					/>
 				</TabsContent>
 				<TabsContent value="skills" className="mt-0">
-					<SkillsForm defaultValues={getSkillsFormData(cv)} formType="skills" />
+					<SkillsForm
+						defaultValues={getSkillsFormData(cv)}
+						formType="skills"
+						onSubmit={handleSkillsSubmit}
+						formProps={formProps}
+					/>
 				</TabsContent>
 			</div>
 		</Tabs>

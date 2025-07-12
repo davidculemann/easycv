@@ -9,9 +9,10 @@ import { type EducationFormValues, educationSchema, type FormType } from "./logi
 
 interface EducationFormProps {
 	defaultValues: EducationFormValues;
-	isSubmitting?: boolean;
 	formType: FormType;
+	onSubmit?: (data: EducationFormValues) => void;
 	wasCompleted?: boolean;
+	formProps?: Record<string, any>;
 }
 
 const EDUCATION_FORM_CONFIG: EntryFormSectionConfig = {
@@ -40,7 +41,7 @@ const EMPTY_EDUCATION = {
 	description: [""],
 };
 
-export function EducationForm({ defaultValues, isSubmitting, formType, wasCompleted }: EducationFormProps) {
+export function EducationForm({ defaultValues, formType, onSubmit, wasCompleted, formProps = {} }: EducationFormProps) {
 	const form = useForm<EducationFormValues>({
 		resolver: zodResolver(educationSchema),
 		defaultValues: {
@@ -62,11 +63,12 @@ export function EducationForm({ defaultValues, isSubmitting, formType, wasComple
 	return (
 		<BaseForm
 			form={form}
-			isSubmitting={isSubmitting}
 			method="POST"
 			formType={formType}
 			wasCompleted={wasCompleted}
 			defaultValues={defaultValues}
+			onSubmit={onSubmit}
+			{...formProps}
 		>
 			<input type="hidden" name="formType" value={formType} />
 			<input type="hidden" name="educations" value={JSON.stringify(educations)} />

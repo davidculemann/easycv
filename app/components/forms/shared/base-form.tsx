@@ -18,6 +18,8 @@ export interface BaseFormProps {
 	wasCompleted?: boolean;
 	defaultValues: any;
 	onBack?: () => void;
+	onNext?: () => void;
+	allowSkipWhenNotDirty?: boolean;
 }
 
 export function BaseForm({
@@ -30,6 +32,8 @@ export function BaseForm({
 	wasCompleted = false,
 	defaultValues,
 	onBack,
+	onNext,
+	allowSkipWhenNotDirty = false,
 }: BaseFormProps) {
 	const [, setSearchParams] = useSearchParams();
 	const submit = useSubmit();
@@ -41,7 +45,7 @@ export function BaseForm({
 	}, [defaultValues, form]);
 
 	const canSubmit = form.formState.isValid && (form.formState.isDirty || wasCompleted);
-	const shouldSkip = !form.formState.isDirty && wasCompleted;
+	const shouldSkip = !form.formState.isDirty && (wasCompleted || allowSkipWhenNotDirty);
 
 	const currentIndex = sectionOrder.indexOf(formType);
 	const nextSection = currentIndex < sectionOrder.length - 1 ? sectionOrder[currentIndex + 1] : null;
@@ -49,7 +53,11 @@ export function BaseForm({
 	const prevSection = currentIndex > 0 ? sectionOrder[currentIndex - 1] : null;
 
 	function handleNext() {
-		if (nextSection) setSearchParams({ section: nextSection });
+		if (onNext) {
+			onNext();
+		} else if (nextSection) {
+			setSearchParams({ section: nextSection });
+		}
 	}
 
 	function handleBack() {

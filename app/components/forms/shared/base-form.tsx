@@ -44,7 +44,18 @@ export function BaseForm({
 		form.reset(defaultValues, { keepDirtyValues: true });
 	}, [defaultValues, form]);
 
-	const canSubmit = form.formState.isValid && (form.formState.isDirty || wasCompleted);
+	useEffect(() => {
+		if (allowSkipWhenNotDirty) {
+			form.trigger();
+		}
+	}, [allowSkipWhenNotDirty, form]);
+
+	// For CV forms: allow proceeding if not dirty (regardless of validation)
+	// For profile forms: require validation AND (dirty OR wasCompleted)
+	const canSubmit = allowSkipWhenNotDirty
+		? !form.formState.isDirty || form.formState.isValid
+		: form.formState.isValid && (form.formState.isDirty || wasCompleted);
+
 	const shouldSkip = !form.formState.isDirty && (wasCompleted || allowSkipWhenNotDirty);
 
 	const currentIndex = sectionOrder.indexOf(formType);
